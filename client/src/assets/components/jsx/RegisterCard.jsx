@@ -1,14 +1,10 @@
 import {
   Anchor,
   Button,
-  Checkbox,
-  Container,
   Group,
   Paper,
   PasswordInput,
-  Text,
   TextInput,
-  Title,
 } from '@mantine/core';
 
 export default function LoginCard() {
@@ -16,14 +12,16 @@ export default function LoginCard() {
     <div>
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
         <TextInput label="Username" placeholder="Username" required />
+        <TextInput label="Email" placeholder="example@flashify.com" required mt="md" />
         <PasswordInput label="Password" placeholder="Password" required mt="md" />
+        <PasswordInput label="Repeat Password" placeholder="Repeat Password" required mt="md" />
         <Group justify="space-between" mt="lg">
           <Anchor component="button" size="sm">
-            Forgot password?
+            Already have an account?
           </Anchor>
         </Group>
         <Button fullWidth mt="xl">
-          Sign in
+          Sign Up
         </Button>
       </Paper>
     </div>

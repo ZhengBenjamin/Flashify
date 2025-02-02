@@ -1,5 +1,6 @@
 import Header from '../components/jsx/Header';
 import LoginCard from '../components/jsx/LoginCard';
+import RegisterCard from '../components/jsx/RegisterCard';
 
 import { Container, Title, Text, Anchor } from '@mantine/core';
 
@@ -20,7 +21,7 @@ export default function Authentication() {
             </Anchor>
           </Text>
 
-          <LoginCard />
+          <RegisterCard />
         </Container>
     </div>
   );

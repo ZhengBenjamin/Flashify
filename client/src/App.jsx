@@ -11,6 +11,7 @@ export default function App() {
   return (
     <MantineProvider>
       <Front />
+      <Authentication />
     </MantineProvider>
   );
 }
