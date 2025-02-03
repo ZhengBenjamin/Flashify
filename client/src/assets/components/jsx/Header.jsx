@@ -27,7 +27,7 @@ export default function Header() {
     return (
         <header className={classes.header}>
             <Container size="md" className={classes.inner}>
-                <Link to={"/"} className={classes.link}>Flashify</Link>
+                <Link to={"/"} className={classes.link} onClick={() => setActive('/')}>Flashify</Link>
                 <Group gap={5} visibleFrom="xs">
                     {items}
                 </Group>
