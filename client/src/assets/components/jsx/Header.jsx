@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import {Burger, Container, Group} from '@mantine/core';
 import {useDisclosure} from '@mantine/hooks';
 import classes from '../css/Header.module.css';
@@ -7,7 +7,6 @@ import classes from '../css/Header.module.css';
 const links = [
     {label: 'Home', link: '/'},
     {label: 'Login', link: '/auth'},
-
 ];
 
 export default function Header() {
@@ -22,15 +21,13 @@ export default function Header() {
             className={classes.link}
             data-active={active === link.link || undefined}
             onClick={() => setActive(link.link)}
-        >
-            {link.label}
-        </Link>
+        >{link.label}</Link>
     ));
 
     return (
         <header className={classes.header}>
             <Container size="md" className={classes.inner}>
-                <p>Flashify</p>
+                <Link to={"/"} className={classes.link}>Flashify</Link>
                 <Group gap={5} visibleFrom="xs">
                     {items}
                 </Group>
