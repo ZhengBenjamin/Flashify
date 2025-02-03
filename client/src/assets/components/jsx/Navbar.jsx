@@ -1,32 +1,44 @@
-import {AppShell, Navbar, Header, Group, Button, Burger} from '@mantine/core';
+import { useState } from 'react';
+import { Burger, Container, Group } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import classes from '../css/Header.module.css';
 
-export default function NavBar() {
-    const [opened, setOpened] = useState(false);
+const links = [
+  { label: 'Home', link: '#' },
+  { label: 'Your Library', link: '#' },
+  { label: 'TBD', link: '#' },
+  { label: 'TBD', link: '#' },
+];
 
-    return (
-        <AppShell
-            navbarOffsetBreakpoint="sm"
-            navbar={
-                <Navbar>
-                    <Group>
-                        <!-- TODO: Update with how we want the Navbar to act like -->
-                        <Button>Home</Button>
-                        <Button>Study</Button>
-                        <Button>Upload a Study Guide</Button>
-                        <Button>Support</Button>
-                    </Group>
-                </Navbar>
-            }
-            header={
-                <Header height={60} p="md">
-                    <Group position={"apart"} style={{height: "100%"}}>
-                        <Burger opened={opened} onClick={() => setOpened((o) => !o)} size={"sm"}/>
-                        <h1>Flashify</h1>
-                    </Group>
-                </Header>
-            }
-            >
-            {/* Main Content goes here */}
-        </AppShell>
-    )
+export default function Navbar() {
+  const [opened, { toggle }] = useDisclosure(false);
+  const [active, setActive] = useState(links[0].link);
+
+  const items = links.map((link) => (
+    <a
+      key={link.label}
+      href={link.link}
+      className={classes.link}
+      data-active={active === link.link || undefined}
+      onClick={(event) => {
+        event.preventDefault();
+        setActive(link.link);
+      }}
+    >
+      {link.label}
+    </a>
+  ));
+
+  return (
+    <nav className={classes.header}>
+      <Container size="md" className={classes.inner}>
+        <p>Flashify</p>
+        <Group gap={5} visibleFrom="xs">
+          {items}
+        </Group>
+
+        <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />
+      </Container>
+    </nav>
+  );
 }
