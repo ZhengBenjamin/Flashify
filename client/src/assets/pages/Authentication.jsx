@@ -7,8 +7,7 @@ import { Container, Title, Text, Anchor } from '@mantine/core';
 export default function Authentication() {
   return (
     <div>
-      <Header />
-        <Container size={420} my={40}>
+      <Container size={420} my={40}>
     
           <Title ta="center">
             Login to Flashify:
