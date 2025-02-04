@@ -15,10 +15,7 @@ export default function LoginCard() {
         <TextInput label="Email" placeholder="example@flashify.com" required mt="md" />
         <PasswordInput label="Password" placeholder="Password" required mt="md" />
         <PasswordInput label="Repeat Password" placeholder="Repeat Password" required mt="md" />
-        <Group justify="space-between" mt="lg">
-          <Anchor component="button" size="sm">
-            Already have an account?
-          </Anchor>
+        <Group justify="space-between" mt="md">
         </Group>
         <Button fullWidth mt="xl">
           Sign Up
