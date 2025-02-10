@@ -18,3 +18,4 @@ class Flashcard:
 
     def setBack(self, back):
         self.front = back
+    
