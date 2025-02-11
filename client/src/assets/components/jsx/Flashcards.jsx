@@ -1,12 +1,12 @@
-import { useState } from 'react';
-import { Card, Container, Group, Text, Button } from '@mantine/core';
+import {useState} from 'react';
+import {Card, Container, Group, Text, Button} from '@mantine/core';
 import classes from '../css/Flashcards.module.css';
 
 // TODO: Use the backend to fetch flashcards data
 const flashcardsData = [
-    { front: 'Front of Card 1', back: 'Back of Card 1' },
-    { front: 'Front of Card 2', back: 'Back of Card 2' },
-    { front: 'Front of Card 3', back: 'Back of Card 3' },
+    {front: 'Front of Card 1', back: 'Back of Card 1'},
+    {front: 'Front of Card 2', back: 'Back of Card 2'},
+    {front: 'Front of Card 3', back: 'Back of Card 3'},
 ];
 
 export default function Flashcards() {
@@ -27,14 +27,15 @@ export default function Flashcards() {
         handleNext();
     }
 
+    const undo = () => {
+        console.log("Undo");
+        setIsFlipped(false);
+        setCurrentCardIndex((prevIndex) => (prevIndex - 1 + flashcardsData.length) % flashcardsData.length);
+    }
+
     const handleNext = () => {
         setIsFlipped(false);
         setCurrentCardIndex((prevIndex) => (prevIndex + 1) % flashcardsData.length);
-    };
-
-    const handlePrev = () => {
-        setIsFlipped(false);
-        setCurrentCardIndex((prevIndex) => (prevIndex - 1 + flashcardsData.length) % flashcardsData.length);
     };
 
     const currentCard = flashcardsData[currentCardIndex];
@@ -46,15 +47,22 @@ export default function Flashcards() {
                     <Text>{isFlipped ? currentCard.back : currentCard.front}</Text>
                 </Card>
             </Group>
-            <Group position={"center"} mt="md">
-                <Button color="red" onClick={handleDontKnow}>Don&#39;t Know</Button>
-                <Button color="green" onClick={handleKnowIt}>Don&#39;t Know</Button>
+
+            <Group position="apart" mt="md">
+                <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
+                    <Group position="apart" mt="md">
+                        <Group position="center" mt="md">
+                            <Button className={classes.button} onClick={handleDontKnow}>❌ Don&#39;t Know</Button>
+                            <Button className={classes.button} onClick={handleKnowIt}>✅ I Know it</Button>
+                        </Group>
+                        <Group position="right" mt="md">
+                            <Button onClick={undo}>↩️ Undo</Button>
+                        </Group>
+                    </Group>
+                </div>
 
             </Group>
-            <Group position="center" mt="md">
-                <Button onClick={handlePrev}>Previous</Button>
-                <Button onClick={handleNext}>Next</Button>
-            </Group>
+
         </Container>
     );
 }
