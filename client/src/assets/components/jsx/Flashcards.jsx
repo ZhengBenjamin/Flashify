@@ -7,7 +7,12 @@ const flashcardsData = [
     {front: 'Front of Card 1', back: 'Back of Card 1'},
     {front: 'Front of Card 2', back: 'Back of Card 2'},
     {front: 'Front of Card 3', back: 'Back of Card 3'},
+    {front: 'Front of Card 4', back: 'Back of Card 4'},
+    {front: 'Front of Card 5', back: 'Back of Card 5'},
+    {front: 'Front of Card 6', back: 'Back of Card 6'},
 ];
+
+const correctResponses = [];
 
 export default function Flashcards() {
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
@@ -18,12 +23,12 @@ export default function Flashcards() {
     };
 
     const handleDontKnow = () => {
-        console.log("Don't Know");
+        correctResponses.push(0);
         handleNext();
     }
 
     const handleKnowIt = () => {
-        console.log("Know It");
+        correctResponses.push(1);
         handleNext();
     }
 
@@ -42,13 +47,17 @@ export default function Flashcards() {
 
     return (
         <Container className={classes.container}>
-            <Group position={"right"}>
+            <Group position={"right"} justify={"space-between"}>
                 <p>Flashcard: {currentCardIndex + 1}/{flashcardsData.length}</p>
+                {currentCardIndex > 0 && (
+                    <p>Correct: {correctResponses.filter((response) => response === 1).length}/
+                        {correctResponses.length} = {(100.0 * (correctResponses.filter((response) => response === 1).length)
+                            / correctResponses.length).toFixed(2)}%</p>)}
             </Group>
 
             <Group position={"center"}>
                 <Card className={classes.card} onClick={handleFlip}>
-                    <Text>{isFlipped ? currentCard.back : currentCard.front}</Text>
+                    <Text className={classes.text}>{isFlipped ? currentCard.back : currentCard.front}</Text>
                 </Card>
             </Group>
 
@@ -58,9 +67,7 @@ export default function Flashcards() {
                     <Button className={classes.button} onClick={handleKnowIt}>✅ I Know it</Button>
                 </Flex>
 
-                {currentCardIndex > 0 && (
-                    <Button className={classes.button} onClick={undo}>↩️ Undo</Button>
-                )}
+                {currentCardIndex > 0 && (<Button className={classes.button} onClick={undo}>↩️ Undo</Button>)}
             </Flex>
 
         </Container>
