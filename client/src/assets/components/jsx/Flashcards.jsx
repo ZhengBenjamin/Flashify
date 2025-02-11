@@ -17,6 +17,16 @@ export default function Flashcards() {
         setIsFlipped(!isFlipped);
     };
 
+    const handleDontKnow = () => {
+        console.log("Don't Know");
+        handleNext();
+    }
+
+    const handleKnowIt = () => {
+        console.log("Know It");
+        handleNext();
+    }
+
     const handleNext = () => {
         setIsFlipped(false);
         setCurrentCardIndex((prevIndex) => (prevIndex + 1) % flashcardsData.length);
@@ -35,6 +45,11 @@ export default function Flashcards() {
                 <Card className={classes.card} onClick={handleFlip}>
                     <Text>{isFlipped ? currentCard.back : currentCard.front}</Text>
                 </Card>
+            </Group>
+            <Group position={"center"} mt="md">
+                <Button color="red" onClick={handleDontKnow}>Don&#39;t Know</Button>
+                <Button color="green" onClick={handleKnowIt}>Don&#39;t Know</Button>
+
             </Group>
             <Group position="center" mt="md">
                 <Button onClick={handlePrev}>Previous</Button>
