@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Card, Container, Group, Text, Button } from '@mantine/core';
 import classes from '../css/Flashcards.module.css';
 
+// TODO: Use the backend to fetch flashcards data
 const flashcardsData = [
     { front: 'Front of Card 1', back: 'Back of Card 1' },
     { front: 'Front of Card 2', back: 'Back of Card 2' },
