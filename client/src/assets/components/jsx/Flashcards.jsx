@@ -42,7 +42,11 @@ export default function Flashcards() {
 
     return (
         <Container className={classes.container}>
-            <Group position="center">
+            <Group position={"right"}>
+                <p>Flashcard: {currentCardIndex + 1}/{flashcardsData.length}</p>
+            </Group>
+
+            <Group position={"center"}>
                 <Card className={classes.card} onClick={handleFlip}>
                     <Text>{isFlipped ? currentCard.back : currentCard.front}</Text>
                 </Card>
@@ -54,7 +58,9 @@ export default function Flashcards() {
                     <Button className={classes.button} onClick={handleKnowIt}>✅ I Know it</Button>
                 </Flex>
 
-                <Button className={classes.button} onClick={undo}>↩️ Undo</Button>
+                {currentCardIndex > 0 && (
+                    <Button className={classes.button} onClick={undo}>↩️ Undo</Button>
+                )}
             </Flex>
 
         </Container>
