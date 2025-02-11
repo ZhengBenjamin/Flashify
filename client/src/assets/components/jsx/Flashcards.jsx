@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Card, Container, Group, Text, Button} from '@mantine/core';
+import {Card, Container, Group, Text, Button, Flex} from '@mantine/core';
 import classes from '../css/Flashcards.module.css';
 
 // TODO: Use the backend to fetch flashcards data
@@ -48,20 +48,14 @@ export default function Flashcards() {
                 </Card>
             </Group>
 
-            <Group position="apart" mt="md">
-                <div style={{display: 'flex', justifyContent: 'center', width: '100%'}}>
-                    <Group position="apart" mt="md">
-                        <Group position="center" mt="md">
-                            <Button className={classes.button} onClick={handleDontKnow}>❌ Don&#39;t Know</Button>
-                            <Button className={classes.button} onClick={handleKnowIt}>✅ I Know it</Button>
-                        </Group>
-                        <Group position="right" mt="md">
-                            <Button onClick={undo}>↩️ Undo</Button>
-                        </Group>
-                    </Group>
-                </div>
+            <Flex justify={"space-between"} mt={"md"}>
+                <Flex justify={"center"} gap={"md"}>
+                    <Button className={classes.button} onClick={handleDontKnow}>❌ Don&#39;t Know</Button>
+                    <Button className={classes.button} onClick={handleKnowIt}>✅ I Know it</Button>
+                </Flex>
 
-            </Group>
+                <Button className={classes.button} onClick={undo}>↩️ Undo</Button>
+            </Flex>
 
         </Container>
     );
