@@ -7,6 +7,7 @@ import classes from '../css/Header.module.css';
 const links = [
     {label: 'Home', link: '/'},
     {label: 'Login', link: '/auth'},
+    {label: 'Flashcards', link: '/flashcards'},
 ];
 
 export default function Header() {
