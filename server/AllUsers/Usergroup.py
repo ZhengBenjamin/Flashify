@@ -1,6 +1,6 @@
-from abc import abstractmethod
+from abc import ABC, abstractmethod
 
-class Usergroup:
+class Usergroup(ABC):
 
 	@property
 	def username(self):
