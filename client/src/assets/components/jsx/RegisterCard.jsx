@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Paper, TextInput, PasswordInput, Button, Group } from "@mantine/core";
 
-export default function LoginCard() {
 import {
   Anchor,
   Button,
