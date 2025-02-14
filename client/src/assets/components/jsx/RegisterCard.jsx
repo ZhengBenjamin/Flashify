@@ -2,6 +2,16 @@ import { useState } from "react";
 import { Paper, TextInput, PasswordInput, Button, Group } from "@mantine/core";
 
 export default function LoginCard() {
+import {
+  Anchor,
+  Button,
+  Group,
+  Paper,
+  PasswordInput,
+  TextInput,
+} from '@mantine/core';
+
+export default function LoginCard() {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -21,7 +31,7 @@ export default function LoginCard() {
     }
 
     try {
-      const response = await fetch("test.com", {
+      const response = await fetch("david url here", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
