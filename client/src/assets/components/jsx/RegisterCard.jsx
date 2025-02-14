@@ -1,15 +1,6 @@
 import { useState } from "react";
 import { Paper, TextInput, PasswordInput, Button, Group } from "@mantine/core";
 
-import {
-  Anchor,
-  Button,
-  Group,
-  Paper,
-  PasswordInput,
-  TextInput,
-} from '@mantine/core';
-
 export default function LoginCard() {
   const [formData, setFormData] = useState({
     username: "",
