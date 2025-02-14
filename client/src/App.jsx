@@ -7,6 +7,8 @@ import {MantineProvider} from '@mantine/core';
 import Front from './assets/pages/Front';
 import Authentication from './assets/pages/Authentication';
 import Header from "./assets/components/jsx/Header.jsx";
+import Flashcards from "./assets/components/jsx/Flashcards.jsx";
+import Study from "./assets/pages/Study";
 
 export default function App() {
     return (
@@ -17,6 +19,8 @@ export default function App() {
                 <Routes>
                     <Route path="/" element={<Front/>}/>
                     <Route path="/auth" element={<Authentication/>}/>
+                    <Route path="/flashcards" element={<Flashcards/>}/>
+                    <Route path="/studyinterface" element={<Study/>}/>
                 </Routes>
             </Router>
         </MantineProvider>
