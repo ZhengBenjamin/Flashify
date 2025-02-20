@@ -3,25 +3,22 @@ import {Container, Text, Title, Button, Flex} from '@mantine/core';
 import classes from "../css/Flashcards.module.css";
 
 export default function Summary() {
+    // React Router
+    const navigate = useNavigate();
     const location = useLocation();
+
+    // Flashcards
     const flashcardsData = location.state?.flashcardsData || [];
+    const allFlashcards = location.state.allFlashcards;
+
+    // Correct/Incorrect Responses
     const correctResponses = location.state?.correctResponses || [];
     const total = correctResponses.length;
     const correct = correctResponses.filter((response) => response === 1).length;
 
-    const allFlashcards = location.state.allFlashcards;
-
-
-    const navigate = useNavigate();
-
+    // Continue Studying
     const next = () => {
         const newFlashcardsData = flashcardsData.filter((_, index) => correctResponses[index] === 0);
-
-        //console.log("newFlashcardsData: ", newFlashcardsData);
-        //console.log("correctResponses: ", correctResponses);
-        //console.log("old flashcardsData: ", flashcardsData);
-
-
 
         if (newFlashcardsData.length === 0) {
             restart();
@@ -31,9 +28,9 @@ export default function Summary() {
         navigate('/flashcards', {state: {newFlashcardsData: newFlashcardsData, correctResponses: [], allFlashcards: allFlashcards}});
     }
 
+    // Restart Progress
     const restart = () => {
         navigate('/flashcards', {state: {newFlashcardsData: allFlashcards, correctResponses: [], allFlashcards: allFlashcards}});
-
     }
 
 
