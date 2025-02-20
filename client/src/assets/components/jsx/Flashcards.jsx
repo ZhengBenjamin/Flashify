@@ -1,10 +1,9 @@
 import {useState} from 'react';
 import {Card, Container, Group, Text, Button, Flex} from '@mantine/core';
 import classes from '../css/Flashcards.module.css';
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 
-// TODO: Use the backend to fetch flashcards data
-const flashcardsData = [
+const defaultFlashcardsData = [
     {front: 'Front of Card 1', back: 'Back of Card 1'},
     {front: 'Front of Card 2', back: 'Back of Card 2'},
     {front: 'Front of Card 3', back: 'Back of Card 3'},
@@ -16,6 +15,11 @@ const flashcardsData = [
 const correctResponses = [];
 
 export default function Flashcards() {
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const flashcardsData = location.state?.newFlashcardsData || defaultFlashcardsData;
+
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
 
@@ -38,16 +42,15 @@ export default function Flashcards() {
         setCurrentCardIndex((prevIndex) => (prevIndex - 1 + flashcardsData.length) % flashcardsData.length);
     }
 
-    //
-    const navigate = useNavigate();
-
     const handleNext = () => {
         setIsFlipped(false);
         setCurrentCardIndex((prevIndex) => (prevIndex + 1) % flashcardsData.length);
 
-        // If we have seen all the flashcards, go to the summary page
         if (currentCardIndex === flashcardsData.length - 1) {
-            navigate('/summary', {state: {correctResponses, flashcardsData}});
+            const serializableCorrectResponses = [...correctResponses];
+            const serializableFlashcardsData = flashcardsData.map(card => ({...card}));
+
+            navigate('/summary', {state: {correctResponses: serializableCorrectResponses, flashcardsData: serializableFlashcardsData, allFlashcards: defaultFlashcardsData}});
         }
     };
 
