@@ -1,15 +1,2 @@
 Put backend stuff here
 Absolutely not. They ought to go behind the end of infinity. 
-
-
-Quick Assignments
-Benjamin - backend and link to fronend
-Ari - Frontend
-Franklin - backend
-David - Database and link to backend
-
-
-
-For now:
-Make classes for usergroups - users and admin
-Make classes for flashcards, notes, and features
