@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import {Card, Container, Group, Text, Button, Flex} from '@mantine/core';
 import classes from '../css/Flashcards.module.css';
+import {useNavigate} from "react-router-dom";
 
 // TODO: Use the backend to fetch flashcards data
 const flashcardsData = [
@@ -33,14 +34,21 @@ export default function Flashcards() {
     }
 
     const undo = () => {
-        console.log("Undo");
         setIsFlipped(false);
         setCurrentCardIndex((prevIndex) => (prevIndex - 1 + flashcardsData.length) % flashcardsData.length);
     }
 
+    //
+    const navigate = useNavigate();
+
     const handleNext = () => {
         setIsFlipped(false);
         setCurrentCardIndex((prevIndex) => (prevIndex + 1) % flashcardsData.length);
+
+        // If we have seen all the flashcards, go to the summary page
+        if (currentCardIndex === flashcardsData.length - 1) {
+            navigate('/summary', {state: {correctResponses, flashcardsData}});
+        }
     };
 
     const currentCard = flashcardsData[currentCardIndex];
@@ -48,11 +56,11 @@ export default function Flashcards() {
     return (
         <Container className={classes.container}>
             <Group position={"right"} justify={"space-between"}>
-                <p>Flashcard: {currentCardIndex + 1}/{flashcardsData.length}</p>
+                <Text>Flashcard: {currentCardIndex + 1}/{flashcardsData.length}</Text>
                 {currentCardIndex > 0 && (
-                    <p>Correct: {correctResponses.filter((response) => response === 1).length}/
+                    <Text>Correct: {correctResponses.filter((response) => response === 1).length}/
                         {correctResponses.length} = {(100.0 * (correctResponses.filter((response) => response === 1).length)
-                            / correctResponses.length).toFixed(2)}%</p>)}
+                            / correctResponses.length).toFixed(2)}%</Text>)}
             </Group>
 
             <Group position={"center"}>
