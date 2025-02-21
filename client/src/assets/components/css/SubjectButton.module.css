@@ -1,0 +1,19 @@
+.body {
+  padding: var(--mantine-spacing-md)
+}
+
+.title {
+  font-weight: bold;
+  line-height: 1.5;
+}
+
+.card {
+  display: flex;
+  height: 40px;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--mantine-spacing-md);
+  border-radius: var(--mantine-radius-sm);
+  background-color: var(--mantine-color-gray-0);
+  box-shadow: var(--mantine-shadow-sm);
+}

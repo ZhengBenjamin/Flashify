@@ -1,4 +1,5 @@
 import { Tabs, Center, Paper, Stack, Title, Text, useMantineTheme } from '@mantine/core';
+import SubjectButtons from './SubjectButtons';
 import classes from '../css/SubjectNavbar.module.css';
 
 
@@ -28,7 +29,7 @@ export default function SubjectNavbar(props) {
       <Stack justify="center" className={classes.stack}>
 
         {props.subjects.map((subject) => (
-          <SubjectCard subject={subject.label} subjectLink={subject.link} />
+          <SubjectButtons keyprops={subject}/>
         ))}
         
       </Stack>
