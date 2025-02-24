@@ -10,11 +10,14 @@ export default function Summary() {
     // Flashcards
     const flashcardsData = location.state?.flashcardsData || [];
     const allFlashcards = location.state.allFlashcards;
+    console.log(flashcardsData)
+    // console.log(allFlashcards)
 
     // Correct/Incorrect Responses
     const correctResponses = location.state?.correctResponses || [];
     const total = correctResponses.length;
     const correct = correctResponses.filter((response) => response === 1).length;
+    console.log(correctResponses)
 
     // Continue Studying
     const next = () => {

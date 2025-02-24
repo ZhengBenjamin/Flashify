@@ -12,8 +12,6 @@ const defaultFlashcardsData = [
     {front: 'Front of Card 6', back: 'Back of Card 6'},
 ];
 
-const correctResponses = [];
-
 export default function Flashcards() {
     const location = useLocation();
     const navigate = useNavigate();
@@ -22,18 +20,29 @@ export default function Flashcards() {
 
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
+    const [correctResponses, setCorrectResponses] = useState(location.state?.correctResponses || []);
+    let lastResponse = 0;
 
     const handleFlip = () => {
         setIsFlipped(!isFlipped);
     };
 
     const handleDontKnow = () => {
-        correctResponses.push(0);
+        lastResponse = 0;
+        // const updatedResponses = [...correctResponses, 0];
+        // setCorrectResponses(updatedResponses);
+        // console.log(correctResponses);
+        // handleNext(updatedResponses);
         handleNext();
     }
 
     const handleKnowIt = () => {
-        correctResponses.push(1);
+        lastResponse = 1;
+        /*
+        const updatedResponses = [...correctResponses, 1];
+        setCorrectResponses(updatedResponses);
+        console.log(correctResponses);
+         */
         handleNext();
     }
 
@@ -44,13 +53,13 @@ export default function Flashcards() {
 
     const handleNext = () => {
         setIsFlipped(false);
-        setCurrentCardIndex((prevIndex) => (prevIndex + 1) % flashcardsData.length);
+        setCorrectResponses([...correctResponses, lastResponse]);
+        console.log([...correctResponses, lastResponse]);
 
         if (currentCardIndex === flashcardsData.length - 1) {
-            const serializableCorrectResponses = [...correctResponses];
-            const serializableFlashcardsData = flashcardsData.map(card => ({...card}));
-
-            navigate('/summary', {state: {correctResponses: serializableCorrectResponses, flashcardsData: serializableFlashcardsData, allFlashcards: defaultFlashcardsData}});
+            navigate('/summary', {state: {correctResponses: [...correctResponses, lastResponse], flashcardsData: flashcardsData, allFlashcards: defaultFlashcardsData}});
+        } else {
+            setCurrentCardIndex((prevIndex) => (prevIndex + 1) % flashcardsData.length);
         }
     };
 
