@@ -13,11 +13,14 @@ const defaultFlashcardsData = [
 ];
 
 export default function Flashcards() {
+    // React Router
     const location = useLocation();
     const navigate = useNavigate();
 
+    // Flashcards
     const flashcardsData = location.state?.newFlashcardsData || defaultFlashcardsData;
 
+    // Flashcard State
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
     const [correctResponses, setCorrectResponses] = useState(location.state?.correctResponses || []);
@@ -35,11 +38,16 @@ export default function Flashcards() {
         setIsFlipped(false);
         setCorrectResponses([...correctResponses, correct]);
 
-        if (currentCardIndex === flashcardsData.length - 1) {
-            navigate('/summary', {state: {correctResponses: [...correctResponses, correct], flashcardsData: flashcardsData, allFlashcards: defaultFlashcardsData}});
-        } else {
+        if (currentCardIndex === flashcardsData.length - 1)
+            navigate('/summary', {
+                state: {
+                    correctResponses: [...correctResponses, correct],
+                    flashcardsData: flashcardsData,
+                    allFlashcards: defaultFlashcardsData
+                }
+            });
+        else
             setCurrentCardIndex((prevIndex) => (prevIndex + 1) % flashcardsData.length);
-        }
     };
 
     const currentCard = flashcardsData[currentCardIndex];
@@ -69,6 +77,5 @@ export default function Flashcards() {
                 {currentCardIndex > 0 && (<Button className={classes.button} onClick={undo}>↩️ Undo</Button>)}
             </Flex>
 
-        </Container>
-    );
+        </Container>);
 }
