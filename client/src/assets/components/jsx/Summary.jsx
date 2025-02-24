@@ -20,37 +20,41 @@ export default function Summary() {
     const next = () => {
         const newFlashcardsData = flashcardsData.filter((_, index) => correctResponses[index] === 0);
 
-        if (newFlashcardsData.length === 0) {
+        if (newFlashcardsData.length === 0)
             restart();
-            return;
-        }
-
-        navigate('/flashcards', {state: {newFlashcardsData: newFlashcardsData, correctResponses: [], allFlashcards: allFlashcards}});
+        else
+            navigate('/flashcards', {
+                state: {
+                    newFlashcardsData: newFlashcardsData,
+                    correctResponses: [],
+                    allFlashcards: allFlashcards
+                }
+            });
     }
 
     // Restart Progress
     const restart = () => {
-        navigate('/flashcards', {state: {newFlashcardsData: allFlashcards, correctResponses: [], allFlashcards: allFlashcards}});
+        navigate('/flashcards', {
+            state: {
+                newFlashcardsData: allFlashcards,
+                correctResponses: [],
+                allFlashcards: allFlashcards
+            }
+        });
     }
-
 
     return (
         <Container className={classes.container}>
-            <Flex direction={"column"} align={"center"} spacing={"md"}>
+            <Flex direction="column" align={"center"} spacing={"md"}>
                 <Title order={1}>Summary:</Title>
                 <br/>
                 <Text>Correct: {correct} / {total} = {(100.0 * correct / total).toFixed(2)}%</Text>
-                <br/>
+                <br/><br/>
 
-            </Flex>
-
-            <Flex align={"center"} spacing={"md"}>
                 {correct !== total && (<Button className={classes.button} onClick={next}>continue →</Button>)}
+                <br/>
                 <Button className={classes.button} onClick={restart}>restart progress 🔄</Button>
             </Flex>
 
-
-
-        </Container>
-    );
+        </Container>);
 }
