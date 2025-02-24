@@ -21,43 +21,22 @@ export default function Flashcards() {
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
     const [correctResponses, setCorrectResponses] = useState(location.state?.correctResponses || []);
-    let lastResponse = 0;
 
     const handleFlip = () => {
         setIsFlipped(!isFlipped);
     };
-
-    const handleDontKnow = () => {
-        lastResponse = 0;
-        // const updatedResponses = [...correctResponses, 0];
-        // setCorrectResponses(updatedResponses);
-        // console.log(correctResponses);
-        // handleNext(updatedResponses);
-        handleNext();
-    }
-
-    const handleKnowIt = () => {
-        lastResponse = 1;
-        /*
-        const updatedResponses = [...correctResponses, 1];
-        setCorrectResponses(updatedResponses);
-        console.log(correctResponses);
-         */
-        handleNext();
-    }
 
     const undo = () => {
         setIsFlipped(false);
         setCurrentCardIndex((prevIndex) => (prevIndex - 1 + flashcardsData.length) % flashcardsData.length);
     }
 
-    const handleNext = () => {
+    const handleNext = (correct) => {
         setIsFlipped(false);
-        setCorrectResponses([...correctResponses, lastResponse]);
-        console.log([...correctResponses, lastResponse]);
+        setCorrectResponses([...correctResponses, correct]);
 
         if (currentCardIndex === flashcardsData.length - 1) {
-            navigate('/summary', {state: {correctResponses: [...correctResponses, lastResponse], flashcardsData: flashcardsData, allFlashcards: defaultFlashcardsData}});
+            navigate('/summary', {state: {correctResponses: [...correctResponses, correct], flashcardsData: flashcardsData, allFlashcards: defaultFlashcardsData}});
         } else {
             setCurrentCardIndex((prevIndex) => (prevIndex + 1) % flashcardsData.length);
         }
@@ -83,8 +62,8 @@ export default function Flashcards() {
 
             <Flex justify={"space-between"} mt={"md"}>
                 <Flex justify={"center"} gap={"md"}>
-                    <Button className={classes.button} onClick={handleDontKnow}>❌ Don&#39;t Know</Button>
-                    <Button className={classes.button} onClick={handleKnowIt}>✅ I Know it</Button>
+                    <Button className={classes.button} onClick={() => handleNext(0)}>❌ Don&#39;t Know</Button>
+                    <Button className={classes.button} onClick={() => handleNext(1)}>✅ I Know it</Button>
                 </Flex>
 
                 {currentCardIndex > 0 && (<Button className={classes.button} onClick={undo}>↩️ Undo</Button>)}

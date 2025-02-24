@@ -10,14 +10,11 @@ export default function Summary() {
     // Flashcards
     const flashcardsData = location.state?.flashcardsData || [];
     const allFlashcards = location.state.allFlashcards;
-    console.log(flashcardsData)
-    // console.log(allFlashcards)
 
     // Correct/Incorrect Responses
     const correctResponses = location.state?.correctResponses || [];
     const total = correctResponses.length;
     const correct = correctResponses.filter((response) => response === 1).length;
-    console.log(correctResponses)
 
     // Continue Studying
     const next = () => {
@@ -48,7 +45,7 @@ export default function Summary() {
             </Flex>
 
             <Flex align={"center"} spacing={"md"}>
-                <Button className={classes.button} onClick={next}>continue →</Button>
+                {correct !== total && (<Button className={classes.button} onClick={next}>continue →</Button>)}
                 <Button className={classes.button} onClick={restart}>restart progress 🔄</Button>
             </Flex>
 
