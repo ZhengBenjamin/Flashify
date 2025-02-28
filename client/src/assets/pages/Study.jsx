@@ -5,9 +5,9 @@ import SubjectNavbar from '../components/jsx/SubjectNavbar';
 
 // TODO: Link to DB
 const subjects = [
-  { label: 'Math', link: '/math' },
-  { label: 'Science', link: '/science' },
-  { label: 'History', link: '/history' },
+  { name: 'Math', description: 'Mathematics Subject', link: '/math' },
+  { name: 'Science', description: 'Science Subject', link: '/science' },
+  { name: 'History', description: 'History Subject', link: '/history' },
 ];
 
 
