@@ -32,6 +32,7 @@ export default function Flashcards() {
     const undo = () => {
         setIsFlipped(false);
         setCurrentCardIndex((prevIndex) => (prevIndex - 1 + flashcardsData.length) % flashcardsData.length);
+        setCorrectResponses(correctResponses.slice(0, -1));
     }
 
     const handleNext = (correct) => {
