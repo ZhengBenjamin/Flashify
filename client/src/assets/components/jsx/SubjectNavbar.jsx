@@ -11,9 +11,14 @@ export default function SubjectNavbar(props) {
       </Center>
 
       <Stack justify="center" className={classes.stack}>
-        {props.subjects.map((subject, index) => (
-          <SubjectButton key={index} subject={subject.name} description={subject.description} />
-        ))}
+      {props.subjects.map((subject, index) => (
+        <SubjectButton 
+          key={index} 
+          subject={subject.name} 
+          description={subject.description} 
+          link={subject.link} 
+        />
+      ))}
       </Stack>
     </Paper>
   )
