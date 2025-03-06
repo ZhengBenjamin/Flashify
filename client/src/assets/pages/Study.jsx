@@ -1,4 +1,5 @@
-// import { AppShell, Burger } from '@mantine/core';
+
+import { AppShell, Burger } from '@mantine/core';
 import { AppShell, Burger } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import Header from '../components/jsx/Header';
@@ -34,4 +35,25 @@ export default function Study() {
             </AppShell.Main>
         </AppShell>
     );
+  const [opened, { toggle }] = useDisclosure();
+
+  return (
+    <AppShell
+      header={<Header />}
+      navbar={{
+        width: 300,
+        breakpoint: 'sm',
+        collapsed: { mobile: !opened },
+      }}
+      padding="md"
+    >
+      <AppShell.Navbar p="md">
+        <SubjectNavbar subjects={subjects}/>
+      </AppShell.Navbar>
+
+      <AppShell.Main>
+        {/*Todo: Add flashcards + features*/}
+      </AppShell.Main>
+    </AppShell>
+  );
 }

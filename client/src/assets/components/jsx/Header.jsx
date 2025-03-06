@@ -8,6 +8,7 @@ const links = [
     {label: 'Home', link: '/'},
     {label: 'Login', link: '/auth'},
     {label: 'Flashcards', link: '/flashcards'},
+    {label: 'Study', link: '/studyinterface'},
 ];
 
 export default function Header() {
