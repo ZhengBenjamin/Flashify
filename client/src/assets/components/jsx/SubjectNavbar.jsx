@@ -26,6 +26,24 @@ export default function SubjectNavbar(props) {
     setModalOpened(false);
   };
 
+    return (
+
+        <Paper className={classes.navbar}>
+            <Center>
+                <Title order={2}> Your Subjects: </Title>
+            </Center>
+
+            <Stack justify="center" className={classes.stack}>
+
+                {props.subjects.map((subject) => (
+                    <SubjectCard subject={subject.label} subjectLink={subject.link} />
+                ))}
+
+            </Stack>
+        </Paper>
+    )
+
+}
   return (
     <>
       <Paper className={classes.navbar}>
