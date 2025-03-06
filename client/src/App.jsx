@@ -10,6 +10,7 @@ import Header from "./assets/components/jsx/Header.jsx";
 import Flashcards from "./assets/components/jsx/Flashcards.jsx";
 import Summary from "./assets/components/jsx/Summary.jsx";
 import Study from "./assets/pages/Study";
+import Footer from "./assets/components/jsx/Footer.jsx";
 
 export default function App() {
     return (
@@ -24,6 +25,8 @@ export default function App() {
                     <Route path="/summary" element={<Summary/>}/>
                     <Route path="/studyinterface" element={<Study/>}/>
                 </Routes>
+
+                <Footer/>
             </Router>
         </MantineProvider>
     );
