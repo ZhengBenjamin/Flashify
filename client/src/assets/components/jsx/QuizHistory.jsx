@@ -1,32 +1,46 @@
-import { Card, Table, Title, Text, Paper } from '@mantine/core';
+import { Card, Text, Group, Title } from '@mantine/core';
 
-export default function History({ quizzes }) {
+export default function QuizHistory({ quizzes }) {
+  if (!quizzes || quizzes.length === 0) {
+    return <Text>No quiz history available.</Text>;
+  }
+
+  // Helper to determine background color based on score
+  const getQuizColor = (score) => {
+    if (score >= 90) return '#d4f3d4';   // greenish for high scores
+    if (score >= 70) return '#fff4d4';   // yellowish for mid scores
+    return '#f3d4d4';                   // reddish for low scores
+  };
+
   return (
-    <Paper shadow="md" radius="md" p="lg">
-      <Title order={2} mb="md">Quiz History</Title>
-      
-      {quizzes.length > 0 ? (
-        <Table highlightOnHover withBorder>
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>Subject</Table.Th>
-              <Table.Th>Date</Table.Th>
-              <Table.Th>Score</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {quizzes.map((quiz, index) => (
-              <Table.Tr key={index}>
-                <Table.Td>{quiz.subject}</Table.Td>
-                <Table.Td>{new Date(quiz.date).toLocaleDateString()}</Table.Td>
-                <Table.Td>{quiz.score}%</Table.Td>
-              </Table.Tr>
-            ))}
-          </Table.Tbody>
-        </Table>
-      ) : (
-        <Text>No quiz history available.</Text>
-      )}
-    </Paper>
+    <>
+      <Title order={2} style={{ paddingBottom: '50px' }}>Quiz History</Title>
+
+      <Card shadow="xl" p="md" >
+        {quizzes.map((quiz, index) => (
+          <Card
+            key={index}
+            withBorder
+            shadow="sm"
+            radius="md"
+            p="md"
+            mb="md"
+            style={{ backgroundColor: getQuizColor(quiz.score) }}
+          >
+            <Text size="lg" weight={600}>
+              {quiz.subject}
+            </Text>
+            <Group position="apart" mt="sm">
+              <Text size="sm">
+                Date: {new Date(quiz.date).toLocaleDateString()}
+              </Text>
+              <Text size="sm" weight={500}>
+                Score: {quiz.score}%
+              </Text>
+            </Group>
+          </Card>
+        ))}
+      </Card>
+    </>
   );
 }
