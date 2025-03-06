@@ -3,6 +3,35 @@ import {Card, Container, Group, Text, Button, Flex} from '@mantine/core';
 import classes from '../css/Flashcards.module.css';
 
 // TODO: Use the backend to fetch flashcards data
+const getDeck = async () => {
+    try {
+      const response = await axios.post('http://localhost:5000/api/deck/getDeck', { //url right???????
+        deck_id,
+      });
+
+      localStorage.setItem('deck', response.data); // Store JWT Token
+    } catch (err) {
+      setError(err.response?.data?.message || "Getting deck error");
+    }
+  };
+
+//for each card in the deck, get the cardstore this somehow
+const getCard = async () => {
+    try {
+      const response = await axios.post('http://localhost:5000/api/card/getCard', { //url right???????
+        flashcard_id,
+      });
+
+      localStorage.setItem('card', response.data); // Store cards?
+      window.location.href = "/Flashcards"; // Redirect after login (update route as needed)
+    } catch (err) {
+      setError(err.response?.data?.message || "Getting cards error");
+    }
+  };
+
+
+// End TODO: Use the backend to fetch flashcards data
+
 const flashcardsData = [
     {front: 'Front of Card 1', back: 'Back of Card 1'},
     {front: 'Front of Card 2', back: 'Back of Card 2'},
