@@ -1,6 +1,8 @@
 import {useState} from 'react';
 import {Card, Container, Group, Text, Button, Flex} from '@mantine/core';
 import classes from '../css/Flashcards.module.css';
+import {useLocation, useNavigate} from "react-router-dom";
+
 
 // TODO: Use the backend to fetch flashcards data
 const getDeck = async () => {
@@ -32,7 +34,7 @@ const getCard = async () => {
 
 // End TODO: Use the backend to fetch flashcards data
 
-const flashcardsData = [
+const defaultFlashcardsData = [
     {front: 'Front of Card 1', back: 'Back of Card 1'},
     {front: 'Front of Card 2', back: 'Back of Card 2'},
     {front: 'Front of Card 3', back: 'Back of Card 3'},
@@ -41,35 +43,43 @@ const flashcardsData = [
     {front: 'Front of Card 6', back: 'Back of Card 6'},
 ];
 
-const correctResponses = [];
-
 export default function Flashcards() {
+    // React Router
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    // Flashcards
+    const flashcardsData = location.state?.newFlashcardsData || defaultFlashcardsData;
+
+    // Flashcard State
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
+    const [correctResponses, setCorrectResponses] = useState(location.state?.correctResponses || []);
 
     const handleFlip = () => {
         setIsFlipped(!isFlipped);
     };
 
-    const handleDontKnow = () => {
-        correctResponses.push(0);
-        handleNext();
-    }
-
-    const handleKnowIt = () => {
-        correctResponses.push(1);
-        handleNext();
-    }
-
     const undo = () => {
-        console.log("Undo");
         setIsFlipped(false);
         setCurrentCardIndex((prevIndex) => (prevIndex - 1 + flashcardsData.length) % flashcardsData.length);
+        setCorrectResponses(correctResponses.slice(0, -1));
     }
 
-    const handleNext = () => {
+    const handleNext = (correct) => {
         setIsFlipped(false);
-        setCurrentCardIndex((prevIndex) => (prevIndex + 1) % flashcardsData.length);
+        setCorrectResponses([...correctResponses, correct]);
+
+        if (currentCardIndex === flashcardsData.length - 1)
+            navigate('/summary', {
+                state: {
+                    correctResponses: [...correctResponses, correct],
+                    flashcardsData: flashcardsData,
+                    allFlashcards: defaultFlashcardsData
+                }
+            });
+        else
+            setCurrentCardIndex((prevIndex) => (prevIndex + 1) % flashcardsData.length);
     };
 
     const currentCard = flashcardsData[currentCardIndex];
@@ -77,11 +87,11 @@ export default function Flashcards() {
     return (
         <Container className={classes.container}>
             <Group position={"right"} justify={"space-between"}>
-                <p>Flashcard: {currentCardIndex + 1}/{flashcardsData.length}</p>
+                <Text>Flashcard: {currentCardIndex + 1}/{flashcardsData.length}</Text>
                 {currentCardIndex > 0 && (
-                    <p>Correct: {correctResponses.filter((response) => response === 1).length}/
+                    <Text>Correct: {correctResponses.filter((response) => response === 1).length}/
                         {correctResponses.length} = {(100.0 * (correctResponses.filter((response) => response === 1).length)
-                            / correctResponses.length).toFixed(2)}%</p>)}
+                            / correctResponses.length).toFixed(2)}%</Text>)}
             </Group>
 
             <Group position={"center"}>
@@ -92,13 +102,12 @@ export default function Flashcards() {
 
             <Flex justify={"space-between"} mt={"md"}>
                 <Flex justify={"center"} gap={"md"}>
-                    <Button className={classes.button} onClick={handleDontKnow}>❌ Don&#39;t Know</Button>
-                    <Button className={classes.button} onClick={handleKnowIt}>✅ I Know it</Button>
+                    <Button className={classes.button} onClick={() => handleNext(0)}>❌ Don&#39;t Know</Button>
+                    <Button className={classes.button} onClick={() => handleNext(1)}>✅ I Know it</Button>
                 </Flex>
 
                 {currentCardIndex > 0 && (<Button className={classes.button} onClick={undo}>↩️ Undo</Button>)}
             </Flex>
 
-        </Container>
-    );
+        </Container>);
 }

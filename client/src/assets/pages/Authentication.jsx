@@ -15,7 +15,7 @@ export default function Authentication() {
 
   return (
     <div>
-      <Container size={420} my={40}>
+      <Container size={420} my={40} style={{ height: '70vh' }}>
     
           <Title ta="center">
             {login? 'Welcome Back!' : 'Create an Account!'}
