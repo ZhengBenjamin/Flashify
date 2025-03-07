@@ -43,7 +43,6 @@ export default function SubjectNavbar(props) {
         </Paper>
     )
 
-}
   return (
     <>
       <Paper className={classes.navbar}>
@@ -95,5 +94,5 @@ export default function SubjectNavbar(props) {
         <Button onClick={handleAddSubject}>Add Subject</Button>
       </Modal>
     </>
-  );
+  )
 }
