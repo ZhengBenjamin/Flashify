@@ -17,7 +17,7 @@ router.post("/register", async (req, res) => {
     }
 
     try {
-        const existingUser = await UserModel.findOne({ username });
+        const existingUser = await UserModel.findOne({ username }); //is this necessary? The schema should set it as unique already, no?
         const existingEmail = await UserModel.findOne({ email });
 
         if (existingUser) return res.status(400).json({ message: "Username already exists" });
@@ -49,6 +49,7 @@ router.post("/login", async (req, res) => {
         const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
         res.json({ token, user: { id: user._id, username: user.username } });
     } catch (error) {
+        console.error("Login Error:", error.message);
         res.status(500).json({ message: "Server error" });
     }
 });

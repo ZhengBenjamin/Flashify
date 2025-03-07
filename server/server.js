@@ -17,6 +17,14 @@ app.use(cors());
 const authRoutes = require("./routes/authRoutes.js");
 app.use("/api/auth", authRoutes);
 
+// Import card routes
+const cardRoutes = require("./routes/cardRoutes.js");
+app.use("/api/card", cardRoutes);
+
+// Import deck routes
+const deckRoutes = require("./routes/deckRoutes.js");
+app.use("/api/deck", deckRoutes);
+
 app.get("/", (req, res) => {
   res.send("Flashify API is running...");
 });
