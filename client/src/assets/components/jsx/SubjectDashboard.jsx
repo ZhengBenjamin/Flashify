@@ -2,7 +2,8 @@ import { useState, useContext } from 'react';
 import { Card, Title, Text, Stack, Grid, Button } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import CreateFlashcards from './CreateFlashcards';
-import { UserContext } from '../../App';
+import { UserContext } from '../../../App';
+
 
 export default function SubjectDashboard({ subjectId, quizzes }) {
 
@@ -52,11 +53,11 @@ export default function SubjectDashboard({ subjectId, quizzes }) {
   const [showCreateDeck, setShowCreateDeck] = useState(false);
   const navigate = useNavigate();
 
-  const handleDeckClick = (deckId) => {
+   const handleDeckClick = (deckId) => {
     // Navigate to the flashcards component route (e.g. "/flashcards")
     // Pass the deckId via route state
     navigate('/flashcards', { state: { deckId } });
-  };
+  }; 
 
   return (
     <Stack spacing="md">
