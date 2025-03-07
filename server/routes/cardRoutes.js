@@ -45,10 +45,40 @@ router.post("/getCard", async (req, res) => {
     }
 });
 
+/**
+ * @route PUT /flashcards/:id
+ * @desc Update flashcard details
+ */
+router.put("/flashcards/:id", async (req, res) => {
+    try {
+        const { front, back, description } = req.body;
+        const updatedCard = await FlashcardModel.findByIdAndUpdate(
+            req.params.id,
+            { front, back, description },
+            { new: true }
+        );
 
-// PUT /flashcards/:id - Update flashcard details
+        if (!updatedCard) return res.status(404).json({ message: "Flashcard not found" });
 
+        res.json({ message: "Flashcard updated successfully", card: updatedCard });
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+});
 
-// DELETE /flashcards/:id - Remove a flashcard
+/**
+ * @route DELETE /flashcards/:id
+ * @desc Delete a flashcard by ID
+ */
+router.delete("/flashcards/:id", async (req, res) => {
+    try {
+        const deletedCard = await FlashcardModel.findByIdAndDelete(req.params.id);
+        if (!deletedCard) return res.status(404).json({ message: "Flashcard not found" });
+
+        res.json({ message: "Flashcard deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+});
 
 module.exports = router;
