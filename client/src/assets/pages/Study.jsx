@@ -1,14 +1,15 @@
-import { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Grid, Container } from '@mantine/core';
-import Header from '../components/jsx/Header';
+import { UserContext } from '../../App';
 import SubjectNavbar from '../components/jsx/SubjectNavbar';
 import QuizHistory from '../components/jsx/QuizHistory';
 import Events from '../components/jsx/Events';
 import SubjectDashboard from '../components/jsx/SubjectDashboard';
+import axios from 'axios';
 // import AuthContext from '.../context/AuthContext';
 
 export default function Study() {
-  // const { user } = useContext(AuthContext); // User from global state
+  const { username } = useContext(UserContext);
   const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState(null);
 
@@ -34,25 +35,17 @@ export default function Study() {
     },
   ];
 
-  // Subjects from db uncomment when API implemneted 
-  // useEffect(() => {
-  //   if (user) {
-  //     fetch(`/api/subjects?userId=${user.id}`)
-  //       .then((response) => {
-  //         if (!response.ok) {
-  //           throw new Error('Failed to fetch subjects');
-  //         }
-  //         return response.json();
-  //       })
-  //       .then((data) => {
-  //         // Obj with subjects array 
-  //         setSubjects(data.subjects);
-  //       })
-  //       .catch((error) => {
-  //         console.error('Error fetching subjects:', error);
-  //       });
-  //   }
-  // }, [user]);
+  useEffect(() => {
+    if (username) {
+      axios.get('/api/subjects?username=${username}')
+      .then ((response) => {
+        setSubjects(response.data.subjects);
+      })
+      .catch((error) => {
+        console.error('Failed to fetch subjects:', error);
+      });
+    }
+  }, [username]);
 
   // Send new subject to DB when user creates new subject; SAME HERE MODIFY SCHEMA WHEN API IMPLEMENTED
   const addSubject = async (newSubject) => {
@@ -76,12 +69,13 @@ export default function Study() {
   return (
     <Container my="xl">
       <Grid>
+        <h1>Subjects for {username}</h1>
         <Grid.Col span={4}>
-          <SubjectNavbar 
+          {/* <SubjectNavbar 
             subjects={subjects} 
             onSubjectSelect={(subject) => setSelectedSubject(subject)}
             onAddSubject={addSubject}
-          />
+          /> */}
         </Grid.Col>
 
         <Grid.Col span={8}>

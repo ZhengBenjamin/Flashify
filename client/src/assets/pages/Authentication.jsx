@@ -2,7 +2,7 @@ import Header from '../components/jsx/Header';
 import LoginCard from '../components/jsx/LoginCard';
 import RegisterCard from '../components/jsx/RegisterCard';
 
-import { useState } from 'react';
+import React, {useContext, useState } from 'react';
 import { Container, Title, Text, Anchor } from '@mantine/core';
 
 export default function Authentication() {
