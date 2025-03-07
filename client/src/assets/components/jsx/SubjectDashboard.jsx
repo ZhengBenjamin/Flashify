@@ -5,7 +5,7 @@ import Flashcards from './Flashcards';
 import CreateFlashcards from './CreateFlashcards';
 import { UserContext } from '../../../App';
 
-export default function SubjectDashboard({ subjectId, quizzes }) {
+export default function SubjectDashboard({ quizzes }) {
   const { username } = useContext(UserContext);
   const navigate = useNavigate();
   const [flashcardDecks, setFlashcardDecks] = useState([]);
@@ -18,7 +18,7 @@ export default function SubjectDashboard({ subjectId, quizzes }) {
       fetch(`http://localhost:4000/api/deck?username=${username}`)
         .then((res) => res.json())
         .then((data) => {
-          setFlashcardDecks(data.decks);
+          setFlashcardDecks(data); // Assuming the response has decks directly
         })
         .catch((error) => console.error("Error fetching decks:", error));
     }
@@ -42,9 +42,9 @@ export default function SubjectDashboard({ subjectId, quizzes }) {
       <Button onClick={() => setShowCreateDeck(true)}>Create Flashcard Deck</Button>
 
       <Grid>
-        {flashcardDecks.length > 0 ? (
+        {flashcardDecks && flashcardDecks.length > 0 ? (
           flashcardDecks.map((deck) => (
-            <Grid.Col key={deck.id} span={6}>
+            <Grid.Col key={deck.deck_id} span={6}> {/* Updated to use deck_id */}
               <Card
                 shadow="md"
                 p="lg"
@@ -58,6 +58,7 @@ export default function SubjectDashboard({ subjectId, quizzes }) {
                   cursor: 'pointer',
                 }}
                 onClick={() => handleDeckClick(deck.deck_id)}
+
               >
                 <Title order={4} align="center">
                   {deck.title}
@@ -87,7 +88,6 @@ export default function SubjectDashboard({ subjectId, quizzes }) {
         opened={showCreateDeck}
         onClose={() => setShowCreateDeck(false)}
         onSubmit={(deck) => {
-          // TODO: SEND NEW DECK TO DATABASE
           console.log('New deck created:', deck);
           setShowCreateDeck(false);
         }}
