@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import axios from 'axios';
 import {
   Anchor,
@@ -8,21 +8,26 @@ import {
   PasswordInput,
   TextInput,
 } from '@mantine/core';
+import { UserContext } from '../../../App'; 
+
 
 export default function LoginCard() {
-  const [username, setUsername] = useState('');
+  const [localUsername, setLocalUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const { setUsername } = useContext(UserContext);
 
   const handleLogin = async () => {
     try {
       const response = await axios.post('http://localhost:4000/api/auth/login', {
-        username,
+        username: localUsername,
         password,
       });
 
       localStorage.setItem('token', response.data.token); // Store JWT Token
+      localStorage.setItem('username', localUsername);
       console.log('Login successful:', response.data);
+      setUsername(localUsername);
       window.location.href = "/studyinterface"; 
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
@@ -36,8 +41,8 @@ export default function LoginCard() {
           label="Username" 
           placeholder="Username" 
           required 
-          value={username} 
-          onChange={(e) => setUsername(e.target.value)}
+          value={localUsername} 
+          onChange={(e) => setLocalUsername(e.currentTarget.value)}
         />
         <PasswordInput 
           label="Password" 
