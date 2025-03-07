@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { Card, Title, Text, Stack, Grid, Button } from '@mantine/core';
+import { useNavigate } from 'react-router-dom';
 import CreateFlashcards from './CreateFlashcards';
 
 export default function SubjectDashboard({ subjectId, quizzes }) {
-  // API STUFF: GET THE FLASHCARD DATA FROM THE DATABASE BASED ON SUBJECT ID? 
-  // SEND NEW FLASHCARD DECK TO DATABASE WHEN USER CREATES ONE
-
   // Dummy subject details based on subject id:
   const dummySubjects = {
     math: {
@@ -45,6 +43,13 @@ export default function SubjectDashboard({ subjectId, quizzes }) {
   
   // createflashcard model state
   const [showCreateDeck, setShowCreateDeck] = useState(false);
+  const navigate = useNavigate();
+
+  const handleDeckClick = (deckId) => {
+    // Navigate to the flashcards component route (e.g. "/flashcards")
+    // Pass the deckId via route state
+    navigate('/flashcards', { state: { deckId } });
+  };
 
   return (
     <Stack spacing="md">
@@ -69,6 +74,7 @@ export default function SubjectDashboard({ subjectId, quizzes }) {
                   justifyContent: 'center',
                   cursor: 'pointer',
                 }}
+                onClick={() => handleDeckClick(deck.id)}
               >
                 <Title order={4} align="center">
                   {deck.title}
@@ -98,8 +104,7 @@ export default function SubjectDashboard({ subjectId, quizzes }) {
         opened={showCreateDeck}
         onClose={() => setShowCreateDeck(false)}
         onSubmit={(deck) => {
-          
-          // TODO: SOMETHING TO HANDLE SENDING NEW DECK TO MONGO
+          // TODO: SEND NEW DECK TO DATABASE
           console.log('New deck created:', deck);
           setShowCreateDeck(false);
         }}
