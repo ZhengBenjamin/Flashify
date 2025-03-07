@@ -37,13 +37,13 @@ export default function Study() {
 
   useEffect(() => {
     if (username) {
-      axios.get('/api/subjects?username=${username}')
-      .then ((response) => {
-        setSubjects(response.data.subjects);
-      })
-      .catch((error) => {
-        console.error('Failed to fetch subjects:', error);
-      });
+      axios.get(`/api/subjects?username=${username}`)
+        .then((response) => {
+          setSubjects(response.data.subjects);
+        })
+        .catch((error) => {
+          console.error('Failed to fetch subjects:', error);
+        });
     }
   }, [username]);
 
@@ -91,7 +91,7 @@ export default function Study() {
           )}
         </Grid.Col>
       </Grid> */}
-      {/* Don't delete my shit this actuall yowrks  */}
+      {/* Don't delete my shit this actuall works  */}
       
       <SubjectDashboard subjectId={1}/>
 

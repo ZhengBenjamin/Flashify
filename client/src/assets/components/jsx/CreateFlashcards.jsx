@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Modal, Container, Group, Card, Text, Button, TextInput } from '@mantine/core';
 import classes from '../css/CreateFlashcards.module.css';
+import { UserContext } from '../../../App'; // Import UserContext
 
 export default function CreateFlashcards({ opened, onClose }) {
+  const { username } = useContext(UserContext); // Get the username from global state
   const [deckTitle, setDeckTitle] = useState('');
   const [flashcardsData, setFlashcardsData] = useState([{ front: '', back: '' }]);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
@@ -57,7 +59,7 @@ export default function CreateFlashcards({ opened, onClose }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          username: "testuser", // Replace with logged-in user
+          username: username, // Use the global username
           title: deckTitle,
           description: "New deck",
           flashcards: flashcardsData, // Send flashcards to backend

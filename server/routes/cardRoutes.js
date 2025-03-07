@@ -5,41 +5,48 @@ const FlashdeckModel = require("../models/FlashdeckModel");
 
 const router = express.Router();
 
-// ✅ Get all flashcards for a deck
+// Get all flashcards for a deck
 router.get("/", async (req, res) => {
     const { username, deck_id } = req.query;
     try {
-        const flashcards = await FlashcardModel.find({ username, deck_id });
-        res.json(flashcards);
+      const flashcards = await FlashcardModel.find({ username, deck_id });
+      res.json(flashcards);
     } catch (error) {
-        res.status(500).json({ error: "Error retrieving flashcards" });
+      res.status(500).json({ error: "Error retrieving flashcards" });
     }
-});
+  });
 
-// ✅ Create a flashcard
+// Create a flashcard
 router.post("/", async (req, res) => {
     const { username, deck_id, front, back } = req.body;
-    try {
-        const newCard = new FlashcardModel({
-            flashcard_id: new mongoose.Types.ObjectId().toString(),
-            username,
-            deck_id,
-            front,
-            back
-        });
-        await newCard.save();
-
-        // Update deck card count
-        await FlashdeckModel.findOneAndUpdate(
-            { deck_id, username },
-            { $inc: { card_count: 1 }, $push: { cards: newCard._id } }
-        );
-
-        res.status(201).json({ message: "Flashcard created successfully", card: newCard });
-    } catch (error) {
-        res.status(500).json({ error: "Error creating flashcard" });
+  
+    if (!front || !back || !deck_id) {
+      return res.status(400).json({ message: "Front, back, and deck_id are required" });
     }
-});
+  
+    try {
+      const newCard = new FlashcardModel({
+        flashcard_id: new mongoose.Types.ObjectId().toString(),
+        username,
+        deck_id,
+        front,
+        back,
+      });
+  
+      await newCard.save();
+  
+      // Update the deck with the new flashcard
+      await FlashdeckModel.findOneAndUpdate(
+        { deck_id },
+        { $inc: { card_count: 1 }, $push: { cards: newCard._id } }
+      );
+  
+      res.status(201).json({ message: "Flashcard created successfully", card: newCard });
+    } catch (error) {
+      res.status(500).json({ error: "Error creating flashcard" });
+    }
+  });
+  
 
 // ✅ Delete a flashcard
 router.delete("/:flashcard_id", async (req, res) => {
