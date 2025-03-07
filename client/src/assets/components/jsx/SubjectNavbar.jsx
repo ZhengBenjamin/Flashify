@@ -4,6 +4,7 @@ import { ColorInput } from '@mantine/core';
 import SubjectButton from './SubjectButtons';
 import classes from '../css/SubjectNavbar.module.css';
 
+
 export default function SubjectNavbar(props) {
   const { subjects, onSubjectSelect, onAddSubject } = props;
   const [modalOpened, setModalOpened] = useState(false);
@@ -25,23 +26,6 @@ export default function SubjectNavbar(props) {
     setNewSubjectColor('#ffffff');
     setModalOpened(false);
   };
-
-    return (
-
-        <Paper className={classes.navbar}>
-            <Center>
-                <Title order={2}> Your Subjects: </Title>
-            </Center>
-
-            <Stack justify="center" className={classes.stack}>
-
-                {props.subjects.map((subject) => (
-                    <SubjectCard subject={subject.label} subjectLink={subject.link} />
-                ))}
-
-            </Stack>
-        </Paper>
-    )
 
   return (
     <>
