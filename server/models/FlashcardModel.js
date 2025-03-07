@@ -1,3 +1,4 @@
+//flashcard schemes
 const mongoose = require("mongoose");
 
 const FlashcardSchema = new mongoose.Schema({
