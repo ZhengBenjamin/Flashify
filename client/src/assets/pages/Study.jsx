@@ -68,14 +68,14 @@ export default function Study() {
 
   return (
     <Container my="xl">
-      <Grid>
+      {/* <Grid>
         <h1>Subjects for {username}</h1>
         <Grid.Col span={4}>
-          {/* <SubjectNavbar 
+          <SubjectNavbar 
             subjects={subjects} 
             onSubjectSelect={(subject) => setSelectedSubject(subject)}
             onAddSubject={addSubject}
-          /> */}
+          />
         </Grid.Col>
 
         <Grid.Col span={8}>
@@ -90,7 +90,11 @@ export default function Study() {
             </>
           )}
         </Grid.Col>
-      </Grid>
+      </Grid> */}
+      {/* Don't delete my shit this actuall yowrks  */}
+      
+      <SubjectDashboard subjectId={1}/>
+
     </Container>
   );
 }
