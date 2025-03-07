@@ -40,4 +40,18 @@ router.get("/", async (req, res) => {
   }
 });
 
+// GET flashcard decks for a specific user
+router.get("/", async (req, res) => {
+  const { username } = req.query;
+  try {
+    // Find decks associated with the provided username
+    const decks = await FlashdeckModel.find({ username });
+    res.status(200).json({ decks });
+  } catch (error) {
+    console.error("Error fetching decks:", error);
+    res.status(500).json({ error: "Error fetching decks" });
+  }
+});
+
+
 module.exports = router;
