@@ -6,7 +6,7 @@ import { UserContext } from '../../../App'; // Import UserContext
 export default function CreateFlashcards({ opened, onClose }) {
   const { username } = useContext(UserContext); // Get the username from global state
   const [deckTitle, setDeckTitle] = useState('');
-  const [flashcardsData, setFlashcardsData] = useState([{ front: '', back: '' }]);
+  const [flashcardsData, setFlashcardsData] = useState([{ front: '', back: '' }]); // Start with one empty card
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -31,34 +31,26 @@ export default function CreateFlashcards({ opened, onClose }) {
   };
 
   const handleAddFlashcard = () => {
-    setFlashcardsData([...flashcardsData, { front: '', back: '' }]);
-    setCurrentCardIndex(flashcardsData.length);
-    setIsFlipped(false);
+    setFlashcardsData([...flashcardsData, { front: '', back: '' }]); // Add an empty flashcard to the list
+    setCurrentCardIndex(flashcardsData.length); // Move to the new card
+    setIsFlipped(false); // Start with the front of the card
   };
 
   const handleChangeFront = (e) => {
     const updated = [...flashcardsData];
     updated[currentCardIndex].front = e.target.value;
-    setFlashcardsData(updated);
+    setFlashcardsData(updated); // Update the front of the current card
   };
 
   const handleChangeBack = (e) => {
     const updated = [...flashcardsData];
     updated[currentCardIndex].back = e.target.value;
-    setFlashcardsData(updated);
+    setFlashcardsData(updated); // Update the back of the current card
   };
 
-  // Function to collect all the flashcard data into a list
+  // Collect the flashcards data (ensure that we're capturing valid front and back)
   const collectFlashcards = () => {
-    console.log("Collecting flashcards data...");
-
-    const collected = flashcardsData.map(card => ({
-      front: card.front,
-      back: card.back
-    }));
-
-    console.log("Collected flashcards:", collected); // Add logging to check data
-    return collected;
+    return flashcardsData.filter(card => card.front.trim() && card.back.trim()); // Filter out empty cards
   };
 
   const handleSubmit = async () => {
@@ -67,32 +59,49 @@ export default function CreateFlashcards({ opened, onClose }) {
       return;
     }
 
-    // Collect all the flashcard data
-    const collectedFlashcards = collectFlashcards();
+    const collectedFlashcards = collectFlashcards(); // Collect all flashcards
 
     if (collectedFlashcards.length === 0) {
-      alert("No flashcards to save!");
+      alert("At least one flashcard is required!");
       return;
     }
 
     try {
-      const response = await fetch("http://localhost:4000/api/deck", {
+      // Step 1: Create the Flashdeck
+      const deckResponse = await fetch("http://localhost:4000/api/deck", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: username, // Use the global username
           title: deckTitle,
-          flashcards: collectedFlashcards, // Send flashcards to backend
         }),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to save deck");
+      if (!deckResponse.ok) {
+        throw new Error("Failed to create deck");
       }
 
-      const data = await response.json();
-      console.log("Flashdeck saved:", data);
-      alert("Deck saved successfully!");
+      const deckData = await deckResponse.json();
+      const deckId = deckData.deck.deck_id; // Get the deck ID from the response
+
+      // Step 2: Create Flashcards for that deck
+      const cardPromises = collectedFlashcards.map((card) =>
+        fetch("http://localhost:4000/api/card", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: username, // Use the global username
+            deck_id: deckId,
+            front: card.front,
+            back: card.back,
+          }),
+        })
+      );
+
+      // Wait for all the flashcards to be created
+      await Promise.all(cardPromises);
+
+      alert("Deck and flashcards saved successfully!");
 
       // Reset form
       setDeckTitle("");
@@ -102,8 +111,8 @@ export default function CreateFlashcards({ opened, onClose }) {
 
       onClose(); // Close the modal after saving
     } catch (error) {
-      console.error("Error saving deck:", error);
-      alert("Error saving deck. Please try again.");
+      console.error("Error saving deck and flashcards:", error);
+      alert("Error saving deck and flashcards. Please try again.");
     }
   };
 
