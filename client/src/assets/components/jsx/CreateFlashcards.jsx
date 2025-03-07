@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Modal, Container, Group, Card, Text, Button, TextInput } from '@mantine/core';
 import classes from '../css/CreateFlashcards.module.css';
 
-export default function CreateFlashcards({ opened, onClose, onSubmit }) {
+export default function CreateFlashcards({ opened, onClose }) {
   const [deckTitle, setDeckTitle] = useState('');
   const [flashcardsData, setFlashcardsData] = useState([{ front: '', back: '' }]);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
@@ -46,13 +46,43 @@ export default function CreateFlashcards({ opened, onClose, onSubmit }) {
     setFlashcardsData(updated);
   };
 
-  const handleSubmit = () => {
-    // Call onSubmit with the deck title and flashcards data
-    onSubmit({ deckTitle, flashcards: flashcardsData });
-    setDeckTitle('');
-    setFlashcardsData([{ front: '', back: '' }]);
-    setCurrentCardIndex(0);
-    setIsFlipped(false);
+  const handleSubmit = async () => {
+    if (!deckTitle.trim()) {
+      alert("Deck title is required!");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:4000/api/deck", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: "testuser", // Replace with logged-in user
+          title: deckTitle,
+          description: "New deck",
+          flashcards: flashcardsData, // Send flashcards to backend
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save deck");
+      }
+
+      const data = await response.json();
+      console.log("Flashdeck saved:", data);
+      alert("Deck saved successfully!");
+
+      // Reset form
+      setDeckTitle("");
+      setFlashcardsData([{ front: "", back: "" }]);
+      setCurrentCardIndex(0);
+      setIsFlipped(false);
+
+      onClose(); // Close the modal after saving
+    } catch (error) {
+      console.error("Error saving deck:", error);
+      alert("Error saving deck. Please try again.");
+    }
   };
 
   return (
