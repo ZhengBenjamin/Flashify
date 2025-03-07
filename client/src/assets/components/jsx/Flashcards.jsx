@@ -1,11 +1,11 @@
 import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { Card, Container, Group, Text, Button, Flex } from '@mantine/core';
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { UserContext } from '../../../App'; // adjust the import path as needed
 import classes from '../css/Flashcards.module.css';
 
-export default function Flashcards({ deckId }) {
+export default function Flashcards({deckId}) {
   const navigate = useNavigate();
   const { username } = useContext(UserContext);
   console.log("Using deck ID:", deckId);
@@ -22,20 +22,19 @@ export default function Flashcards({ deckId }) {
   // Fetch flashcards from the backend when username and deckId are available
   useEffect(() => {
     if (username && deckId) {
-      const url = `http://localhost:4000/api/card?username=${username}&deck_id=${deckId}`;
-      console.log("Fetching flashcards from URL:", url);
+      console.log("Fetching flashcards for user:", username, "and deck ID:", deckId);
       setLoading(true);
-      axios.get(url)
-        .then(response => {
-          console.log("API response:", response.data);
-          // Directly use the returned array of flashcards
-          setFlashcardsData(response.data);
-          setLoading(false);
-        })
-        .catch(err => {
-          setError(err.response?.data?.error || "Error fetching flashcards");
-          setLoading(false);
-        });
+      axios.get('http://localhost:4000/api/card', {
+        params: { username, deckId }
+      })
+      .then(response => {
+        setFlashcardsData(response.data.flashcards);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err.response?.data?.error || "Error fetching flashcards");
+        setLoading(false);
+      });
     }
   }, [username, deckId]);
 
