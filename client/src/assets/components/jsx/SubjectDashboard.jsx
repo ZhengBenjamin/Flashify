@@ -1,68 +1,36 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { Card, Title, Text, Stack, Grid, Button } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import CreateFlashcards from './CreateFlashcards';
 import { UserContext } from '../../../App';
 
-
 export default function SubjectDashboard({ subjectId, quizzes }) {
-
-
-  const {username} = useContext(UserContext); // Gets the username 
-  console.log('Username:', username); // Logs the username to the console
-  
-
-  // Dummy subject details based on subject id:
-  const dummySubjects = {
-    math: {
-      name: "Math",
-      description: "Mathematics Subject",
-    },
-    science: {
-      name: "Science",
-      description: "Science Subject",
-    },
-    history: {
-      name: "History",
-      description: "History Subject",
-    },
-  };
-
-  const subject = dummySubjects[subjectId] || { name: "Unknown", description: "Unknown" };
-
-  // Dummy flashcard decks for each subject:
-  const dummyFlashcardDecks = {
-    math: [
-      { id: 1, title: "Algebra Deck" },
-      { id: 2, title: "Geometry Deck" },
-      { id: 3, title: "Calculus Deck" },
-    ],
-    science: [
-      { id: 4, title: "Physics Deck" },
-      { id: 5, title: "Chemistry Deck" },
-    ],
-    history: [
-      { id: 6, title: "Ancient History Deck" },
-      { id: 7, title: "Modern History Deck" },
-    ],
-  };
-
-  const flashcardDecks = dummyFlashcardDecks[subjectId] || [];
-  
-  // createflashcard model state
-  const [showCreateDeck, setShowCreateDeck] = useState(false);
+  const { username } = useContext(UserContext);
   const navigate = useNavigate();
+  const [flashcardDecks, setFlashcardDecks] = useState([]);
+  const [showCreateDeck, setShowCreateDeck] = useState(false);
 
-   const handleDeckClick = (deckId) => {
-    // Navigate to the flashcards component route (e.g. "/flashcards")
-    // Pass the deckId via route state
+  // Fetch decks for the logged-in user
+  useEffect(() => {
+    if (username) {
+      fetch(`http://localhost:4000/api/deck?username=${username}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setFlashcardDecks(data.decks);
+        })
+        .catch((error) => console.error("Error fetching decks:", error));
+    }
+  }, [username]);
+
+  // Navigate to the flashcards view for the selected deck
+  const handleDeckClick = (deckId) => {
     navigate('/flashcards', { state: { deckId } });
-  }; 
+  };
 
   return (
     <Stack spacing="md">
-      <Title order={3}>{subject.name} Dashboard</Title>
-      <Text>{subject.description}</Text>
+      <Title order={3}>Subject Dashboard</Title>
+      <Text>Welcome, {username}</Text>
 
       <Button onClick={() => setShowCreateDeck(true)}>Create Flashcard Deck</Button>
 
