@@ -1,9 +1,16 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Card, Title, Text, Stack, Grid, Button } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import CreateFlashcards from './CreateFlashcards';
+import { UserContext } from '../../App';
 
 export default function SubjectDashboard({ subjectId, quizzes }) {
+
+
+  const {username} = useContext(UserContext); // Gets the username 
+  console.log('Username:', username); // Logs the username to the console
+  
+
   // Dummy subject details based on subject id:
   const dummySubjects = {
     math: {
