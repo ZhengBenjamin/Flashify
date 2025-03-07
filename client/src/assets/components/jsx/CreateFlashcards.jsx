@@ -48,9 +48,30 @@ export default function CreateFlashcards({ opened, onClose }) {
     setFlashcardsData(updated);
   };
 
+  // Function to collect all the flashcard data into a list
+  const collectFlashcards = () => {
+    console.log("Collecting flashcards data...");
+
+    const collected = flashcardsData.map(card => ({
+      front: card.front,
+      back: card.back
+    }));
+
+    console.log("Collected flashcards:", collected); // Add logging to check data
+    return collected;
+  };
+
   const handleSubmit = async () => {
     if (!deckTitle.trim()) {
       alert("Deck title is required!");
+      return;
+    }
+
+    // Collect all the flashcard data
+    const collectedFlashcards = collectFlashcards();
+
+    if (collectedFlashcards.length === 0) {
+      alert("No flashcards to save!");
       return;
     }
 
@@ -61,7 +82,7 @@ export default function CreateFlashcards({ opened, onClose }) {
         body: JSON.stringify({
           username: username, // Use the global username
           title: deckTitle,
-          flashcards: flashcardsData, // Send flashcards to backend
+          flashcards: collectedFlashcards, // Send flashcards to backend
         }),
       });
 

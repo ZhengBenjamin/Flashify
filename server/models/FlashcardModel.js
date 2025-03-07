@@ -4,7 +4,6 @@ const FlashcardSchema = new mongoose.Schema({
   flashcard_id: { type: String, required: true, unique: true }, 
   deck_id: { type: String, required: true }, 
   username: { type: String, required: true }, 
-  description: { type: String, default: "Null" },
   front: { type: String, required: true },
   back: { type: String, required: true }
 }, { timestamps: true });

@@ -8,6 +8,7 @@ const router = express.Router();
 // ✅ Create a flashdeck and its flashcards
 router.post("/", async (req, res) => {
   const { username, title, flashcards } = req.body; // Remove description here
+  
   try {
     // Step 1: Create the flashdeck
     const newDeck = new FlashdeckModel({
@@ -18,10 +19,7 @@ router.post("/", async (req, res) => {
       cards: [] // We'll add the flashcards to this later
     });
 
-    // Step 2: Save the flashdeck
-    await newDeck.save();
-
-    // Step 3: Create flashcards and associate them with the new deck
+    // Step 2: Create flashcards and associate them with the new deck
     const createdFlashcards = [];
     for (let card of flashcards) {
       const newCard = new FlashcardModel({
@@ -36,15 +34,27 @@ router.post("/", async (req, res) => {
       createdFlashcards.push(newCard._id); // Store the card ID to associate it with the deck
     }
 
-    // Step 4: Update the deck with the newly created flashcards
+    // Step 3: Update the deck with the newly created flashcards
     newDeck.cards = createdFlashcards;
-    await newDeck.save();
+    await newDeck.save(); // Save deck only once
 
     // Send response with the saved deck data
     res.status(201).json({ message: "Flashdeck and flashcards created successfully", deck: newDeck });
   } catch (error) {
     console.error("Error creating flashdeck and flashcards:", error);
     res.status(500).json({ error: "Error creating flashdeck and flashcards" });
+  }
+});
+
+// ✅ Get all flashdecks for a user
+router.get("/", async (req, res) => {
+  const { username } = req.query; // Get the username from the query string
+  try {
+    const flashdecks = await FlashdeckModel.find({ username }).populate("cards"); // Fetch the flashdecks and populate the cards field
+    res.json(flashdecks); // Send the flashdecks as a response
+  } catch (error) {
+    console.error("Error retrieving flashdecks:", error);
+    res.status(500).json({ error: "Error retrieving flashdecks" });
   }
 });
 
