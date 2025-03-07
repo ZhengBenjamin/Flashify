@@ -61,7 +61,6 @@ export default function CreateFlashcards({ opened, onClose }) {
         body: JSON.stringify({
           username: username, // Use the global username
           title: deckTitle,
-          description: "New deck",
           flashcards: flashcardsData, // Send flashcards to backend
         }),
       });
