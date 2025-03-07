@@ -23,7 +23,7 @@ export default function LoginCard() {
 
       localStorage.setItem('token', response.data.token); // Store JWT Token
       console.log('Login successful:', response.data);
-      window.location.href = "/dashboard"; // Redirect after login (update route as needed)
+      window.location.href = "/studyinterface"; 
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
     }
