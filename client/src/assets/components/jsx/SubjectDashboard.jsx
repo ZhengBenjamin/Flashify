@@ -1,6 +1,7 @@
 import { useState, useContext, useEffect } from 'react';
 import { Card, Title, Text, Stack, Grid, Button } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
+import Flashcards from './Flashcards';
 import CreateFlashcards from './CreateFlashcards';
 import { UserContext } from '../../../App';
 
@@ -9,6 +10,7 @@ export default function SubjectDashboard({ subjectId, quizzes }) {
   const navigate = useNavigate();
   const [flashcardDecks, setFlashcardDecks] = useState([]);
   const [showCreateDeck, setShowCreateDeck] = useState(false);
+  const [selectedDeckId, setSelectedDeckId] = useState(null);
 
   // Fetch decks for the logged-in user
   useEffect(() => {
@@ -24,8 +26,13 @@ export default function SubjectDashboard({ subjectId, quizzes }) {
 
   // Navigate to the flashcards view for the selected deck
   const handleDeckClick = (deckId) => {
-    navigate('/flashcards', { state: { deckId } });
+    console.log(deckId);
+    setSelectedDeckId(deckId);
   };
+
+  if (selectedDeckId) {
+    return <Flashcards deckId={selectedDeckId} />;
+  }
 
   return (
     <Stack spacing="md">
@@ -50,7 +57,7 @@ export default function SubjectDashboard({ subjectId, quizzes }) {
                   justifyContent: 'center',
                   cursor: 'pointer',
                 }}
-                onClick={() => handleDeckClick(deck.id)}
+                onClick={() => handleDeckClick(deck.deck_id)}
               >
                 <Title order={4} align="center">
                   {deck.title}
