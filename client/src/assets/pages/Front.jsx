@@ -1,11 +1,12 @@
-import Header from '../components/jsx/Header';
 import TitleCard from '../components/jsx/TitleCard';
+import Features from '../components/jsx/Features';
+import { Container } from '@mantine/core';
 
 export default function Front() {
-  return (
-    <div>
-      <Header />
-      <TitleCard />
-    </div>
-  );
+    return (
+        <Container size="md">
+            <TitleCard/>
+            <Features/>
+        </Container>
+    );
 }
