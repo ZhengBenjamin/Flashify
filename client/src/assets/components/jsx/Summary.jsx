@@ -1,46 +1,34 @@
-import {useLocation, useNavigate} from 'react-router-dom';
-import {Container, Text, Title, Button, Flex} from '@mantine/core';
-import classes from "../css/Flashcards.module.css";
+import { useState } from 'react';
+import { Container, Text, Title, Button, Flex } from '@mantine/core';
+import classes from '../css/Flashcards.module.css';
+import Flashcards from './Flashcards.jsx';
 
-export default function Summary() {
-    // React Router
-    const navigate = useNavigate();
-    const location = useLocation();
+export default function Summary({ deckId, remainingFlashcards, correctResponses }) {
+    const [showFlashcards, setShowFlashcards] = useState(false);
+    const [flashcardsData, setFlashcardsData] = useState([]);
+    const [responses, setResponses] = useState([]);
 
-    // Flashcards
-    const flashcardsData = location.state?.flashcardsData || [];
-    const allFlashcards = location.state.allFlashcards;
-
-    // Correct/Incorrect Responses
-    const correctResponses = location.state?.correctResponses || [];
     const total = correctResponses.length;
     const correct = correctResponses.filter((response) => response === 1).length;
 
-    // Continue Studying
     const next = () => {
-        const newFlashcardsData = flashcardsData.filter((_, index) => correctResponses[index] === 0);
-
-        if (newFlashcardsData.length === 0)
+        if (remainingFlashcards.length === 0) {
             restart();
-        else
-            navigate('/flashcards', {
-                state: {
-                    newFlashcardsData: newFlashcardsData,
-                    correctResponses: [],
-                    allFlashcards: allFlashcards
-                }
-            });
-    }
+        } else {
+            setFlashcardsData(remainingFlashcards);
+            setResponses(correctResponses);
+            setShowFlashcards(true);
+        }
+    };
 
-    // Restart Progress
     const restart = () => {
-        navigate('/flashcards', {
-            state: {
-                newFlashcardsData: allFlashcards,
-                correctResponses: [],
-                allFlashcards: allFlashcards
-            }
-        });
+        setFlashcardsData(remainingFlashcards);
+        setResponses([]);
+        setShowFlashcards(true);
+    };
+
+    if (showFlashcards) {
+        return <Flashcards deckId={deckId} flashcardsData={flashcardsData} initialResponses={responses} />;
     }
 
     return (
@@ -55,6 +43,6 @@ export default function Summary() {
                 <br/>
                 <Button className={classes.button} onClick={restart}>restart progress 🔄</Button>
             </Flex>
-
-        </Container>);
+        </Container>
+    );
 }
