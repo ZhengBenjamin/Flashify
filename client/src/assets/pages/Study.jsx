@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Grid, Container, Title } from '@mantine/core';
+import { Grid, Container, Title, Modal } from '@mantine/core';
 import { UserContext } from '../../App';
 import SubjectNavbar from '../components/jsx/SubjectNavbar';
 import QuizHistory from '../components/jsx/QuizHistory';
 import Events from '../components/jsx/Events';
 import SubjectDashboard from '../components/jsx/SubjectDashboard';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 // import AuthContext from '.../context/AuthContext';
 
 export default function Study() {
@@ -41,8 +42,20 @@ export default function Study() {
   ];
 
   const { username } = useContext(UserContext);
+  const navigate = useNavigate();
   const [subjects, setSubjects] = useState(defaultSubjects); // Default subjects; modify when API implemented for setSubjects
   const [selectedSubject, setSelectedSubject] = useState(null);
+  const [showRedirectModal, setRedirectModal] = useState(false);
+
+  useEffect(() => { // Redirects user to login if not logged in
+    if (!username) {
+      setRedirectModal(true);
+      setTimeout(() => {
+        setRedirectModal(false);
+        navigate('/auth');
+      }, 3000); 
+    }
+  }, [username, navigate]);
 
   // TODO: implement API call to add new subject
   const addSubject = async (newSubject) => {
@@ -80,6 +93,15 @@ export default function Study() {
           )}
         </Grid.Col>
       </Grid>
+
+      <Modal
+        opened={showRedirectModal}
+        onClose={() => {}}
+        title="Authentication Required"
+        centered
+      >
+        <Title order={5}>You must be signed in to visit this page. Redirecting to the Login Page...</Title>
+      </Modal>
 
     </Container>
   );
