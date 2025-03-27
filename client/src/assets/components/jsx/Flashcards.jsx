@@ -5,29 +5,29 @@ import { UserContext } from '../../../App'; // adjust the import path as needed
 import classes from '../css/Flashcards.module.css';
 import Summary from "./Summary.jsx";
 
-export default function Flashcards({ deckId, flashcardsData: initialFlashcardsData = [], initialResponses = [] }) {
+export default function Flashcards({ deckId, correctResponses: initialCorrectResponses = [], toStudy: initialToStudy = [] }) {
     const { username } = useContext(UserContext);
 
     // State for flashcards, error and loading status
-    const [flashcardsData, setFlashcardsData] = useState(initialFlashcardsData);
+    const [flashcardsData, setFlashcardsData] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
+    // Flashcard states
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
-    const [correctResponses, setCorrectResponses] = useState(initialResponses);
+    const [correctResponses, setCorrectResponses] = useState(initialCorrectResponses);
     const [showSummary, setShowSummary] = useState(false);
+
+    const [firstLoad, setFirstLoad] = useState(true);
 
     // Fetch flashcards from the backend when username and deckId are available
     useEffect(() => {
         if (username && deckId && flashcardsData.length === 0) {
             const url = `http://localhost:4000/api/card?username=${username}&deck_id=${deckId}`;
-            console.log("Fetching flashcards from URL:", url);
             setLoading(true);
             axios.get(url)
                 .then(response => {
-                    console.log("API response:", response.data);
-                    // Directly use the returned array of flashcards
                     setFlashcardsData(response.data);
                     setLoading(false);
                 })
@@ -37,6 +37,19 @@ export default function Flashcards({ deckId, flashcardsData: initialFlashcardsDa
                 });
         }
     }, [username, deckId, flashcardsData.length]);
+
+    useEffect(() => {
+        if (firstLoad && initialCorrectResponses.length > 0 && flashcardsData.length > 0) {
+            console.log("initial correct responses: " + initialCorrectResponses);
+            const filteredFlashcards = flashcardsData.filter((_, index) => initialCorrectResponses[index] !== 1);
+            const filteredCorrectResponses = initialCorrectResponses.filter(response => response === 1);
+            console.log("filtered flashcards: " + filteredFlashcards);
+            console.log("filtered correct responses: " + filteredCorrectResponses);
+            setFlashcardsData(filteredFlashcards);
+            setCorrectResponses(filteredCorrectResponses);
+            setFirstLoad(false);
+        }
+    }, [firstLoad, initialCorrectResponses, flashcardsData]);
 
     const handleFlip = () => {
         setIsFlipped(!isFlipped);

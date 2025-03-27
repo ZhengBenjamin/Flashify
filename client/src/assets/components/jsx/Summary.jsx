@@ -8,27 +8,33 @@ export default function Summary({ deckId, remainingFlashcards, correctResponses 
     const [flashcardsData, setFlashcardsData] = useState([]);
     const [responses, setResponses] = useState([]);
 
+    const [restartBool, setRestartBool] = useState(false);
+
     const total = correctResponses.length;
     const correct = correctResponses.filter((response) => response === 1).length;
 
     const next = () => {
-        if (remainingFlashcards.length === 0) {
-            restart();
-        } else {
-            setFlashcardsData(remainingFlashcards);
-            setResponses(correctResponses);
-            setShowFlashcards(true);
-        }
+        const newFlashcardsData = remainingFlashcards.filter((_, index) => correctResponses[index] === 0);
+        setFlashcardsData(newFlashcardsData);
+        setResponses(correctResponses.filter((response) => response === 0));
+        setShowFlashcards(true);
+        setRestartBool(false);
     };
 
     const restart = () => {
         setFlashcardsData(remainingFlashcards);
         setResponses([]);
         setShowFlashcards(true);
+        setRestartBool(true);
     };
 
     if (showFlashcards) {
-        return <Flashcards deckId={deckId} flashcardsData={flashcardsData} initialResponses={responses} />;
+        // { deckId, correctResponses: initialCorrectResponses = [], toStudy: initialToStudy = [] }
+        // return <Flashcards deckId={deckId} flashcardsData={flashcardsData} initialResponses={responses} />;
+        if (restartBool) {
+            return <Flashcards deckId={deckId} flashcardsData={flashcardsData} correctResponses={[]} toStudy={flashcardsData} />;
+        }
+        return <Flashcards deckId={deckId} flashcardsData={flashcardsData} correctResponses={correctResponses} toStudy={remainingFlashcards} />;
     }
 
     return (
