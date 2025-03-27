@@ -8,22 +8,22 @@ import classes from '../css/Features.module.css';
 
 const data = [
   {
-    image: 'spaced_repetition_icon',
+    image: spaced_repetition_icon,
     title: 'Spaced Repetition',
     description: "Designed to optimize your learning by reviewing flashcards at strategic intervals. By prioritizing harder concepts and delaying easier ones, you’ll retain knowledge longer and reduce study time.",
   },
   {
-    image: 'study_sets_icon',
+    image: study_sets_icon,
     title: 'Study Sets',
     description: "Create Sets tailored to your learning needs! Organize flashcards by topic, subject, or exam to streamline your study sessions. Whether you're preparing for a test or reinforcing key concepts, Study Sets keep everything structured and accessible.",
   },
   {
-    image: 'notes_icon',
+    image: notes_icon,
     title: 'Notes',
     description: "Enhance your study experience with Notes, where you can jot down key insights, explanations, and summaries alongside your flashcards. Stay organized, connect ideas, and build a deeper understanding of your subjects.",
   },
   {
-    image: 'collaborative_decks_icon',
+    image: collaborative_decks_icon,
     title: 'Collaborative Decks',
     description: "Learning is better together! With Collaborative Decks, you can create, edit, and study flashcards with friends, classmates, or colleagues in real-time. Share knowledge, test each other, and make studying a more engaging and interactive experience.",
   },

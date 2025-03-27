@@ -4,11 +4,10 @@ import classes from '../css/SubjectButton.module.css';
 export default function SubjectButton(props) {
   return (
     <Card
-      withBorder
-      radius="md"
+      radius="xl"
       className={classes.card}
       onClick={props.onClick} 
-      style={{ backgroundColor: props.color, cursor: 'pointer' }}  // Indicate it's clickable
+      style={{ backgroundColor: props.color, cursor: 'pointer' }} 
     >
       <Group wrap="nowrap" gap={0}>
         <div className={classes.body}>

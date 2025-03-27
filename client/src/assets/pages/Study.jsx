@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Grid, Container } from '@mantine/core';
+import { Grid, Container, Title } from '@mantine/core';
 import { UserContext } from '../../App';
 import SubjectNavbar from '../components/jsx/SubjectNavbar';
 import QuizHistory from '../components/jsx/QuizHistory';
@@ -9,15 +9,20 @@ import axios from 'axios';
 // import AuthContext from '.../context/AuthContext';
 
 export default function Study() {
-  const { username } = useContext(UserContext);
-  const [subjects, setSubjects] = useState([]);
-  const [selectedSubject, setSelectedSubject] = useState(null);
+
+  const defaultSubjects = [
+    { id: 'Math', name: 'Mathematics', color: '#CD5C5C' },
+    { id: 'Science', name: 'Science', color: '#F08080' },
+    { id: 'History', name: 'History', color: '#FA8072' },
+    { id: 'English', name: 'English', color: '#E9967A' },
+  ];
 
   const quizHistory = [
     { subject: 'math', date: '69420-02-25', score: 85 },
     { subject: 'science', date: '2012-02-20', score: 92 },
     { subject: 'history', date: '2077-02-15', score: 78 },
   ];
+
   const events = [
     {
       name: 'Math Quiz - Algebra',
@@ -35,41 +40,23 @@ export default function Study() {
     },
   ];
 
-  useEffect(() => {
-    if (username) {
-      axios.get(`/api/subjects?username=${username}`)
-        .then((response) => {
-          setSubjects(response.data.subjects);
-        })
-        .catch((error) => {
-          console.error('Failed to fetch subjects:', error);
-        });
-    }
-  }, [username]);
+  const { username } = useContext(UserContext);
+  const [subjects, setSubjects] = useState(defaultSubjects); // Default subjects; modify when API implemented for setSubjects
+  const [selectedSubject, setSelectedSubject] = useState(null);
 
-  // Send new subject to DB when user creates new subject; SAME HERE MODIFY SCHEMA WHEN API IMPLEMENTED
+  // TODO: implement API call to add new subject
   const addSubject = async (newSubject) => {
-    try {
-      const response = await fetch('/api/subjects', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newSubject),
-      });
-      if (!response.ok) {
-        throw new Error('Error adding subject');
-      }
-      const data = await response.json();
-      // Append the newly created subject to the list
-      setSubjects((prev) => [...prev, data.subject]);
-    } catch (error) {
-      console.error('Failed to add subject:', error);
-    }
   };
+
+  // TODO: implement API call to fetch subjects
+  // const setSubjects = async (setSubjects) => {
+  // };
 
   return (
     <Container my="xl">
-      {/* <Grid>
-        <h1>Subjects for {username}</h1>
+      <Title order={1}>Welcome to your dashboard, {username}!</Title>
+      <br/>
+      <Grid>
         <Grid.Col span={4}>
           <SubjectNavbar 
             subjects={subjects} 
@@ -79,21 +66,20 @@ export default function Study() {
         </Grid.Col>
 
         <Grid.Col span={8}>
-          {selectedSubject ? (
+          {selectedSubject ? (  // Subject dashboard when user clicks a subject
+            console.log("Selected subject:", selectedSubject.id),
             <SubjectDashboard 
               subjectId={selectedSubject.id} 
             />
-          ) : (
-            <>
+          ) : ( // Default view when no subject is selected
+            <> 
+              <Title order={2}>Select a subject from the left to view your decks!</Title>
+
               <QuizHistory quizzes={quizHistory} />
-              <Events events={events} />
             </>
           )}
         </Grid.Col>
-      </Grid> */}
-      {/* Don't delete my shit this actuall works  */}
-      
-      <SubjectDashboard subjectId={1}/>
+      </Grid>
 
     </Container>
   );
