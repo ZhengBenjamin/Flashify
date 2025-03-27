@@ -13,12 +13,15 @@ export default function Flashcards({ deckId, correctResponses: initialCorrectRes
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    // Flashcard states
+    // Indexing and Flipping Flashcards
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
+
+    // State for tracking correct responses and showing summary
     const [correctResponses, setCorrectResponses] = useState(initialCorrectResponses);
     const [showSummary, setShowSummary] = useState(false);
 
+    // Prevents checking for initialCorrectResponses more than once
     const [firstLoad, setFirstLoad] = useState(true);
 
     // Fetch flashcards from the backend when username and deckId are available
@@ -40,13 +43,26 @@ export default function Flashcards({ deckId, correctResponses: initialCorrectRes
 
     useEffect(() => {
         if (firstLoad && initialCorrectResponses.length > 0 && flashcardsData.length > 0) {
-            console.log("initial correct responses: " + initialCorrectResponses);
+            // Print out each array for debugging
+            // console.log("initial correct responses: " + initialCorrectResponses);
+            // console.log("flashcards data: " + flashcardsData);
+            // console.log("correct responses: " + correctResponses);
+
+            // Filter out flashcards that were answered correctly
             const filteredFlashcards = flashcardsData.filter((_, index) => initialCorrectResponses[index] !== 1);
-            const filteredCorrectResponses = initialCorrectResponses.filter(response => response === 1);
+            const filteredCorrectResponses = initialCorrectResponses.filter(response => response !== 1);
+
+            /*
+            console.log("states: " + initialCorrectResponses);
             console.log("filtered flashcards: " + filteredFlashcards);
             console.log("filtered correct responses: " + filteredCorrectResponses);
+            */
+
+            // Update the state with the filtered flashcards and correct responses
             setFlashcardsData(filteredFlashcards);
             setCorrectResponses(filteredCorrectResponses);
+
+            // Set firstLoad to false to prevent re-running this effect
             setFirstLoad(false);
         }
     }, [firstLoad, initialCorrectResponses, flashcardsData]);
@@ -73,8 +89,16 @@ export default function Flashcards({ deckId, correctResponses: initialCorrectRes
         }
     };
 
+    const handleContinue = () => {
+        const incorrectFlashcards = flashcardsData.filter((_, index) => correctResponses[index] === 0);
+        setFlashcardsData(incorrectFlashcards);
+        setCorrectResponses([]);
+        setCurrentCardIndex(0);
+        setShowSummary(false);
+    };
+
     if (showSummary) {
-        return <Summary deckId={deckId} remainingFlashcards={flashcardsData} correctResponses={correctResponses} />;
+        return <Summary deckId={deckId} remainingFlashcards={flashcardsData} correctResponses={correctResponses} onContinue={handleContinue} />;
     }
 
     // Render loading, error or no data messages as needed
