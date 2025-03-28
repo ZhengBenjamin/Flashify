@@ -14,9 +14,8 @@ export default function QuizHistory({ quizzes }) {
 
   return (
     <>
-      <Title order={2} style={{ paddingBottom: '50px' }}>Quiz History</Title>
-
       <Card shadow="xl" p="md" >
+        <Title order={2} style={{ paddingBottom: '25px' }}>Quiz History</Title>
         {quizzes.map((quiz, index) => (
           <Card
             key={index}

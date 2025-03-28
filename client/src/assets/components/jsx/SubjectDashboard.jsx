@@ -5,7 +5,7 @@ import Flashcards from './Flashcards';
 import CreateFlashcards from './CreateFlashcards';
 import { UserContext } from '../../../App';
 
-export default function SubjectDashboard({ quizzes }) {
+export default function SubjectDashboard({ subjectId }) {
   const { username } = useContext(UserContext);
   const navigate = useNavigate();
   const [flashcardDecks, setFlashcardDecks] = useState([]);
@@ -18,7 +18,7 @@ export default function SubjectDashboard({ quizzes }) {
       fetch(`http://localhost:4000/api/deck?username=${username}`)
         .then((res) => res.json())
         .then((data) => {
-          setFlashcardDecks(data); // Assuming the response has decks directly
+          setFlashcardDecks(data); 
         })
         .catch((error) => console.error("Error fetching decks:", error));
     }
@@ -36,15 +36,14 @@ export default function SubjectDashboard({ quizzes }) {
 
   return (
     <Stack spacing="md">
-      <Title order={3}>Subject Dashboard</Title>
-      <Text>Welcome, {username}</Text>
+      <Title order={4}>{subjectId} Dashboard</Title>
 
       <Button onClick={() => setShowCreateDeck(true)}>Create Flashcard Deck</Button>
 
       <Grid>
         {flashcardDecks && flashcardDecks.length > 0 ? (
           flashcardDecks.map((deck) => (
-            <Grid.Col key={deck.deck_id} span={6}> {/* Updated to use deck_id */}
+            <Grid.Col key={deck.deck_id} span={6}>
               <Card
                 shadow="md"
                 p="lg"
@@ -71,6 +70,7 @@ export default function SubjectDashboard({ quizzes }) {
         )}
       </Grid>
 
+      {/* Todo: Add when quizzes are implemented
       <Card shadow="sm" p="md">
         <Title order={4}>Quizzes</Title>
         {quizzes && quizzes.length > 0 ? (
@@ -82,7 +82,7 @@ export default function SubjectDashboard({ quizzes }) {
         ) : (
           <Text>No quizzes available</Text>
         )}
-      </Card>
+      </Card> */}
 
       <CreateFlashcards
         opened={showCreateDeck}
