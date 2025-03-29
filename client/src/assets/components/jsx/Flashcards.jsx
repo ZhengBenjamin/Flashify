@@ -1,28 +1,25 @@
-import { useState, useEffect, useContext } from 'react';
+import {useState, useEffect, useContext} from 'react';
 import axios from 'axios';
-import { Card, Container, Group, Text, Button, Flex } from '@mantine/core';
-import { UserContext } from '../../../App'; // adjust the import path as needed
+import {Card, Container, Group, Text, Button, Flex, Title} from '@mantine/core';
+import {UserContext} from '../../../App'; // adjust the import path as needed
 import classes from '../css/Flashcards.module.css';
-import Summary from "./Summary.jsx";
 
-export default function Flashcards({ deckId, correctResponses: initialCorrectResponses = [], toStudy: initialToStudy = [] }) {
-    const { username } = useContext(UserContext);
-
-    // State for flashcards, error and loading status
+export default function Flashcards({deckId}) {
+    // State variables
+    const {username} = useContext(UserContext);
     const [flashcardsData, setFlashcardsData] = useState([]);
+
+    // Status variables
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    // Indexing and Flipping Flashcards
+    // Variables for flashcard logic
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
-    const [isFlipped, setIsFlipped] = useState(false);
-
-    // State for tracking correct responses and showing summary
-    const [correctResponses, setCorrectResponses] = useState(initialCorrectResponses);
-    const [showSummary, setShowSummary] = useState(false);
-
-    // Prevents checking for initialCorrectResponses more than once
-    const [firstLoad, setFirstLoad] = useState(true);
+    const [flipped, setFlipped] = useState(false);
+    const [learnedTerms, setLearnedTerms] = useState([]);
+    const [termsToStudy, setTermsToStudy] = useState(flashcardsData);
+    const [resultsThisRound, setResultsThisRound] = useState([]);
+    const currentCard = termsToStudy[currentCardIndex];
 
     // Fetch flashcards from the backend when username and deckId are available
     useEffect(() => {
@@ -41,93 +38,147 @@ export default function Flashcards({ deckId, correctResponses: initialCorrectRes
         }
     }, [username, deckId, flashcardsData.length]);
 
-    useEffect(() => {
-        if (firstLoad && initialCorrectResponses.length > 0 && flashcardsData.length > 0) {
-            // Print out each array for debugging
-            // console.log("initial correct responses: " + initialCorrectResponses);
-            // console.log("flashcards data: " + flashcardsData);
-            // console.log("correct responses: " + correctResponses);
+    /*** Studying Flashcard Logic ***/
 
-            // Filter out flashcards that were answered correctly
-            const filteredFlashcards = flashcardsData.filter((_, index) => initialCorrectResponses[index] !== 1);
-            const filteredCorrectResponses = initialCorrectResponses.filter(response => response !== 1);
+        // Function to handle flipping the card
+    const flipCard = () => {
+            setFlipped(!flipped);
+        };
 
-            /*
-            console.log("states: " + initialCorrectResponses);
-            console.log("filtered flashcards: " + filteredFlashcards);
-            console.log("filtered correct responses: " + filteredCorrectResponses);
-            */
-
-            // Update the state with the filtered flashcards and correct responses
-            setFlashcardsData(filteredFlashcards);
-            setCorrectResponses(filteredCorrectResponses);
-
-            // Set firstLoad to false to prevent re-running this effect
-            setFirstLoad(false);
-        }
-    }, [firstLoad, initialCorrectResponses, flashcardsData]);
-
-    const handleFlip = () => {
-        setIsFlipped(!isFlipped);
-    };
-
-    const undo = () => {
-        setIsFlipped(false);
-        setCurrentCardIndex((prevIndex) => (prevIndex - 1 + flashcardsData.length) % flashcardsData.length);
-        setCorrectResponses(correctResponses.slice(0, -1));
-        console.log("undo");
-    };
-
-    const handleNext = (correct) => {
-        setIsFlipped(false);
-        setCorrectResponses([...correctResponses, correct]);
-
-        if (currentCardIndex === flashcardsData.length - 1) {
-            setShowSummary(true);
+    // Function to handle correct/incorrect answer
+    const handleAnswer = (isCorrect) => {
+        // Update the progress in the current round
+        if (isCorrect) {
+            setResultsThisRound([...resultsThisRound, true]);
         } else {
-            setCurrentCardIndex((prevIndex) => prevIndex + 1);
+            setResultsThisRound([...resultsThisRound, false]);
+        }
+
+        // move to the next card
+        setCurrentCardIndex(currentCardIndex + 1);
+        setFlipped(false);
+
+        // Check if we have reached the end of the flashcards
+        if (currentCardIndex === termsToStudy.length - 1) {
+            // Show summary screen
+            setShowSummary(true);
         }
     };
 
-    const handleContinue = () => {
-        const incorrectFlashcards = flashcardsData.filter((_, index) => correctResponses[index] === 0);
-        setFlashcardsData(incorrectFlashcards);
-        setCorrectResponses([]);
+    const undoAnswer = () => {
+        // Remove the last answer from the results
+        setResultsThisRound(resultsThisRound.slice(0, -1));
+
+        // move back to the previous card
+        setCurrentCardIndex(currentCardIndex - 1);
+        setFlipped(false);
+    }
+
+    /*** Summary Screen Logic ***/
+
+        // Display summary screen
+    const [showSummary, setShowSummary] = useState(false);
+
+    // Results from this round
+    const [totalCardsLearnedThisRound, setTotalCardsLearnedThisRound] = useState(0);
+    const [totalCardsThisRound, setTotalCardsThisRound] = useState(0);
+    //
+    // const [totalCardsCorrect, setTotalCardsCorrect] = useState(0);
+    // const [totalCardsStudyied, setTotalCardsStudied] = useState(0);
+
+    const updateLearnedTerms = () => {
+        // Add all terms corresponding with a 1 in resultsThisRound to learnedTerms
+        const newLearnedTerms = resultsThisRound.map((result, index) => termsToStudy[index]);
+        setLearnedTerms([...learnedTerms, ...newLearnedTerms]);
+
+        // Remove all terms that were answered correctly from termsToStudy
+        const newTermsToStudy = termsToStudy.filter((_, index) => !resultsThisRound[index]);
+        setTermsToStudy(newTermsToStudy);
+
+        // Set the statistics for the summary page
+        setTotalCardsLearnedThisRound(learnedTerms.length);
+        setTotalCardsThisRound(resultsThisRound.length);
+    }
+
+    const continueStudying = () => {
         setCurrentCardIndex(0);
+        setFlipped(false);
+        setResultsThisRound([]);
         setShowSummary(false);
-    };
-
-    if (showSummary) {
-        return <Summary deckId={deckId} remainingFlashcards={flashcardsData} correctResponses={correctResponses} onContinue={handleContinue} />;
     }
 
-    // Render loading, error or no data messages as needed
+    const restartFlashcards = () => {
+        // Reset the deck
+        setLearnedTerms([]);
+        setTermsToStudy(flashcardsData);
+
+        // Continue studying
+        continueStudying();
+    }
+
+
+    /*** Render Flashcards ***/
+
+    /**
+     * Loading state
+     */
     if (loading) {
-        return (
-            <Container className={classes.container}>
-                <Text>Loading flashcards...</Text>
-            </Container>
-        );
+        return (<Container className={classes.container}><Text>Loading flashcards...</Text></Container>);
     }
 
-    if (error) {
-        return (
-            <Container className={classes.container}>
-                <Text>{error}</Text>
-            </Container>
-        );
-    }
-
+    /**
+     * No flashcards state
+     */
     if (flashcardsData.length === 0) {
+        return (<Container className={classes.container}><Text>No flashcards available</Text></Container>);
+    }
+
+    /**
+     * Error state
+     */
+    if (error) {
+        return (<Container className={classes.container}><Text>Error</Text></Container>);
+    }
+
+    /**
+     * Summary screen
+     */
+    if (showSummary) {
         return (
             <Container className={classes.container}>
-                <Text>No flashcards available</Text>
+                <Flex direction="column" align={"center"} spacing={"md"}>
+                    <Title order={1}>Summary:</Title>
+                    <br/>
+                    <h6>Results this round</h6>
+                    <Text>{totalCardsLearnedThisRound} / {totalCardsThisRound} =
+                        {(100.0 * totalCardsLearnedThisRound / totalCardsThisRound).toFixed(2)}%</Text>
+                    <br/><br/>
+
+                    <h6>Results overall</h6>
+                    <Text>{learnedTerms.length} / {flashcardsData.length} =
+                        {(100.0 * learnedTerms.length / flashcardsData.length).toFixed(2)}%</Text>
+                    <br/><br/>
+
+                    {learnedTerms.length < flashcardsData.length &&
+                        (<Button className={classes.button} onClick={continueStudying}>continue →</Button>)}
+                    <br/>
+                    <Button className={classes.button} onClick={restartFlashcards}>restart progress 🔄</Button>
+                </Flex>
             </Container>
         );
     }
 
-    const currentCard = flashcardsData[currentCardIndex];
+    /**
+     * Flashcard screen (default)
+     */
 
+    /*
+    for stats:
+
+    Correct: {correctResponses.filter(response => response === 1).length}/
+                        {correctResponses.length} = {(100.0 * (correctResponses.filter(response => response === 1).length)
+                        / correctResponses.length).toFixed(2)}%
+     */
     return (
         <Container className={classes.container}>
             <Group position="right" justify="space-between">
@@ -136,33 +187,34 @@ export default function Flashcards({ deckId, correctResponses: initialCorrectRes
                 </Text>
                 {currentCardIndex > 0 && (
                     <Text>
-                        Correct: {correctResponses.filter(response => response === 1).length}/
-                        {correctResponses.length} = {(100.0 * (correctResponses.filter(response => response === 1).length)
-                        / correctResponses.length).toFixed(2)}%
+                        Correct: {resultsThisRound.filter(response => response).length}/
+                        {resultsThisRound.length} = {(100.0 * (resultsThisRound.filter(response => response).length)
+                        / resultsThisRound.length).toFixed(2)}%
+
                     </Text>
                 )}
             </Group>
 
             <Group position="center">
-                <Card className={classes.card} onClick={handleFlip}>
+                <Card className={classes.card} onClick={flipCard}>
                     <Text className={classes.text}>
-                        {isFlipped ? currentCard.back : currentCard.front}
+                        {flipped ? currentCard.back : currentCard.front}
                     </Text>
                 </Card>
             </Group>
 
             <Flex justify="space-between" mt="md">
                 <Flex justify="center" gap="md">
-                    <Button className={classes.button} onClick={() => handleNext(0)}>
+                    <Button className={classes.button} onClick={() => handleAnswer(false)}>
                         ❌ Don't Know
                     </Button>
-                    <Button className={classes.button} onClick={() => handleNext(1)}>
+                    <Button className={classes.button} onClick={() => handleAnswer(true)}>
                         ✅ I Know it
                     </Button>
                 </Flex>
 
                 {currentCardIndex > 0 && (
-                    <Button className={classes.button} onClick={undo}>
+                    <Button className={classes.button} onClick={undoAnswer}>
                         ↩️ Undo
                     </Button>
                 )}
@@ -170,3 +222,6 @@ export default function Flashcards({ deckId, correctResponses: initialCorrectRes
         </Container>
     );
 }
+
+
+

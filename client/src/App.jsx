@@ -9,7 +9,7 @@ import Front from './assets/pages/Front';
 import Authentication from './assets/pages/Authentication';
 import Header from "./assets/components/jsx/Header.jsx";
 import Flashcards from "./assets/components/jsx/Flashcards.jsx";
-import Summary from "./assets/components/jsx/Summary.jsx";
+// import Summary from "./assets/components/jsx/Summary.jsx";
 import Study from "./assets/pages/Study";
 import Footer from "./assets/components/jsx/Footer.jsx";
 
@@ -19,6 +19,7 @@ export default function App() {
     const storedUsername = localStorage.getItem('username') || '';
     const [username, setUsername] = useState(storedUsername);
 
+    // <Route path="/summary" element={<Summary/>}/>
     return (
         <UserContext.Provider value={{ username, setUsername }}>
             <MantineProvider>
@@ -29,7 +30,7 @@ export default function App() {
                         <Route path="/" element={<Front/>}/>
                         <Route path="/auth" element={<Authentication/>}/>
                         <Route path="/flashcards" element={<Flashcards/>}/>
-                        <Route path="/summary" element={<Summary/>}/>
+
                         <Route path="/studyinterface" element={<Study/>}/>
                     </Routes>
 

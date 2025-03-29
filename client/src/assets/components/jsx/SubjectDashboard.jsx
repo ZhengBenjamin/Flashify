@@ -31,8 +31,8 @@ export default function SubjectDashboard({ quizzes }) {
   };
 
   if (selectedDeckId) {
-    return <Flashcards deckId={selectedDeckId} correct={[]} toStudy={[]} />;
-    // return <Flashcards deckId={selectedDeckId} />;
+    // return <Flashcards deckId={selectedDeckId} correct={[]} toStudy={[]} />;
+    return <Flashcards deckId={selectedDeckId} />;
   }
 
   return (
