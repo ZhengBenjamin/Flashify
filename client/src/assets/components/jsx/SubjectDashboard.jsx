@@ -14,15 +14,22 @@ export default function SubjectDashboard({ subjectId }) {
 
   // Fetch decks for the logged-in user
   useEffect(() => {
-    if (username) {
-      fetch(`http://localhost:4000/api/deck?username=${username}`)
+    if (subjectId) {
+      fetch('http://localhost:4000/api/decks/by-subject', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ subjectId }),
+      })
         .then((res) => res.json())
         .then((data) => {
-          setFlashcardDecks(data); 
+          setFlashcardDecks(data);
         })
-        .catch((error) => console.error("Error fetching decks:", error));
+        .catch((error) => console.error("Error fetching decks by subject:", error));
     }
-  }, [username]);
+  }, [subjectId]);
+  
 
   // Navigate to the flashcards view for the selected deck
   const handleDeckClick = (deckId) => {

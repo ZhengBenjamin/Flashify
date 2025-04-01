@@ -11,13 +11,6 @@ import { useNavigate } from 'react-router-dom';
 
 export default function Study() {
 
-  const defaultSubjects = [
-    { id: 'Math', name: 'Mathematics', color: '#CD5C5C' },
-    { id: 'Science', name: 'Science', color: '#F08080' },
-    { id: 'History', name: 'History', color: '#FA8072' },
-    { id: 'English', name: 'English', color: '#E9967A' },
-  ];
-
   const quizHistory = [
     { subject: 'math', date: '69420-02-25', score: 85 },
     { subject: 'science', date: '2012-02-20', score: 92 },
@@ -43,7 +36,8 @@ export default function Study() {
 
   const { username } = useContext(UserContext);
   const navigate = useNavigate();
-  const [subjects, setSubjects] = useState(defaultSubjects); // Default subjects; modify when API implemented for setSubjects
+  // Initialize subjects as an empty array since we're fetching them from the API
+  const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [showRedirectModal, setRedirectModal] = useState(false);
 
@@ -57,13 +51,36 @@ export default function Study() {
     }
   }, [username, navigate]);
 
-  // TODO: implement API call to add new subject
-  const addSubject = async (newSubject) => {
-  };
+  useEffect(() => {
+    async function fetchSubjects() {
+      try {
+        const response = await axios.post('http://localhost:4000/api/subjects/user', {
+          username
+        });
+        const subjectsData = Array.isArray(response.data)
+          ? response.data
+          : response.data.subjects;
+        setSubjects(subjectsData || []);
+      } catch (error) {
+        console.error('Error fetching subjects:', error);
+      }
+    }
+  
+    if (username) fetchSubjects(); // only fetch if user is logged in
+  }, [username]);
 
-  // TODO: implement API call to fetch subjects
-  // const setSubjects = async (setSubjects) => {
-  // };
+  // API call to add new subject
+  const addSubject = async (newSubject) => {
+    try {
+      const response = await axios.post('http://localhost:4000/api/subjects', {
+        ...newSubject,
+        username
+      });
+      setSubjects(prevSubjects => [...prevSubjects, response.data]);
+    } catch (error) {
+      console.error('Error creating subject:', error);
+    }
+  };
 
   return (
     <Container my="xl">
@@ -87,7 +104,6 @@ export default function Study() {
           ) : ( // Default view when no subject is selected
             <> 
               <Title order={2}>Select a subject from the left to view your decks!</Title>
-
               <QuizHistory quizzes={quizHistory} />
             </>
           )}
@@ -102,7 +118,6 @@ export default function Study() {
       >
         <Title order={5}>You must be signed in to visit this page. Redirecting to the Login Page...</Title>
       </Modal>
-
     </Container>
   );
 }
