@@ -80,23 +80,36 @@ export default function Flashcards({deckId}) {
 
     // Results from this round
     const [totalCardsLearnedThisRound, setTotalCardsLearnedThisRound] = useState(0);
-    const [totalCardsThisRound, setTotalCardsThisRound] = useState(0);
+    // const [totalCardsThisRound, setTotalCardsThisRound] = useState(0);
+
+    const totalCardsThisRound = resultsThisRound.length;
+
     //
     // const [totalCardsCorrect, setTotalCardsCorrect] = useState(0);
     // const [totalCardsStudyied, setTotalCardsStudied] = useState(0);
 
     const updateLearnedTerms = () => {
-        // Add all terms corresponding with a 1 in resultsThisRound to learnedTerms
-        const newLearnedTerms = resultsThisRound.map((result, index) => termsToStudy[index]);
-        setLearnedTerms([...learnedTerms, ...newLearnedTerms]);
-
+        // Add all terms corresponding with a true in resultsThisRound to learnedTerms
+        const newLearnedTerms = resultsThisRound.map((response, index) => {
+            if (response) {
+                return termsToStudy[index];
+            }
+            return null;
+        });
+        // Filter out null values
+        const filteredLearnedTerms = newLearnedTerms.filter(term => term !== null);
+        // Add the new learned terms to the existing learned terms
+        console.log('newly learned terms: ' + filteredLearnedTerms);
+        console.log('old learned terms: ' + learnedTerms);
+        setLearnedTerms([...learnedTerms, ...filteredLearnedTerms]);
+        console.log('both terms: ' + learnedTerms);
         // Remove all terms that were answered correctly from termsToStudy
-        const newTermsToStudy = termsToStudy.filter((_, index) => !resultsThisRound[index]);
-        setTermsToStudy(newTermsToStudy);
+        // const newTermsToStudy = termsToStudy.filter((_, index) => !resultsThisRound[index]);
+        setTermsToStudy(learnedTerms);
 
         // Set the statistics for the summary page
-        setTotalCardsLearnedThisRound(learnedTerms.length);
-        setTotalCardsThisRound(resultsThisRound.length);
+        // setTotalCardsLearnedThisRound(learnedTerms.length);
+        // setTotalCardsThisRound(resultsThisRound.length);
     }
 
     const continueStudying = () => {
@@ -144,17 +157,25 @@ export default function Flashcards({deckId}) {
     /**
      * Summary screen
      */
+
+    // console.log('results this round: ' + resultsThisRound);
+    // console.log('number correct: ' + resultsThisRound.filter(response => response).length);
+
     if (showSummary) {
-        console.log("total this round: " + totalCardsLearnedThisRound);
+
+        console.log('learned terms: ' + learnedTerms);
+
         return (
             <Container className={classes.container}>
                 <Flex direction="column" align={"center"} spacing={"md"}>
                     <Title order={1}>Summary:</Title>
                     <br/>
                     <h6>Results this round</h6>
-                    <Text>{totalCardsLearnedThisRound} / {totalCardsThisRound} =
-                        {(100.0 * totalCardsLearnedThisRound / totalCardsThisRound).toFixed(2)}%</Text>
+                    <Text>{resultsThisRound.filter(response => response).length} / {resultsThisRound.length} =
+                        {(100.0 * resultsThisRound.filter(response => response).length / resultsThisRound.length).toFixed(2)}%</Text>
                     <br/><br/>
+
+
 
                     <h6>Results overall</h6>
                     <Text>{learnedTerms.length} / {flashcardsData.length} =
@@ -181,6 +202,8 @@ export default function Flashcards({deckId}) {
                         {correctResponses.length} = {(100.0 * (correctResponses.filter(response => response === 1).length)
                         / correctResponses.length).toFixed(2)}%
      */
+
+
     return (
         <Container className={classes.container}>
             <Group position="right" justify="space-between">
@@ -189,7 +212,7 @@ export default function Flashcards({deckId}) {
                 </Text>
                 {currentCardIndex > 0 && (
                     <Text>
-                        Correct: {resultsThisRound.filter(response => response).length}/
+                        Correct: { resultsThisRound.filter(response => response).length }/
                         {resultsThisRound.length} = {(100.0 * (resultsThisRound.filter(response => response).length)
                         / resultsThisRound.length).toFixed(2)}%
 
