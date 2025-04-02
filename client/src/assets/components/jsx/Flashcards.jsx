@@ -40,11 +40,8 @@ export default function Flashcards({deckId}) {
     }, [username, deckId, flashcardsData.length]);
 
     /*** Studying Flashcard Logic ***/
-
         // Function to handle flipping the card
-    const flipCard = () => {
-            setFlipped(!flipped);
-        };
+    const flipCard = () => setFlipped(!flipped);
 
     // Function to handle correct/incorrect answer
     const handleAnswer = (isCorrect) => {
@@ -181,6 +178,7 @@ export default function Flashcards({deckId}) {
                         {correctResponses.length} = {(100.0 * (correctResponses.filter(response => response === 1).length)
                         / correctResponses.length).toFixed(2)}%
      */
+    // {flipped ? currentCard.back : currentCard.front}
     return (
         <Container className={classes.container}>
             <Group position="right" justify="space-between">
@@ -200,7 +198,9 @@ export default function Flashcards({deckId}) {
             <Group position="center">
                 <Card className={classes.card} onClick={flipCard}>
                     <Text className={classes.text}>
-                        {flipped ? currentCard.back : currentCard.front}
+
+                        {flashcardsData[0].front}
+
                     </Text>
                 </Card>
             </Group>

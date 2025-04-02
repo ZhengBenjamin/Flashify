@@ -1,13 +1,11 @@
 import { useState, useContext, useEffect } from 'react';
 import { Card, Title, Text, Stack, Grid, Button } from '@mantine/core';
-import { useNavigate } from 'react-router-dom';
 import Flashcards from './Flashcards';
 import CreateFlashcards from './CreateFlashcards';
 import { UserContext } from '../../../App';
 
 export default function SubjectDashboard({ quizzes }) {
   const { username } = useContext(UserContext);
-  const navigate = useNavigate();
   const [flashcardDecks, setFlashcardDecks] = useState([]);
   const [showCreateDeck, setShowCreateDeck] = useState(false);
   const [selectedDeckId, setSelectedDeckId] = useState(null);
