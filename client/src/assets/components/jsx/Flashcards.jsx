@@ -200,9 +200,7 @@ export default function Flashcards({deckId}) {
             <Group position="center">
                 <Card className={classes.card} onClick={flipCard}>
                     <Text className={classes.text}>
-
-                        {flashcardsData[0].front}
-
+                        {flipped ? termsToStudy[currentCardIndex].back : termsToStudy[currentCardIndex].front}
                     </Text>
                 </Card>
             </Group>
