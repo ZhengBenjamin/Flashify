@@ -2,6 +2,7 @@ import {useLocation, useNavigate} from 'react-router-dom';
 import {Container, Text, Title, Button, Flex} from '@mantine/core';
 import classes from "../css/Flashcards.module.css";
 
+//This is the summary page for when you finish practicing a flashcard deck.
 export default function Summary() {
     // React Router
     const navigate = useNavigate();

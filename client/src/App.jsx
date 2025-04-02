@@ -15,6 +15,7 @@ import Footer from "./assets/components/jsx/Footer.jsx";
 
 export const UserContext = createContext();
 
+// This is the main entry point of the application?????? Is it? Or does the main call this. 
 export default function App() {
     const storedUsername = localStorage.getItem('username') || '';
     const [username, setUsername] = useState(storedUsername);

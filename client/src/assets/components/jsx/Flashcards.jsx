@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from '../../../App'; // adjust the import path as needed
 import classes from '../css/Flashcards.module.css';
 
+//This file is used to pracice flashcards once you click on a deck.
 export default function Flashcards({ deckId }) {
   const navigate = useNavigate();
   const { username } = useContext(UserContext);

@@ -8,6 +8,7 @@ import SubjectDashboard from '../components/jsx/SubjectDashboard';
 import axios from 'axios';
 // import AuthContext from '.../context/AuthContext';
 
+//don't know what this does
 export default function Study() {
   const { username } = useContext(UserContext);
   const [subjects, setSubjects] = useState([]);

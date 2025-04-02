@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const UserModel = require("../models/UserModel");
 
+// This file contains the api calls for hanlding user registraion, login, and deletion
+
 dotenv.config(); 
 
 const router = express.Router();

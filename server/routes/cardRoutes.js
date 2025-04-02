@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const FlashdeckModel = require("../models/FlashdeckModel");
 const FlashcardModel = require("../models/FlashcardModel");
 
+//This file contains the API calls for handling flashcard creation, retrieval, updating, and deletion
+
 const router = express.Router();
 
 // ✅ Create a flashcard and associate it with a deck
@@ -90,7 +92,7 @@ router.delete("/:id", async (req, res) => {
 
     await FlashdeckModel.findOneAndUpdate(
       { deck_id: deletedCard.deck_id },
-      { $inc: { card_count: -1 }, $pull: { cards: deletedCard._id } }
+      //{ $inc: { card_count: -1 }, $pull: { cards: deletedCard._id } }
     );
 
     res.json({ message: "Flashcard deleted successfully" });

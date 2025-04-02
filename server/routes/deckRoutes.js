@@ -4,6 +4,9 @@ const FlashdeckModel = require("../models/FlashdeckModel");
 
 const router = express.Router();
 
+//This file contains the API calls for handling flashdeck creation, retrieval, updating, and deletion
+
+
 // ✅ Create a flashdeck
 router.post("/", async (req, res) => {
   const { username, title } = req.body; // Remove description here
