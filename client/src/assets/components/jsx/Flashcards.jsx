@@ -4,6 +4,7 @@ import {Card, Container, Group, Text, Button, Flex, Title} from '@mantine/core';
 import {UserContext} from '../../../App'; // adjust the import path as needed
 import classes from '../css/Flashcards.module.css';
 
+// eslint-disable-next-line react/prop-types
 export default function Flashcards({deckId}) {
     // State variables
     const {username} = useContext(UserContext);
@@ -61,6 +62,7 @@ export default function Flashcards({deckId}) {
         // Check if we have reached the end of the flashcards
         if (currentCardIndex === termsToStudy.length - 1) {
             // Show summary screen
+            updateLearnedTerms();
             setShowSummary(true);
         }
     };
