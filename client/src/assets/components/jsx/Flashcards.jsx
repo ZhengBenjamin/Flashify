@@ -20,7 +20,6 @@ export default function Flashcards({deckId}) {
     const [learnedTerms, setLearnedTerms] = useState([]);
     const [termsToStudy, setTermsToStudy] = useState(flashcardsData);
     const [resultsThisRound, setResultsThisRound] = useState([]);
-    const currentCard = termsToStudy[currentCardIndex];
 
     // Fetch flashcards from the backend when username and deckId are available
     useEffect(() => {
@@ -30,6 +29,7 @@ export default function Flashcards({deckId}) {
             axios.get(url)
                 .then(response => {
                     setFlashcardsData(response.data);
+                    setTermsToStudy(response.data);
                     setLoading(false);
                 })
                 .catch(err => {
@@ -139,10 +139,13 @@ export default function Flashcards({deckId}) {
         return (<Container className={classes.container}><Text>Error</Text></Container>);
     }
 
+
+
     /**
      * Summary screen
      */
     if (showSummary) {
+        console.log("total this round: " + totalCardsLearnedThisRound);
         return (
             <Container className={classes.container}>
                 <Flex direction="column" align={"center"} spacing={"md"}>
@@ -155,7 +158,7 @@ export default function Flashcards({deckId}) {
 
                     <h6>Results overall</h6>
                     <Text>{learnedTerms.length} / {flashcardsData.length} =
-                        {(100.0 * learnedTerms.length / flashcardsData.length).toFixed(2)}%</Text>
+                        {(learnedTerms.length / flashcardsData.length * 100.0).toFixed(2)}%</Text>
                     <br/><br/>
 
                     {learnedTerms.length < flashcardsData.length &&
@@ -178,7 +181,6 @@ export default function Flashcards({deckId}) {
                         {correctResponses.length} = {(100.0 * (correctResponses.filter(response => response === 1).length)
                         / correctResponses.length).toFixed(2)}%
      */
-    // {flipped ? currentCard.back : currentCard.front}
     return (
         <Container className={classes.container}>
             <Group position="right" justify="space-between">
@@ -208,7 +210,7 @@ export default function Flashcards({deckId}) {
             <Flex justify="space-between" mt="md">
                 <Flex justify="center" gap="md">
                     <Button className={classes.button} onClick={() => handleAnswer(false)}>
-                        ❌ Don't Know
+                        ❌ Don&#39;t Know
                     </Button>
                     <Button className={classes.button} onClick={() => handleAnswer(true)}>
                         ✅ I Know it
