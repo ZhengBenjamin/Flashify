@@ -51,4 +51,53 @@ router.get("/", async (req, res) => {
   }
 });
 
+// ✅ Update a flashcard
+router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { front, back } = req.body;
+
+  if (!front && !back) {
+    return res.status(400).json({ message: "At least one field (front or back) must be provided" });
+  }
+
+  try {
+    const updatedCard = await FlashcardModel.findByIdAndUpdate(
+      id,
+      { $set: { front, back } },
+      { new: true }
+    );
+
+    if (!updatedCard) {
+      return res.status(404).json({ message: "Flashcard not found" });
+    }
+
+    res.json({ message: "Flashcard updated successfully", card: updatedCard });
+  } catch (error) {
+    console.error("Error updating flashcard:", error);
+    res.status(500).json({ error: "Error updating flashcard" });
+  }
+});
+
+// ✅ Delete a flashcard
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deletedCard = await FlashcardModel.findByIdAndDelete(id);
+    if (!deletedCard) {
+      return res.status(404).json({ message: "Flashcard not found" });
+    }
+
+    await FlashdeckModel.findOneAndUpdate(
+      { deck_id: deletedCard.deck_id },
+      { $inc: { card_count: -1 }, $pull: { cards: deletedCard._id } }
+    );
+
+    res.json({ message: "Flashcard deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting flashcard:", error);
+    res.status(500).json({ error: "Error deleting flashcard" });
+  }
+});
+
 module.exports = router;
