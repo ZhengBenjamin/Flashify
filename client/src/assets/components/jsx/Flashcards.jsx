@@ -6,6 +6,8 @@ import classes from '../css/Flashcards.module.css';
 
 // eslint-disable-next-line react/prop-types
 export default function Flashcards({deckId}) {
+    /*** Flashcard Logic Fields ***/
+
     // State variables
     const {username} = useContext(UserContext);
     const [flashcardsData, setFlashcardsData] = useState([]);
@@ -13,21 +15,28 @@ export default function Flashcards({deckId}) {
     // Status variables
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [showSummary, setShowSummary] = useState(false);
 
-    // Variables for flashcard logic
+    // Flashcard logic variables
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
     const [flipped, setFlipped] = useState(false);
+
+    // Variables for tracking user progress
     const [learnedTerms, setLearnedTerms] = useState([]);
     const [termsToStudy, setTermsToStudy] = useState(flashcardsData);
     const [resultsThisRound, setResultsThisRound] = useState([]);
 
-    // Fetch flashcards from the backend when username and deckId are available
+    /**
+     * Fetch flashcards from the backend when username and deckId are available
+     */
     useEffect(() => {
+        // Fetch flashcards only if username and deckId are available
         if (username && deckId && flashcardsData.length === 0) {
             const url = `http://localhost:4000/api/card?username=${username}&deck_id=${deckId}`;
             setLoading(true);
             axios.get(url)
                 .then(response => {
+                    // Set the flashcards data and terms to study with the data from the backend
                     setFlashcardsData(response.data);
                     setTermsToStudy(response.data);
                     setLoading(false);
@@ -40,17 +49,19 @@ export default function Flashcards({deckId}) {
     }, [username, deckId, flashcardsData.length]);
 
     /*** Studying Flashcard Logic ***/
-        // Function to handle flipping the card
+
+    /**
+     * Flips the card to show the other side
+     */
     const flipCard = () => setFlipped(!flipped);
 
     // Function to handle correct/incorrect answer
     const handleAnswer = (isCorrect) => {
-
-
         // Update the progress in the current round
         setResultsThisRound(prevResults => {
             const updatedResults = [...prevResults, isCorrect];
 
+            // If the last card was answered, update results & show the summary screen
             if (currentCardIndex + 1 === termsToStudy.length)
                 updateLearnedTerms(updatedResults);
 
@@ -60,15 +71,11 @@ export default function Flashcards({deckId}) {
         // move to the next card
         setCurrentCardIndex(currentCardIndex + 1);
         setFlipped(false);
-
-        // Check if we have reached the end of the flashcards
-        console.log('index: ' + (1 + currentCardIndex) + ', length: ' + termsToStudy.length);
-        console.log('results: ' + (resultsThisRound.length) + ', length: ' + termsToStudy.length);
-        console.log('results: ' + resultsThisRound);
-        // if (currentCardIndex + 1 === termsToStudy.length)
-        //    updateLearnedTerms(isCorrect);
     };
 
+    /**
+     * If a user wants to undo their last answer, remove the last answer from the results
+     */
     const undoAnswer = () => {
         // Remove the last answer from the results
         setResultsThisRound(resultsThisRound.slice(0, -1));
@@ -80,34 +87,35 @@ export default function Flashcards({deckId}) {
 
     /*** Summary Screen Logic ***/
 
-        // Display summary screen
-    const [showSummary, setShowSummary] = useState(false);
-
-    // Results from this round
-
+    /**
+     * Update the learned terms based on the results of this round
+     *
+     * @param results the results of this round
+     */
     const updateLearnedTerms = (results) => {
         // Update the learned terms based on the results of this round
         const newLearnedTerms = [...learnedTerms];
         const newTermsToStudy = [...termsToStudy];
 
-        console.log('number: ' + resultsThisRound.length);
-
+        // Filter out the terms that were answered correctly and move them to the learned terms
         for (let i = 0; i < results.length; i++) {
             if (results[i]) {
                 newLearnedTerms.push(termsToStudy[i]);
                 newTermsToStudy.splice(i, 1);
             }
         }
+
+        // Update the state with the new learned terms and terms to study
         setLearnedTerms(newLearnedTerms);
         setTermsToStudy(newTermsToStudy);
 
-        console.log('learned terms: ' + newLearnedTerms);
-        console.log('terms to study: ' + newTermsToStudy);
-
-        // Now show the summary screen
+        // Display the summary screen
         setShowSummary(true);
     }
 
+    /**
+     * Continue studying after the summary screen
+     */
     const continueStudying = () => {
         setCurrentCardIndex(0);
         setFlipped(false);
@@ -115,6 +123,9 @@ export default function Flashcards({deckId}) {
         setShowSummary(false);
     }
 
+    /**
+     * Restart the flashcards and the progress from the user
+     */
     const restartFlashcards = () => {
         // Reset the deck
         setLearnedTerms([]);
@@ -149,18 +160,11 @@ export default function Flashcards({deckId}) {
     }
 
 
-
     /**
      * Summary screen
      */
 
-    // console.log('results this round: ' + resultsThisRound);
-    // console.log('number correct: ' + resultsThisRound.filter(response => response).length);
-
-    if (showSummary) {
-
-        // console.log('learned terms: ' + learnedTerms);
-
+    if (showSummary)
         return (
             <Container className={classes.container}>
                 <Flex direction="column" align={"center"} spacing={"md"}>
@@ -170,7 +174,6 @@ export default function Flashcards({deckId}) {
                     <Text>{resultsThisRound.filter(response => response).length} / {resultsThisRound.length} =
                         {(100.0 * resultsThisRound.filter(response => response).length / resultsThisRound.length).toFixed(2)}%</Text>
                     <br/><br/>
-
 
 
                     <h6>Results overall</h6>
@@ -185,7 +188,6 @@ export default function Flashcards({deckId}) {
                 </Flex>
             </Container>
         );
-    }
 
     /**
      * Flashcard screen (default)
@@ -198,7 +200,7 @@ export default function Flashcards({deckId}) {
                 </Text>
                 {currentCardIndex > 0 && (
                     <Text>
-                        Correct: { resultsThisRound.filter(response => response).length }/
+                        Correct: {resultsThisRound.filter(response => response).length}/
                         {resultsThisRound.length} = {(100.0 * (resultsThisRound.filter(response => response).length)
                         / resultsThisRound.length).toFixed(2)}%
 
