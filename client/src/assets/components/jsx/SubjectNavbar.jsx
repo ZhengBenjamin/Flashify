@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Center, Paper, Stack, Title, TextInput, Button, Modal } from '@mantine/core';
+import { Center, Paper, Stack, Title, TextInput, Button, Modal, Card } from '@mantine/core';
 import { ColorInput } from '@mantine/core';
 import SubjectButton from './SubjectButtons';
 import classes from '../css/SubjectNavbar.module.css';
@@ -9,20 +9,17 @@ export default function SubjectNavbar(props) {
   const { subjects, onSubjectSelect, onAddSubject } = props;
   const [modalOpened, setModalOpened] = useState(false);
   const [newSubjectName, setNewSubjectName] = useState('');
-  const [newSubjectDescription, setNewSubjectDescription] = useState('');
   const [newSubjectColor, setNewSubjectColor] = useState('#ffffff');
 
   const handleAddSubject = () => {
     const newSubject = {
       name: newSubjectName,
-      description: newSubjectDescription,
-      link: `/${newSubjectName.toLowerCase()}`, // can be removed if not needed
+      link: `/${newSubjectName.toLowerCase()}`,
       color: newSubjectColor,
     };
 
     onAddSubject(newSubject);
     setNewSubjectName('');
-    setNewSubjectDescription('');
     setNewSubjectColor('#ffffff');
     setModalOpened(false);
   };
@@ -30,16 +27,12 @@ export default function SubjectNavbar(props) {
   return (
     <>
       <Paper className={classes.navbar}>
-        <Center>
-          <Title order={2}> Your Subjects: </Title>
-        </Center>
-
+        <Title order={4}>Available Subjects: </Title>
         <Stack justify="center" className={classes.stack}>
           {subjects.map((subject, index) => (
             <SubjectButton 
               key={index} 
               subject={subject.name} 
-              description={subject.description} 
               color={subject.color}
               onClick={() => onSubjectSelect(subject)}  // Pass selected subject to parent
             />
@@ -56,14 +49,6 @@ export default function SubjectNavbar(props) {
           placeholder="Enter subject name"
           value={newSubjectName}
           onChange={(e) => setNewSubjectName(e.currentTarget.value)}
-          required
-          mb="md"
-        />
-        <TextInput
-          label="Subtitle"
-          placeholder="Enter subject subtitle/description"
-          value={newSubjectDescription}
-          onChange={(e) => setNewSubjectDescription(e.currentTarget.value)}
           required
           mb="md"
         />
