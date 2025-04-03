@@ -194,7 +194,7 @@ export default function Flashcards({deckId}) {
         <Container className={classes.container}>
             <Group position="right" justify="space-between">
                 <Text>
-                    Flashcard: {currentCardIndex + 1}/{flashcardsData.length}
+                    Flashcard: {currentCardIndex + 1}/{termsToStudy.length}
                 </Text>
                 {currentCardIndex > 0 && (
                     <Text>
