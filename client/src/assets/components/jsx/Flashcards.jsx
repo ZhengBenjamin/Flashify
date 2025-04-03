@@ -45,23 +45,28 @@ export default function Flashcards({deckId}) {
 
     // Function to handle correct/incorrect answer
     const handleAnswer = (isCorrect) => {
+
+
         // Update the progress in the current round
-        if (isCorrect) {
-            setResultsThisRound([...resultsThisRound, true]);
-        } else {
-            setResultsThisRound([...resultsThisRound, false]);
-        }
+        setResultsThisRound(prevResults => {
+            const updatedResults = [...prevResults, isCorrect];
+
+            if (currentCardIndex + 1 === termsToStudy.length)
+                updateLearnedTerms(updatedResults);
+
+            return updatedResults;
+        });
 
         // move to the next card
         setCurrentCardIndex(currentCardIndex + 1);
         setFlipped(false);
 
         // Check if we have reached the end of the flashcards
-        if (currentCardIndex === termsToStudy.length - 1) {
-            // Show summary screen
-            updateLearnedTerms();
-            setShowSummary(true);
-        }
+        console.log('index: ' + (1 + currentCardIndex) + ', length: ' + termsToStudy.length);
+        console.log('results: ' + (resultsThisRound.length) + ', length: ' + termsToStudy.length);
+        console.log('results: ' + resultsThisRound);
+        // if (currentCardIndex + 1 === termsToStudy.length)
+        //    updateLearnedTerms(isCorrect);
     };
 
     const undoAnswer = () => {
@@ -79,37 +84,28 @@ export default function Flashcards({deckId}) {
     const [showSummary, setShowSummary] = useState(false);
 
     // Results from this round
-    const [totalCardsLearnedThisRound, setTotalCardsLearnedThisRound] = useState(0);
-    // const [totalCardsThisRound, setTotalCardsThisRound] = useState(0);
 
-    const totalCardsThisRound = resultsThisRound.length;
+    const updateLearnedTerms = (results) => {
+        // Update the learned terms based on the results of this round
+        const newLearnedTerms = [...learnedTerms];
+        const newTermsToStudy = [...termsToStudy];
 
-    //
-    // const [totalCardsCorrect, setTotalCardsCorrect] = useState(0);
-    // const [totalCardsStudyied, setTotalCardsStudied] = useState(0);
+        console.log('number: ' + resultsThisRound.length);
 
-    const updateLearnedTerms = () => {
-        // Add all terms corresponding with a true in resultsThisRound to learnedTerms
-        const newLearnedTerms = resultsThisRound.map((response, index) => {
-            if (response) {
-                return termsToStudy[index];
+        for (let i = 0; i < results.length; i++) {
+            if (results[i]) {
+                newLearnedTerms.push(termsToStudy[i]);
+                newTermsToStudy.splice(i, 1);
             }
-            return null;
-        });
-        // Filter out null values
-        const filteredLearnedTerms = newLearnedTerms.filter(term => term !== null);
-        // Add the new learned terms to the existing learned terms
-        console.log('newly learned terms: ' + filteredLearnedTerms);
-        console.log('old learned terms: ' + learnedTerms);
-        setLearnedTerms([...learnedTerms, ...filteredLearnedTerms]);
-        console.log('both terms: ' + learnedTerms);
-        // Remove all terms that were answered correctly from termsToStudy
-        // const newTermsToStudy = termsToStudy.filter((_, index) => !resultsThisRound[index]);
-        setTermsToStudy(learnedTerms);
+        }
+        setLearnedTerms(newLearnedTerms);
+        setTermsToStudy(newTermsToStudy);
 
-        // Set the statistics for the summary page
-        // setTotalCardsLearnedThisRound(learnedTerms.length);
-        // setTotalCardsThisRound(resultsThisRound.length);
+        console.log('learned terms: ' + newLearnedTerms);
+        console.log('terms to study: ' + newTermsToStudy);
+
+        // Now show the summary screen
+        setShowSummary(true);
     }
 
     const continueStudying = () => {
@@ -163,7 +159,7 @@ export default function Flashcards({deckId}) {
 
     if (showSummary) {
 
-        console.log('learned terms: ' + learnedTerms);
+        // console.log('learned terms: ' + learnedTerms);
 
         return (
             <Container className={classes.container}>
@@ -194,16 +190,6 @@ export default function Flashcards({deckId}) {
     /**
      * Flashcard screen (default)
      */
-
-    /*
-    for stats:
-
-    Correct: {correctResponses.filter(response => response === 1).length}/
-                        {correctResponses.length} = {(100.0 * (correctResponses.filter(response => response === 1).length)
-                        / correctResponses.length).toFixed(2)}%
-     */
-
-
     return (
         <Container className={classes.container}>
             <Group position="right" justify="space-between">
