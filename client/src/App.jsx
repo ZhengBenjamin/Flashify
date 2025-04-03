@@ -17,7 +17,7 @@ export const UserContext = createContext();
 export default function App() {
     const storedUsername = localStorage.getItem('username') || '';
     const [username, setUsername] = useState(storedUsername);
-    
+
     return (
         <UserContext.Provider value={{ username, setUsername }}>
             <MantineProvider>

@@ -8,14 +8,14 @@ import classes from '../css/Flashcards.module.css';
 export default function Flashcards({deckId}) {
     /*** Flashcard Logic Fields ***/
 
-    // State variables
+        // State variables
     const {username} = useContext(UserContext);
     const [flashcardsData, setFlashcardsData] = useState([]);
 
     // Status variables
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [showSummary, setShowSummary] = useState(false);
+
 
     // Flashcard logic variables
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
@@ -49,6 +49,9 @@ export default function Flashcards({deckId}) {
     }, [username, deckId, flashcardsData.length]);
 
     /*** Studying Flashcard Logic ***/
+
+        // showSummary must be placed here to avoid an error
+    const [showSummary, setShowSummary] = useState(false);
 
     /**
      * Flips the card to show the other side
