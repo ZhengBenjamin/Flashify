@@ -35,10 +35,20 @@ export default function SubjectDashboard({ subject }) {
   };
 
   // Handle deletion of a deck
-  const handleDelete = (deckId) => {
+  const handleDelete = async (deckId) => {
     if (window.confirm("Are you sure you want to delete this deck?")) {
-      // API HERE FRANK
-      setFlashcardDecks((prevDecks) => prevDecks.filter((deck) => deck.deck_id !== deckId));
+      try {
+        const res = await fetch(`http://localhost:4000/api/deck/${deckId}`, {
+          method: "DELETE",
+        });
+  
+        if (!res.ok) throw new Error("Failed to delete deck");
+  
+        refreshDecks(); // Refresh from DB after deletion
+      } catch (err) {
+        console.error("Error deleting deck:", err);
+        alert("Failed to delete deck.");
+      }
     }
   };
 

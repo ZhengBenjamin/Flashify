@@ -2,9 +2,10 @@ const express = require("express");
 const router = express.Router();
 const { v4: uuidv4 } = require("uuid");
 const Subject = require("../models/SubjectModel");
+const Flashdeck = require("../models/FlashdeckModel");
+const Flashcard = require("../models/FlashcardModel");
 
-// @route   POST /api/subject/create
-// @desc    Create a new subject
+// Adding Subjects
 router.post("/create", async (req, res) => {
   console.log("📥 Received body from frontend:", req.body); // Debug log
 
@@ -28,20 +29,46 @@ router.post("/create", async (req, res) => {
     const savedSubject = await newSubject.save();
     res.status(201).json(savedSubject);
   } catch (err) {
-    console.error("❌ Error creating subject:", err);
+    console.error("Error creating subject:", err);
     res.status(500).json({ error: "Failed to create subject." });
   }
 });
 
-// @route   GET /api/subject/:username
-// @desc    Get all subjects for a user
+// Getting subjects
 router.get("/:username", async (req, res) => {
   try {
     const subjects = await Subject.find({ username: req.params.username });
     res.json(subjects);
   } catch (err) {
-    console.error("❌ Error fetching subjects:", err);
+    console.error("Error fetching subjects:", err);
     res.status(500).json({ error: "Failed to fetch subjects." });
+  }
+});
+
+// DELETE a subject and all related decks + flashcards
+router.delete("/:id", async (req, res) => {
+  const subjectId = req.params.id;
+
+  try {
+    // Step 1: Find all decks linked to this subject
+    const decks = await Flashdeck.find({ subject_id: subjectId });
+
+    // Step 2: Delete all flashcards for each deck
+    const flashcardDeletions = decks.map(deck =>
+      Flashcard.deleteMany({ deck_id: deck.deck_id })
+    );
+    await Promise.all(flashcardDeletions);
+
+    // Step 3: Delete all decks for the subject
+    await Flashdeck.deleteMany({ subject_id: subjectId });
+
+    // Step 4: Delete the subject itself
+    await Subject.deleteOne({ subject_id: subjectId });
+
+    res.json({ message: "Subject and all related decks/flashcards deleted successfully." });
+  } catch (err) {
+    console.error("Error deleting subject:", err);
+    res.status(500).json({ error: "Failed to delete subject and related data." });
   }
 });
 

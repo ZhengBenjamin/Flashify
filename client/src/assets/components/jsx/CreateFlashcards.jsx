@@ -54,6 +54,31 @@ export default function CreateFlashcards({ opened, onClose, subject, onSubmit, e
     setIsFlipped(false);
   };
 
+  const handleDeleteCard = async () => {
+    const cardToDelete = flashcardsData[currentCardIndex];
+  
+    if (!cardToDelete._id) return;
+  
+    const confirm = window.confirm("Are you sure you want to delete this card?");
+    if (!confirm) return;
+  
+    try {
+      await fetch(`http://localhost:4000/api/card/${cardToDelete._id}`, {
+        method: "DELETE",
+      });
+  
+      const updated = [...flashcardsData];
+      updated.splice(currentCardIndex, 1);
+  
+      setFlashcardsData(updated.length > 0 ? updated : [{ front: "", back: "" }]);
+      setCurrentCardIndex(Math.max(0, currentCardIndex - 1));
+      setIsFlipped(false);
+    } catch (error) {
+      console.error("Error deleting flashcard:", error);
+      alert("Failed to delete flashcard.");
+    }
+  };
+
   const handleChangeFront = (e) => {
     const updated = [...flashcardsData];
     updated[currentCardIndex].front = e.target.value;
@@ -216,8 +241,18 @@ export default function CreateFlashcards({ opened, onClose, subject, onSubmit, e
           <Button className={classes.button} onClick={handleAddFlashcard}>
             Add Flashcard
           </Button>
-        </Group>
 
+          {flashcardsData[currentCardIndex]?._id && (
+          <Button
+            className={classes.button}
+            color="red"
+            variant="filled"
+            onClick={handleDeleteCard}
+          >
+            Delete Flashcard
+          </Button>
+        )}
+        </Group>
         <Group position="center" className={classes.saveGroup}>
           <Button className={classes.button} onClick={handleSubmit}>
             Save Deck
