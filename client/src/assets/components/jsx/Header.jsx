@@ -14,6 +14,7 @@ export default function Header() {
   const baseLinks = [
     { label: 'Home', link: '/' },
     { label: 'Study', link: '/studyinterface' },
+    { label: 'Admin', link: '/admin' },
   ];
 
   // Auth links 
