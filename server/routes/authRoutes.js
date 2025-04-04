@@ -54,7 +54,7 @@ router.post("/login", async (req, res) => {
     }
 });
 
-// ✅ Get all users for an admin to see. NOT for the public. Not complete
+// Get all users for an admin to see. NOT for the public. Not complete
 router.get("/", async (req, res) => {
   const { username } = req.query; // Get the username from the query string
   try {

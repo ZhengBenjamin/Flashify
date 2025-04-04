@@ -4,14 +4,15 @@ const FlashdeckModel = require("../models/FlashdeckModel");
 
 const router = express.Router();
 
-// ✅ Create a flashdeck
+// Create a flashdeck
 router.post("/", async (req, res) => {
-  const { username, title } = req.body; // Remove description here
+  const { username, title, subject_id } = req.body;
   try {
     // Step 1: Create the flashdeck
     const newDeck = new FlashdeckModel({
       deck_id: new mongoose.Types.ObjectId().toString(),
       username,
+      subject_id, 
       title,
       card_count: 0, // Initial card count is zero
       cards: [] // We'll add the flashcards later
@@ -30,17 +31,20 @@ router.post("/", async (req, res) => {
 
 // Get all flashdecks for a user
 router.get("/", async (req, res) => {
-  const { username } = req.query; // Get the username from the query string
+  const { username, subject_id } = req.query;
   try {
-    const flashdecks = await FlashdeckModel.find({ username }).populate("cards"); // Fetch the flashdecks and populate the cards field
-    res.json(flashdecks); // Send the flashdecks as a response
+    const filter = { username };
+    if (subject_id) filter.subject_id = subject_id;
+
+    const flashdecks = await FlashdeckModel.find(filter).populate("cards");
+    res.json(flashdecks);
   } catch (error) {
     console.error("Error retrieving flashdecks:", error);
     res.status(500).json({ error: "Error retrieving flashdecks" });
   }
 });
 
-// ✅ Update a flashdeck
+// Update a flashdeck
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
   const { title } = req.body;
@@ -67,17 +71,24 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// ✅ Delete a flashdeck
+// Delete a flashdeck
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    const deletedDeck = await FlashdeckModel.findByIdAndDelete(id);
-    if (!deletedDeck) {
+    const deck = await FlashdeckModel.findById(id);
+
+    if (!deck) {
       return res.status(404).json({ message: "Flashdeck not found" });
     }
 
-    res.json({ message: "Flashdeck deleted successfully" });
+    // Delete all associated flashcards
+    await FlashcardModel.deleteMany({ _id: { $in: deck.cards } });
+
+    // Delete the deck itself
+    await FlashdeckModel.findByIdAndDelete(id);
+
+    res.json({ message: "Deck and its flashcards deleted successfully" });
   } catch (error) {
     console.error("Error deleting flashdeck:", error);
     res.status(500).json({ error: "Error deleting flashdeck" });

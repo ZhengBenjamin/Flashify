@@ -5,26 +5,29 @@ import Flashcards from './Flashcards';
 import CreateFlashcards from './CreateFlashcards';
 import { UserContext } from '../../../App';
 
-export default function SubjectDashboard({ subjectId }) {
+export default function SubjectDashboard({ subject }) {
   const { username } = useContext(UserContext);
   const navigate = useNavigate();
   const [flashcardDecks, setFlashcardDecks] = useState([]);
   const [showCreateDeck, setShowCreateDeck] = useState(false);
   const [selectedDeckId, setSelectedDeckId] = useState(null);
   const [hoveredDeckId, setHoveredDeckId] = useState(null);
+  const [editDeck, setEditDeck] = useState(null); // holds deck object when editing
 
   // Fetch decks for the logged-in user
   useEffect(() => {
     if (username) {
-      fetch(`http://localhost:4000/api/deck?username=${username}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setFlashcardDecks(data); 
-        })
-        .catch((error) => console.error("Error fetching decks:", error));
+      refreshDecks();
     }
-  }, [username]);
-
+  }, [username, subject.id]);
+  
+  const refreshDecks = () => {
+    fetch(`http://localhost:4000/api/deck?username=${username}&subject_id=${subject.id}`)
+      .then((res) => res.json())
+      .then((data) => setFlashcardDecks(data))
+      .catch((error) => console.error("Error refreshing decks:", error));
+  };
+  
   // Navigate to the flashcards view for the selected deck
   const handleDeckClick = (deckId) => {
     console.log(deckId);
@@ -40,18 +43,18 @@ export default function SubjectDashboard({ subjectId }) {
   };
 
   const handleEdit = (deckId) => {
-    // IDK DECK LOGIC
-    // API HEER FARNK
-    console.log("Edit deck:", deckId);
+    const deckToEdit = flashcardDecks.find((deck) => deck.deck_id === deckId);
+    setEditDeck(deckToEdit);        // Set deck to be edited
+    setShowCreateDeck(true);        // Open modal in edit mode
   };
-
+  
   if (selectedDeckId) {
     return <Flashcards deckId={selectedDeckId} />;
   }
 
   return (
     <Stack spacing="md">
-      <Title order={4}>{subjectId} Dashboard</Title>
+      <Title order={4}>{subject.name} Dashboard</Title>
 
       <Button onClick={() => setShowCreateDeck(true)}>Create Flashcard Deck</Button>
 
@@ -131,10 +134,17 @@ export default function SubjectDashboard({ subjectId }) {
 
       <CreateFlashcards
         opened={showCreateDeck}
-        onClose={() => setShowCreateDeck(false)}
+        onClose={() => {
+          setShowCreateDeck(false)
+          setEditDeck(null);
+        }}
+        subject={subject}
+        editDeck={editDeck}
         onSubmit={(deck) => {
           console.log('New deck created:', deck);
+          refreshDecks();
           setShowCreateDeck(false);
+          setEditDeck(null);
         }}
       />
     </Stack>
