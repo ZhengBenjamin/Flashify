@@ -5,7 +5,7 @@ import Flashcards from './Flashcards';
 import CreateFlashcards from './CreateFlashcards';
 import { UserContext } from '../../../App';
 
-export default function SubjectDashboard({ subjectId }) {
+export default function SubjectDashboard({ subject }) {
   const { username } = useContext(UserContext);
   const navigate = useNavigate();
   const [flashcardDecks, setFlashcardDecks] = useState([]);
@@ -15,15 +15,17 @@ export default function SubjectDashboard({ subjectId }) {
   // Fetch decks for the logged-in user
   useEffect(() => {
     if (username) {
-      fetch(`http://localhost:4000/api/deck?username=${username}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setFlashcardDecks(data); 
-        })
-        .catch((error) => console.error("Error fetching decks:", error));
+      refreshDecks();
     }
-  }, [username]);
-
+  }, [username, subject.id]);
+  
+  const refreshDecks = () => {
+    fetch(`http://localhost:4000/api/deck?username=${username}&subject_id=${subject.id}`)
+      .then((res) => res.json())
+      .then((data) => setFlashcardDecks(data))
+      .catch((error) => console.error("Error refreshing decks:", error));
+  };
+  
   // Navigate to the flashcards view for the selected deck
   const handleDeckClick = (deckId) => {
     console.log(deckId);
@@ -36,7 +38,7 @@ export default function SubjectDashboard({ subjectId }) {
 
   return (
     <Stack spacing="md">
-      <Title order={4}>{subjectId} Dashboard</Title>
+      <Title order={4}>{subject.name} Dashboard</Title>
 
       <Button onClick={() => setShowCreateDeck(true)}>Create Flashcard Deck</Button>
 
@@ -87,8 +89,10 @@ export default function SubjectDashboard({ subjectId }) {
       <CreateFlashcards
         opened={showCreateDeck}
         onClose={() => setShowCreateDeck(false)}
+        subject={subject}
         onSubmit={(deck) => {
           console.log('New deck created:', deck);
+          refreshDecks();
           setShowCreateDeck(false);
         }}
       />

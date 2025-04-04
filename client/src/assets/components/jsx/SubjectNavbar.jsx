@@ -13,16 +13,16 @@ export default function SubjectNavbar(props) {
 
   const handleAddSubject = () => {
     const newSubject = {
-      name: newSubjectName,
-      link: `/${newSubjectName.toLowerCase()}`,
-      color: newSubjectColor,
+      subjectName: newSubjectName,    
+      color: newSubjectColor,         
     };
-
-    onAddSubject(newSubject);
+  
+    onAddSubject(newSubject);         
     setNewSubjectName('');
     setNewSubjectColor('#ffffff');
     setModalOpened(false);
   };
+  
 
   return (
     <>

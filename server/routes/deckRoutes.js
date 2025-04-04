@@ -6,12 +6,13 @@ const router = express.Router();
 
 // ✅ Create a flashdeck
 router.post("/", async (req, res) => {
-  const { username, title } = req.body; // Remove description here
+  const { username, title, subject_id } = req.body;
   try {
     // Step 1: Create the flashdeck
     const newDeck = new FlashdeckModel({
       deck_id: new mongoose.Types.ObjectId().toString(),
       username,
+      subject_id, 
       title,
       card_count: 0, // Initial card count is zero
       cards: [] // We'll add the flashcards later
@@ -30,14 +31,18 @@ router.post("/", async (req, res) => {
 
 // Get all flashdecks for a user
 router.get("/", async (req, res) => {
-  const { username } = req.query; // Get the username from the query string
+  const { username, subject_id } = req.query;
   try {
-    const flashdecks = await FlashdeckModel.find({ username }).populate("cards"); // Fetch the flashdecks and populate the cards field
-    res.json(flashdecks); // Send the flashdecks as a response
+    const filter = { username };
+    if (subject_id) filter.subject_id = subject_id;
+
+    const flashdecks = await FlashdeckModel.find(filter).populate("cards");
+    res.json(flashdecks);
   } catch (error) {
     console.error("Error retrieving flashdecks:", error);
     res.status(500).json({ error: "Error retrieving flashdecks" });
   }
 });
+
 
 module.exports = router;

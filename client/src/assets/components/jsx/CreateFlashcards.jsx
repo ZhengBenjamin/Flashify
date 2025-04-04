@@ -3,7 +3,7 @@ import { Modal, Container, Group, Card, Text, Button, TextInput } from '@mantine
 import classes from '../css/CreateFlashcards.module.css';
 import { UserContext } from '../../../App'; // Import UserContext
 
-export default function CreateFlashcards({ opened, onClose }) {
+export default function CreateFlashcards({ opened, onClose, subject }) {
   const { username } = useContext(UserContext); // Get the username from global state
   const [deckTitle, setDeckTitle] = useState('');
   const [flashcardsData, setFlashcardsData] = useState([{ front: '', back: '' }]); // Start with one empty card
@@ -74,6 +74,7 @@ export default function CreateFlashcards({ opened, onClose }) {
         body: JSON.stringify({
           username: username, // Use the global username
           title: deckTitle,
+          subject_id: subject.id,
         }),
       });
 
