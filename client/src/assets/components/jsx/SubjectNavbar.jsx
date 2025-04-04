@@ -16,7 +16,7 @@ export default function SubjectNavbar(props) {
   const handleSaveSubject = () => {
     const subjectData = {
       subjectName: newSubjectName,
-      color: parseInt(newSubjectColor.replace("#", ""), 16), // Convert hex to a number
+      color: newSubjectColor,
     };
 
     onAddSubject(subjectData);
