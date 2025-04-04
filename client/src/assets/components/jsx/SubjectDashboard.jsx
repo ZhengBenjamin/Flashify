@@ -2,16 +2,15 @@ import {useState, useContext, useEffect} from 'react';
 import {Card, Title, Text, Stack, Grid, Button} from '@mantine/core';
 import Flashcards from './Flashcards';
 import CreateFlashcards from './CreateFlashcards';
-import EditFlashcards from './EditFlashcards';
-import DeleteFlashcards from './DeleteFlashcards';
 import {UserContext} from '../../../App';
 
 export default function SubjectDashboard({subjectId}) {
+    // State variables
     const {username} = useContext(UserContext);
+
+    // Deck state variables
     const [flashcardDecks, setFlashcardDecks] = useState([]);
     const [showCreateDeck, setShowCreateDeck] = useState(false);
-    const [showEditDeck, setShowEditDeck] = useState(false);
-    const [showDeleteShowDeck, setShowDeleteDeck] = useState(false);
     const [selectedDeckId, setSelectedDeckId] = useState(null);
 
     // Fetch decks for the logged-in user
@@ -39,8 +38,6 @@ export default function SubjectDashboard({subjectId}) {
             <Title order={4}>{subjectId} Dashboard</Title>
 
             <Button onClick={() => setShowCreateDeck(true)}>Create Flashcard Deck</Button>
-            <Button onClick={() => setShowEditDeck(true)}>Edit Flashcard Deck</Button>
-            <Button onClick={() => setShowDeleteDeck(true)}>Delete Flashcard Deck</Button>
 
             <Grid>
                 {flashcardDecks && flashcardDecks.length > 0 ? (
@@ -61,9 +58,7 @@ export default function SubjectDashboard({subjectId}) {
                                 onClick={() => handleDeckClick(deck.deck_id)}
 
                             >
-                                <Title order={4} align="center">
-                                    {deck.title}
-                                </Title>
+                                <Title order={4} align="center">{deck.title}</Title>
                             </Card>
                         </Grid.Col>
                     ))
@@ -89,28 +84,7 @@ export default function SubjectDashboard({subjectId}) {
             <CreateFlashcards
                 opened={showCreateDeck}
                 onClose={() => setShowCreateDeck(false)}
-                onSubmit={(deck) => {
-                    console.log('New deck created:', deck);
-                    setShowCreateDeck(false);
-                }}
-            />
-
-            <EditFlashcards
-                opened={showEditDeck}
-                onClose={() => setShowEditDeck(false)}
-                onSubmit={(deck) => {
-                    console.log('Deck edited:', deck);
-                    setShowEditDeck(false);
-                }}
-            />
-
-            <DeleteFlashcards
-                opened={showDeleteShowDeck}
-                onClose={() => setShowDeleteDeck(false)}
-                onSubmit={(deck) => {
-                    console.log('Deck deleted:', deck);
-                    setShowDeleteDeck(false);
-                }}
+                onSubmit={() => setShowCreateDeck(false)}
             />
         </Stack>
     );
