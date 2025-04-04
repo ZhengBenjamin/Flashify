@@ -1,19 +1,17 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const FlashdeckModel = require("../models/FlashdeckModel");
-const FlashcardModel = require("../models/FlashcardModel");
 
 const router = express.Router();
 
-// Create a flashdeck
+// ✅ Create a flashdeck
 router.post("/", async (req, res) => {
-  const { username, title, subject_id } = req.body;
+  const { username, title } = req.body; // Remove description here
   try {
     // Step 1: Create the flashdeck
     const newDeck = new FlashdeckModel({
       deck_id: new mongoose.Types.ObjectId().toString(),
       username,
-      subject_id, 
       title,
       card_count: 0, // Initial card count is zero
       cards: [] // We'll add the flashcards later
@@ -32,70 +30,14 @@ router.post("/", async (req, res) => {
 
 // Get all flashdecks for a user
 router.get("/", async (req, res) => {
-  const { username, subject_id } = req.query;
+  const { username } = req.query; // Get the username from the query string
   try {
-    const filter = { username };
-    if (subject_id) filter.subject_id = subject_id;
-
-    const flashdecks = await FlashdeckModel.find(filter).populate("cards");
-    res.json(flashdecks);
+    const flashdecks = await FlashdeckModel.find({ username }).populate("cards"); // Fetch the flashdecks and populate the cards field
+    res.json(flashdecks); // Send the flashdecks as a response
   } catch (error) {
     console.error("Error retrieving flashdecks:", error);
     res.status(500).json({ error: "Error retrieving flashdecks" });
   }
 });
-
-// Update a flashdeck
-router.put("/:id", async (req, res) => {
-  const { id } = req.params;
-  const { title } = req.body;
-
-  if (!title) {
-    return res.status(400).json({ message: "Title is required to update the flashdeck" });
-  }
-
-  try {
-    const updatedDeck = await FlashdeckModel.findByIdAndUpdate(
-      id,
-      { $set: { title } },
-      { new: true }
-    );
-
-    if (!updatedDeck) {
-      return res.status(404).json({ message: "Flashdeck not found" });
-    }
-
-    res.json({ message: "Flashdeck updated successfully", deck: updatedDeck });
-  } catch (error) {
-    console.error("Error updating flashdeck:", error);
-    res.status(500).json({ error: "Error updating flashdeck" });
-  }
-});
-
-// Delete a flashdeck
-router.delete("/:deck_id", async (req, res) => {
-  const { deck_id } = req.params;
-
-  try {
-    const deck = await FlashdeckModel.findOne({ deck_id });
-
-    if (!deck) {
-      return res.status(404).json({ message: "Deck not found" });
-    }
-
-    // Delete all associated flashcards
-    await FlashcardModel.deleteMany({ _id: { $in: deck.cards } });
-
-    // Delete the flashdeck itself
-    await FlashdeckModel.deleteOne({ deck_id });
-
-    res.json({ message: "Deck and its flashcards deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting flashdeck:", error);
-    res.status(500).json({ error: "Error deleting flashdeck" });
-  }
-});
-
-
 
 module.exports = router;
