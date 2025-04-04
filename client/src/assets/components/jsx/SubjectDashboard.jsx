@@ -11,6 +11,7 @@ export default function SubjectDashboard({ subject }) {
   const [flashcardDecks, setFlashcardDecks] = useState([]);
   const [showCreateDeck, setShowCreateDeck] = useState(false);
   const [selectedDeckId, setSelectedDeckId] = useState(null);
+  const [hoveredDeckId, setHoveredDeckId] = useState(null);
 
   // Fetch decks for the logged-in user
   useEffect(() => {
@@ -30,6 +31,20 @@ export default function SubjectDashboard({ subject }) {
   const handleDeckClick = (deckId) => {
     console.log(deckId);
     setSelectedDeckId(deckId);
+  };
+
+  // Handle deletion of a deck
+  const handleDelete = (deckId) => {
+    if (window.confirm("Are you sure you want to delete this deck?")) {
+      // API HERE FRANK
+      setFlashcardDecks((prevDecks) => prevDecks.filter((deck) => deck.deck_id !== deckId));
+    }
+  };
+
+  const handleEdit = (deckId) => {
+    // IDK DECK LOGIC
+    // API HEER FARNK
+    console.log("Edit deck:", deckId);
   };
 
   if (selectedDeckId) {
@@ -57,10 +72,40 @@ export default function SubjectDashboard({ subject }) {
                   alignItems: 'center',
                   justifyContent: 'center',
                   cursor: 'pointer',
+                  position: 'relative',
                 }}
+                onMouseEnter={() => setHoveredDeckId(deck.deck_id)}
+                onMouseLeave={() => setHoveredDeckId(null)}
                 onClick={() => handleDeckClick(deck.deck_id)}
-
               >
+                {/* Conditionally render the delete button when the deck is hovered */}
+                {hoveredDeckId === deck.deck_id && (
+                  <>
+                  <Button
+                    variant="light"
+                    size="xs"
+                    style={{ position: 'absolute', top: 10, right: 80 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEdit(deck.deck_id);
+                    }}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="light"
+                    color="red"
+                    size="xs"
+                    style={{ position: 'absolute', top: 10, right: 10 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(deck.deck_id);
+                    }}
+                  >
+                    Delete
+                  </Button>
+                  </>
+                )}
                 <Title order={4} align="center">
                   {deck.title}
                 </Title>

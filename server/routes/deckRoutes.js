@@ -44,5 +44,48 @@ router.get("/", async (req, res) => {
   }
 });
 
+// ✅ Update a flashdeck
+router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { title } = req.body;
+
+  if (!title) {
+    return res.status(400).json({ message: "Title is required to update the flashdeck" });
+  }
+
+  try {
+    const updatedDeck = await FlashdeckModel.findByIdAndUpdate(
+      id,
+      { $set: { title } },
+      { new: true }
+    );
+
+    if (!updatedDeck) {
+      return res.status(404).json({ message: "Flashdeck not found" });
+    }
+
+    res.json({ message: "Flashdeck updated successfully", deck: updatedDeck });
+  } catch (error) {
+    console.error("Error updating flashdeck:", error);
+    res.status(500).json({ error: "Error updating flashdeck" });
+  }
+});
+
+// ✅ Delete a flashdeck
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deletedDeck = await FlashdeckModel.findByIdAndDelete(id);
+    if (!deletedDeck) {
+      return res.status(404).json({ message: "Flashdeck not found" });
+    }
+
+    res.json({ message: "Flashdeck deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting flashdeck:", error);
+    res.status(500).json({ error: "Error deleting flashdeck" });
+  }
+});
 
 module.exports = router;
