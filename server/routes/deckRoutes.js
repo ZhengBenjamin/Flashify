@@ -4,7 +4,7 @@ const FlashdeckModel = require("../models/FlashdeckModel");
 
 const router = express.Router();
 
-// ✅ Create a flashdeck
+// Create a flashdeck
 router.post("/", async (req, res) => {
   const { username, title, subject_id } = req.body;
   try {
@@ -44,7 +44,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ✅ Update a flashdeck
+// Update a flashdeck
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
   const { title } = req.body;
@@ -71,17 +71,24 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// ✅ Delete a flashdeck
+// Delete a flashdeck
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-    const deletedDeck = await FlashdeckModel.findByIdAndDelete(id);
-    if (!deletedDeck) {
+    const deck = await FlashdeckModel.findById(id);
+
+    if (!deck) {
       return res.status(404).json({ message: "Flashdeck not found" });
     }
 
-    res.json({ message: "Flashdeck deleted successfully" });
+    // Delete all associated flashcards
+    await FlashcardModel.deleteMany({ _id: { $in: deck.cards } });
+
+    // Delete the deck itself
+    await FlashdeckModel.findByIdAndDelete(id);
+
+    res.json({ message: "Deck and its flashcards deleted successfully" });
   } catch (error) {
     console.error("Error deleting flashdeck:", error);
     res.status(500).json({ error: "Error deleting flashdeck" });

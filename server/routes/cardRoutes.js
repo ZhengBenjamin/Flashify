@@ -5,7 +5,7 @@ const FlashcardModel = require("../models/FlashcardModel");
 
 const router = express.Router();
 
-// ✅ Create a flashcard and associate it with a deck
+// Create a flashcard and associate it with a deck
 router.post("/", async (req, res) => {
   const { username, deck_id, front, back } = req.body;
 
@@ -39,7 +39,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// ✅ Get all flashcards for a deck
+// Get all flashcards for a deck
 router.get("/", async (req, res) => {
   const { username, deck_id } = req.query; // Get the username and deck_id from the query string
   try {
@@ -51,7 +51,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ✅ Update a flashcard
+// Update a flashcard
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
   const { front, back } = req.body;
@@ -78,7 +78,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// ✅ Delete a flashcard
+// Delete a flashcard
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
 

@@ -12,6 +12,7 @@ export default function SubjectDashboard({ subject }) {
   const [showCreateDeck, setShowCreateDeck] = useState(false);
   const [selectedDeckId, setSelectedDeckId] = useState(null);
   const [hoveredDeckId, setHoveredDeckId] = useState(null);
+  const [editDeck, setEditDeck] = useState(null); // holds deck object when editing
 
   // Fetch decks for the logged-in user
   useEffect(() => {
@@ -42,11 +43,11 @@ export default function SubjectDashboard({ subject }) {
   };
 
   const handleEdit = (deckId) => {
-    // IDK DECK LOGIC
-    // API HEER FARNK
-    console.log("Edit deck:", deckId);
+    const deckToEdit = flashcardDecks.find((deck) => deck.deck_id === deckId);
+    setEditDeck(deckToEdit);        // Set deck to be edited
+    setShowCreateDeck(true);        // Open modal in edit mode
   };
-
+  
   if (selectedDeckId) {
     return <Flashcards deckId={selectedDeckId} />;
   }
@@ -133,12 +134,17 @@ export default function SubjectDashboard({ subject }) {
 
       <CreateFlashcards
         opened={showCreateDeck}
-        onClose={() => setShowCreateDeck(false)}
+        onClose={() => {
+          setShowCreateDeck(false)
+          setEditDeck(null);
+        }}
         subject={subject}
+        editDeck={editDeck}
         onSubmit={(deck) => {
           console.log('New deck created:', deck);
           refreshDecks();
           setShowCreateDeck(false);
+          setEditDeck(null);
         }}
       />
     </Stack>
