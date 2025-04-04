@@ -1,35 +1,26 @@
 import { useState, useContext, useEffect } from 'react';
 import { Card, Title, Text, Stack, Grid, Button } from '@mantine/core';
-import { useNavigate } from 'react-router-dom';
 import Flashcards from './Flashcards';
 import CreateFlashcards from './CreateFlashcards';
 import { UserContext } from '../../../App';
 
 export default function SubjectDashboard({ subjectId }) {
   const { username } = useContext(UserContext);
-  const navigate = useNavigate();
   const [flashcardDecks, setFlashcardDecks] = useState([]);
   const [showCreateDeck, setShowCreateDeck] = useState(false);
   const [selectedDeckId, setSelectedDeckId] = useState(null);
 
   // Fetch decks for the logged-in user
   useEffect(() => {
-
-    if (subjectId) {
-      fetch('http://localhost:4000/api/decks/by-subject', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ subjectId }),
-      })
+    if (username) {
+      fetch(`http://localhost:4000/api/deck?username=${username}`)
         .then((res) => res.json())
         .then((data) => {
-          setFlashcardDecks(data);
+          setFlashcardDecks(data); 
         })
-        .catch((error) => console.error("Error fetching decks by subject:", error));
+        .catch((error) => console.error("Error fetching decks:", error));
     }
-  }, [subjectId]);
+  }, [username]);
 
   // Navigate to the flashcards view for the selected deck
   const handleDeckClick = (deckId) => {
@@ -38,6 +29,7 @@ export default function SubjectDashboard({ subjectId }) {
   };
 
   if (selectedDeckId) {
+    // return <Flashcards deckId={selectedDeckId} correct={[]} toStudy={[]} />;
     return <Flashcards deckId={selectedDeckId} />;
   }
 
