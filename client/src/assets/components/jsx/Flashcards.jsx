@@ -29,22 +29,24 @@ export default function Flashcards({deckId}) {
     /**
      * Fetch flashcards from the backend when username and deckId are available
      */
-  useEffect(() => {
-    if (username && deckId) {
-      const url = `http://localhost:4000/api/card?username=${username}&deck_id=${deckId}`;
-      console.log("Fetching flashcards from URL:", url);
-      setLoading(true);
-      axios.get(url)
-        .then(response => {
-          console.log("API response:", response.data);
-          // Directly use the returned array of flashcards
-          setFlashcardsData(response.data);
-          setLoading(false);
-        })
-        .catch(err => {
-          setError(err.response?.data?.error || "Error fetching flashcards");
-          setLoading(false);
-        });
+    useEffect(() => {
+        // Fetch flashcards only if username and deckId are available
+        if (username && deckId && flashcardsData.length === 0) {
+            const url = `http://localhost:4000/api/card?username=${username}&deck_id=${deckId}`;
+            setLoading(true);
+            axios.get(url)
+                .then(response => {
+                    // Set the flashcards data and terms to study with the data from the backend
+                    setFlashcardsData(response.data);
+                    setTermsToStudy(response.data);
+                    setLoading(false);
+                })
+                .catch(err => {
+                    setError(err.response?.data?.error || "Error fetching flashcards");
+                    setLoading(false);
+                });
+        }
+    }, [username, deckId, flashcardsData.length]);
 
     /*** Studying Flashcard Logic ***/
 
@@ -113,11 +115,6 @@ export default function Flashcards({deckId}) {
         // Display the summary screen
         setShowSummary(true);
     }
-  }, [username, deckId]);
-
-  const handleFlip = () => {
-    setIsFlipped(!isFlipped);
-  };
 
     /**
      * Continue studying after the summary screen
@@ -139,9 +136,8 @@ export default function Flashcards({deckId}) {
 
         // Continue studying
         continueStudying();
-
     }
-  };
+
 
     /*** Render Flashcards ***/
 
@@ -242,5 +238,6 @@ export default function Flashcards({deckId}) {
         </Container>
     );
 }
+
 
 
