@@ -173,14 +173,16 @@ export default function Flashcards({deckId}) {
                     <Title order={1}>Summary:</Title>
                     <br/>
                     <h6>Results this round</h6>
-                    <Text>{resultsThisRound.filter(response => response).length} / {resultsThisRound.length} =
-                        {(100.0 * resultsThisRound.filter(response => response).length / resultsThisRound.length).toFixed(2)}%</Text>
+                    <Text>
+                        {resultsThisRound.filter(response => response).length} / {resultsThisRound.length} = {(100.0 * resultsThisRound.filter(response => response).length / resultsThisRound.length).toFixed(2)} %
+                    </Text>
                     <br/><br/>
 
 
                     <h6>Results overall</h6>
-                    <Text>{learnedTerms.length} / {flashcardsData.length} =
-                        {(learnedTerms.length / flashcardsData.length * 100.0).toFixed(2)}%</Text>
+                    <Text>
+                        {learnedTerms.length} / {flashcardsData.length} = {(learnedTerms.length / flashcardsData.length * 100.0).toFixed(2)} %
+                    </Text>
                     <br/><br/>
 
                     {learnedTerms.length < flashcardsData.length &&
