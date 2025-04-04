@@ -1,136 +1,200 @@
-import { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
-import { Card, Container, Group, Text, Button, Flex } from '@mantine/core';
-import { useNavigate } from "react-router-dom";
-import { UserContext } from '../../../App'; // adjust the import path as needed
-import classes from '../css/Flashcards.module.css';
+import { useState, useContext } from 'react';
+import { Modal, Container, Group, Card, Text, Button, TextInput } from '@mantine/core';
+import classes from '../css/CreateFlashcards.module.css';
+import { UserContext } from '../../../App'; // Import UserContext
 
-export default function Flashcards({ deckId }) {
-  const navigate = useNavigate();
-  const { username } = useContext(UserContext);
-  console.log("Using deck ID:", deckId);
-
-  // State for flashcards, error and loading status
-  const [flashcardsData, setFlashcardsData] = useState([]);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-
+export default function CreateFlashcards({ opened, onClose }) {
+  const { username } = useContext(UserContext); // Get the username from global state
+  const [deckTitle, setDeckTitle] = useState('');
+  const [flashcardsData, setFlashcardsData] = useState([{ front: '', back: '' }]); // Start with one empty card
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
-  const [correctResponses, setCorrectResponses] = useState([]);
-
-  // Fetch flashcards from the backend when username and deckId are available
-  useEffect(() => {
-    if (username && deckId) {
-      const url = `http://localhost:4000/api/card?username=${username}&deck_id=${deckId}`;
-      console.log("Fetching flashcards from URL:", url);
-      setLoading(true);
-      axios.get(url)
-        .then(response => {
-          console.log("API response:", response.data);
-          // Directly use the returned array of flashcards
-          setFlashcardsData(response.data);
-          setLoading(false);
-        })
-        .catch(err => {
-          setError(err.response?.data?.error || "Error fetching flashcards");
-          setLoading(false);
-        });
-    }
-  }, [username, deckId]);
-
-  const handleFlip = () => {
-    setIsFlipped(!isFlipped);
-  };
-
-  const undo = () => {
-    setIsFlipped(false);
-    setCurrentCardIndex((prevIndex) => (prevIndex - 1 + flashcardsData.length) % flashcardsData.length);
-    setCorrectResponses(correctResponses.slice(0, -1));
-  };
-
-  const handleNext = (correct) => {
-    setIsFlipped(false);
-    setCorrectResponses([...correctResponses, correct]);
-
-    if (currentCardIndex === flashcardsData.length - 1) {
-      navigate('/summary', {
-        state: {
-          correctResponses: [...correctResponses, correct],
-          flashcardsData: flashcardsData,
-        }
-      });
-    } else {
-      setCurrentCardIndex((prevIndex) => prevIndex + 1);
-    }
-  };
-
-  // Render loading, error or no data messages as needed
-  if (loading) {
-    return (
-      <Container className={classes.container}>
-        <Text>Loading flashcards...</Text>
-      </Container>
-    );
-  }
-
-  if (error) {
-    return (
-      <Container className={classes.container}>
-        <Text>{error}</Text>
-      </Container>
-    );
-  }
-
-  if (flashcardsData.length === 0) {
-    return (
-      <Container className={classes.container}>
-        <Text>No flashcards available</Text>
-      </Container>
-    );
-  }
 
   const currentCard = flashcardsData[currentCardIndex];
 
+  const handleFlip = () => {
+    setIsFlipped((prev) => !prev);
+  };
+
+  const handlePrev = () => {
+    if (currentCardIndex > 0) {
+      setCurrentCardIndex(currentCardIndex - 1);
+      setIsFlipped(false);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentCardIndex < flashcardsData.length - 1) {
+      setCurrentCardIndex(currentCardIndex + 1);
+      setIsFlipped(false);
+    }
+  };
+
+  const handleAddFlashcard = () => {
+    setFlashcardsData([...flashcardsData, { front: '', back: '' }]); // Add an empty flashcard to the list
+    setCurrentCardIndex(flashcardsData.length); // Move to the new card
+    setIsFlipped(false); // Start with the front of the card
+  };
+
+  const handleChangeFront = (e) => {
+    const updated = [...flashcardsData];
+    updated[currentCardIndex].front = e.target.value;
+    setFlashcardsData(updated); // Update the front of the current card
+  };
+
+  const handleChangeBack = (e) => {
+    const updated = [...flashcardsData];
+    updated[currentCardIndex].back = e.target.value;
+    setFlashcardsData(updated); // Update the back of the current card
+  };
+
+  // Collect the flashcards data (ensure that we're capturing valid front and back)
+  const collectFlashcards = () => {
+    return flashcardsData.filter(card => card.front.trim() && card.back.trim()); // Filter out empty cards
+  };
+
+  const handleSubmit = async () => {
+    if (!deckTitle.trim()) {
+      alert("Deck title is required!");
+      return;
+    }
+
+    const collectedFlashcards = collectFlashcards(); // Collect all flashcards
+
+    if (collectedFlashcards.length === 0) {
+      alert("At least one flashcard is required!");
+      return;
+    }
+
+    try {
+      // Step 1: Create the Flashdeck
+      const deckResponse = await fetch("http://localhost:4000/api/deck", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: username, // Use the global username
+          title: deckTitle,
+        }),
+      });
+
+      if (!deckResponse.ok) {
+        throw new Error("Failed to create deck");
+      }
+
+      const deckData = await deckResponse.json();
+      const deckId = deckData.deck.deck_id; // Get the deck ID from the response
+
+      // Step 2: Create Flashcards for that deck
+      const cardPromises = collectedFlashcards.map((card) =>
+          fetch("http://localhost:4000/api/card", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              username: username, // Use the global username
+              deck_id: deckId,
+              front: card.front,
+              back: card.back,
+            }),
+          })
+      );
+
+      // Wait for all the flashcards to be created
+      await Promise.all(cardPromises);
+
+      alert("Deck and flashcards saved successfully!");
+
+      // Reset form
+      setDeckTitle("");
+      setFlashcardsData([{ front: "", back: "" }]);
+      setCurrentCardIndex(0);
+      setIsFlipped(false);
+
+      onClose(); // Close the modal after saving
+    } catch (error) {
+      console.error("Error saving deck and flashcards:", error);
+      alert("Error saving deck and flashcards. Please try again.");
+    }
+  };
+
   return (
-    <Container className={classes.container}>
-      <Group position="right" justify="space-between">
-        <Text>
-          Flashcard: {currentCardIndex + 1}/{flashcardsData.length}
-        </Text>
-        {currentCardIndex > 0 && (
-          <Text>
-            Correct: {correctResponses.filter(response => response === 1).length}/
-            {correctResponses.length} = {(100.0 * (correctResponses.filter(response => response === 1).length)
-              / correctResponses.length).toFixed(2)}%
-          </Text>
-        )}
-      </Group>
+      <Modal
+          opened={opened}
+          onClose={onClose}
+          title="Create Flashcard Deck"
+          size="xl"
+          overlayOpacity={0.55}
+          overlayBlur={3}
+          centered
+          className={classes.modal}
+      >
+        <Container className={classes.container}>
+          <TextInput
+              label="Deck Title"
+              placeholder="Enter deck title"
+              value={deckTitle}
+              onChange={(e) => setDeckTitle(e.target.value)}
+              className={classes.titleInput}
+          />
 
-      <Group position="center">
-        <Card className={classes.card} onClick={handleFlip}>
-          <Text className={classes.text}>
-            {isFlipped ? currentCard.back : currentCard.front}
-          </Text>
-        </Card>
-      </Group>
+          <Group position="apart" className={classes.infoGroup}>
+            <Text>
+              Flashcard: {currentCardIndex + 1}/{flashcardsData.length}
+            </Text>
+          </Group>
 
-      <Flex justify="space-between" mt="md">
-        <Flex justify="center" gap="md">
-          <Button className={classes.button} onClick={() => handleNext(0)}>
-            ❌ Don't Know
-          </Button>
-          <Button className={classes.button} onClick={() => handleNext(1)}>
-            ✅ I Know it
-          </Button>
-        </Flex>
+          <Group position="center" className={classes.cardGroup}>
+            <Card className={classes.card} onClick={handleFlip}>
+              <Text className={classes.text}>
+                {isFlipped
+                    ? currentCard.back || 'Back side is empty'
+                    : currentCard.front || 'Front side is empty'}
+              </Text>
+            </Card>
+          </Group>
 
-        {currentCardIndex > 0 && (
-          <Button className={classes.button} onClick={undo}>
-            ↩️ Undo
-          </Button>
-        )}
-      </Flex>
-    </Container>
+          <Group position="center" className={classes.buttonGroup}>
+            <Button className={classes.button} onClick={handleFlip}>
+              Flip
+            </Button>
+          </Group>
+
+          <Group direction="column" className={classes.inputGroup}>
+            <TextInput
+                label="Front"
+                placeholder="Enter front text"
+                value={currentCard.front}
+                onChange={handleChangeFront}
+            />
+            <TextInput
+                label="Back"
+                placeholder="Enter back text"
+                value={currentCard.back}
+                onChange={handleChangeBack}
+            />
+          </Group>
+
+          <Group position="apart" className={classes.navGroup}>
+            <Button className={classes.button} onClick={handlePrev} disabled={currentCardIndex === 0}>
+              Previous
+            </Button>
+            <Button
+                className={classes.button}
+                onClick={handleNext}
+                disabled={currentCardIndex === flashcardsData.length - 1}
+            >
+              Next
+            </Button>
+            <Button className={classes.button} onClick={handleAddFlashcard}>
+              Add Flashcard
+            </Button>
+          </Group>
+
+          <Group position="center" className={classes.saveGroup}>
+            <Button className={classes.button} onClick={handleSubmit}>
+              Save Deck
+            </Button>
+          </Group>
+        </Container>
+      </Modal>
   );
 }
