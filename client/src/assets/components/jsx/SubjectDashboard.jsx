@@ -14,6 +14,7 @@ export default function SubjectDashboard({ subjectId }) {
 
   // Fetch decks for the logged-in user
   useEffect(() => {
+
     if (subjectId) {
       fetch('http://localhost:4000/api/decks/by-subject', {
         method: 'POST',
@@ -29,7 +30,6 @@ export default function SubjectDashboard({ subjectId }) {
         .catch((error) => console.error("Error fetching decks by subject:", error));
     }
   }, [subjectId]);
-  
 
   // Navigate to the flashcards view for the selected deck
   const handleDeckClick = (deckId) => {

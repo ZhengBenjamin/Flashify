@@ -38,6 +38,7 @@ export default function Study() {
   const navigate = useNavigate();
   // Initialize subjects as an empty array since we're fetching them from the API
   const [subjects, setSubjects] = useState([]);
+
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [showRedirectModal, setRedirectModal] = useState(false);
 
@@ -82,6 +83,7 @@ export default function Study() {
     }
   };
 
+
   return (
     <Container my="xl">
       <Title order={1}>Welcome to your dashboard, {username}!</Title>
@@ -104,6 +106,7 @@ export default function Study() {
           ) : ( // Default view when no subject is selected
             <> 
               <Title order={2}>Select a subject from the left to view your decks!</Title>
+
               <QuizHistory quizzes={quizHistory} />
             </>
           )}
@@ -118,6 +121,7 @@ export default function Study() {
       >
         <Title order={5}>You must be signed in to visit this page. Redirecting to the Login Page...</Title>
       </Modal>
+
     </Container>
   );
 }

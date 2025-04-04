@@ -54,4 +54,5 @@
     "vite": "^6.1.1"
   },
   "proxy": "http://localhost:4000"
+  }
 }

@@ -29,6 +29,7 @@ app.use("/api/deck", deckRoutes);
 const subjectRoutes = require('./routes/subjectRoutes');
 app.use('/api/subjects', subjectRoutes);
 
+
 app.get("/", (req, res) => {
   res.send("Flashify API is running...");
 });
