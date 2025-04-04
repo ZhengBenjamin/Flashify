@@ -7,16 +7,10 @@ import Events from '../components/jsx/Events';
 import SubjectDashboard from '../components/jsx/SubjectDashboard';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from "uuid";
 // import AuthContext from '.../context/AuthContext';
 
 export default function Study() {
-
-  const defaultSubjects = [
-    { id: 'Math', name: 'Mathematics', color: '#CD5C5C' },
-    { id: 'Science', name: 'Science', color: '#F08080' },
-    { id: 'History', name: 'History', color: '#FA8072' },
-    { id: 'English', name: 'English', color: '#E9967A' },
-  ];
 
   const quizHistory = [
     { subject: 'math', date: '69420-02-25', score: 85 },
@@ -43,7 +37,7 @@ export default function Study() {
 
   const { username } = useContext(UserContext);
   const navigate = useNavigate();
-  const [subjects, setSubjects] = useState(defaultSubjects); // Default subjects; modify when API implemented for setSubjects
+  const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [showRedirectModal, setRedirectModal] = useState(false);
 
@@ -57,13 +51,86 @@ export default function Study() {
     }
   }, [username, navigate]);
 
-  // TODO: implement API call to add new subject
-  const addSubject = async (newSubject) => {
-  };
+  // adding subject API
+  const addSubject = async ({ subjectName, color }) => {
+    try {
+      const colorNumber = parseInt(color.replace("#", ""), 16);
+      const newSubjectData = {
+        subject_id: uuidv4(),
+        username,
+        subjectName,
+        color: colorNumber,
+      };
 
-  // TODO: implement API call to fetch subjects
-  // const setSubjects = async (setSubjects) => {
-  // };
+      console.log("📤 Sending subject to backend:", newSubjectData); // Debug log
+
+      const res = await axios.post("http://localhost:4000/api/subject/create", newSubjectData);
+
+      const createdSubject = res.data;
+
+      setSubjects((prev) => [
+        ...prev,
+        {
+          id: createdSubject.subject_id,
+          name: createdSubject.subjectName,
+          color: `#${createdSubject.color.toString(16).padStart(6, '0')}`,
+        },
+      ]);
+    } catch (err) {
+      console.error("❌ Failed to create subject:", err.response?.data || err.message || err);
+      alert("Error creating subject. Please try again.");
+    }
+  };
+  
+  
+// fetching subject API
+  useEffect(() => {
+    const fetchSubjects = async () => {
+      if (!username) return;
+      try {
+        const res = await axios.get(`http://localhost:4000/api/subject/${username}`);
+        const subjectList = res.data.map((s) => ({
+          id: s.subject_id,
+          name: s.subjectName,
+          color: `#${s.color.toString(16).padStart(6, '0')}`,
+        }));
+        setSubjects(subjectList);
+      } catch (err) {
+        console.error("❌ Failed to fetch subjects:", err.response?.data || err.message || err);
+      }
+    };
+  
+    fetchSubjects();
+  }, [username]);
+
+// Handle deleting a subject
+const deleteSubject = async (id) => {
+  try {
+    await axios.delete(`http://localhost:4000/api/subject/${id}`);
+    // Remove subject from local state after deletion
+    setSubjects((prevSubjects) => prevSubjects.filter((subject) => subject.id !== id));
+  } catch (err) {
+    console.error("Error deleting subject:", err);
+    alert("Failed to delete subject.");
+  }
+};
+
+// Handle editing a subject
+const editSubject = async (id, updatedSubject) => {
+  try {
+    const res = await axios.put(`http://localhost:4000/api/subject/${id}`, updatedSubject);
+    const updated = res.data;
+
+    setSubjects((prevSubjects) =>
+      prevSubjects.map((subject) =>
+        subject.id === id ? { ...subject, name: updated.subjectName, color: updated.color } : subject
+      )
+    );
+  } catch (err) {
+    console.error("Error updating subject:", err);
+    alert("Failed to update subject.");
+  }
+};
 
   return (
     <Container my="xl">
@@ -72,9 +139,11 @@ export default function Study() {
       <Grid>
         <Grid.Col span={4}>
           <SubjectNavbar 
-            subjects={subjects} 
+            subjects={subjects}
             onSubjectSelect={(subject) => setSelectedSubject(subject)}
             onAddSubject={addSubject}
+            onSubjectDeleted={deleteSubject}
+            onEditSubject={editSubject}
           />
         </Grid.Col>
 
@@ -82,7 +151,7 @@ export default function Study() {
           {selectedSubject ? (  // Subject dashboard when user clicks a subject
             console.log("Selected subject:", selectedSubject.id),
             <SubjectDashboard 
-              subjectId={selectedSubject.id} 
+              subject={selectedSubject} 
             />
           ) : ( // Default view when no subject is selected
             <> 

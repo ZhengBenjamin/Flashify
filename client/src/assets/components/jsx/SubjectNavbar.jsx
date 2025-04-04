@@ -1,44 +1,88 @@
 import { useState } from 'react';
-import { Center, Paper, Stack, Title, TextInput, Button, Modal, Card } from '@mantine/core';
-import { ColorInput } from '@mantine/core';
+import { Paper, Stack, Title, TextInput, Button, Modal, ColorInput } from '@mantine/core';
 import SubjectButton from './SubjectButtons';
 import classes from '../css/SubjectNavbar.module.css';
-
+import axios from 'axios';
 
 export default function SubjectNavbar(props) {
-  const { subjects, onSubjectSelect, onAddSubject } = props;
+  const { subjects, onSubjectSelect, onAddSubject, onSubjectDeleted } = props;
+
   const [modalOpened, setModalOpened] = useState(false);
   const [newSubjectName, setNewSubjectName] = useState('');
   const [newSubjectColor, setNewSubjectColor] = useState('#ffffff');
+  const [hoveredSubjectId, setHoveredSubjectId] = useState(null);
 
-  const handleAddSubject = () => {
-    const newSubject = {
-      name: newSubjectName,
-      link: `/${newSubjectName.toLowerCase()}`,
+  // Handle subject creation
+  const handleSaveSubject = () => {
+    const subjectData = {
+      subjectName: newSubjectName,
       color: newSubjectColor,
     };
 
-    onAddSubject(newSubject);
+    onAddSubject(subjectData);
+
+    setModalOpened(false);
     setNewSubjectName('');
     setNewSubjectColor('#ffffff');
-    setModalOpened(false);
+  };
+
+  // Delete subject
+  const handleDeleteSubject = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this subject and all its decks/cards?")) return;
+
+    try {
+      await axios.delete(`http://localhost:4000/api/subject/${id}`);
+      onSubjectDeleted(id); // update parent state
+    } catch (err) {
+      console.error("Error deleting subject:", err);
+      alert("Failed to delete subject.");
+    }
   };
 
   return (
     <>
       <Paper className={classes.navbar}>
-        <Title order={4}>Available Subjects: </Title>
+        <Title order={4}>Available Subjects:</Title>
         <Stack justify="center" className={classes.stack}>
           {subjects.map((subject, index) => (
-            <SubjectButton 
-              key={index} 
-              subject={subject.name} 
-              color={subject.color}
-              onClick={() => onSubjectSelect(subject)}  // Pass selected subject to parent
-            />
+            <div
+              key={index}
+              onMouseEnter={() => setHoveredSubjectId(subject.id)}
+              onMouseLeave={() => setHoveredSubjectId(null)}
+              style={{ position: 'relative' }}
+            >
+              <SubjectButton
+                subject={subject.name}
+                color={subject.color}
+                onClick={() => onSubjectSelect(subject)}
+              />
+              {hoveredSubjectId === subject.id && (
+                <>
+                  <Button
+                    size="xs"
+                    color="red"
+                    style={{
+                      position: 'absolute',
+                      top: '50%', 
+                      right: '10px',
+                      transform: 'translateY(-50%)', // Vertically center the button
+                      padding: '5px 10px',
+                      backgroundColor: '#e74c3c',  // Red for Delete
+                      color: 'white',
+                      display: 'inline-block',
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteSubject(subject.id);
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </>
+              )}
+            </div>
           ))}
 
-          {/* Create New Subject Button */}
           <Button onClick={() => setModalOpened(true)}>Create New Subject</Button>
         </Stack>
       </Paper>
@@ -60,8 +104,8 @@ export default function SubjectNavbar(props) {
           required
           mb="md"
         />
-        <Button onClick={handleAddSubject}>Add Subject</Button>
+        <Button onClick={handleSaveSubject}>Add Subject</Button>
       </Modal>
     </>
-  )
+  );
 }
