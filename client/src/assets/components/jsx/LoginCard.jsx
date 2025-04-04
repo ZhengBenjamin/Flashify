@@ -15,7 +15,7 @@ export default function LoginCard() {
   const [localUsername, setLocalUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { setUsername, setRole } = useContext(UserContext);
+  const { setUsername } = useContext(UserContext);
 
   const handleLogin = async () => {
     try {
@@ -24,21 +24,15 @@ export default function LoginCard() {
         password,
       });
 
-      const { token, user } = response.data;
-
-      localStorage.setItem('token', token);
-      localStorage.setItem('username', user.username);
-      localStorage.setItem('role', user.role);
-
-      setUsername(user.username);
-      setRole(user.role);
-
-      window.location.href = "/studyinterface";
+      localStorage.setItem('token', response.data.token); // Store JWT Token
+      localStorage.setItem('username', localUsername);
+      console.log('Login successful:', response.data);
+      setUsername(localUsername);
+      window.location.href = "/studyinterface"; 
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
     }
   };
-
 
   return (
     <div>
