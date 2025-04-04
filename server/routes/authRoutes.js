@@ -37,19 +37,52 @@ router.post("/register", async (req, res) => {
 
 // Login User
 router.post("/login", async (req, res) => {
-    const { username, password } = req.body;
+  const { username, password } = req.body;
+
+  try {
+    const user = await UserModel.findOne({ username });
+    if (!user) return res.status(400).json({ message: "Invalid credentials" });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+
+    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
+    
+    res.json({ 
+      token, 
+      user: { id: user._id, username: user.username, role: user.role } 
+    });
+  } catch (error) {
+    console.error("Login Error:", error.message);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+// Get all users for an admin to see. NOT for the public. Not complete
+router.get("/", async (req, res) => {
+    try {
+      const allUsers = await UserModel.find().select("_id username");
+      res.json(allUsers);
+    } catch (error) {
+      console.error("Error retrieving users:", error);
+      res.status(500).json({ error: "Error retrieving users" });
+    }
+});
+  
+  
+
+// Delete User
+router.delete("/:id", async (req, res) => {
+    const { id } = req.params; 
 
     try {
-        const user = await UserModel.findOne({ username });
-        if (!user) return res.status(400).json({ message: "Invalid credentials" });
+        const deletedUser = await UserModel.findByIdAndDelete(id);
+        if (!deletedUser) return res.status(404).json({ message: "User not found" });
 
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
-
-        const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
-        res.json({ token, user: { id: user._id, username: user.username } });
+        res.json({ message: "User deleted successfully" });
     } catch (error) {
-        console.error("Login Error:", error.message);
+        console.error("Error deleting user:", error.message);
         res.status(500).json({ message: "Server error" });
     }
 });

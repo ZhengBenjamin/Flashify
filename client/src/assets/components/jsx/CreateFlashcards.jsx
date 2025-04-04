@@ -1,20 +1,38 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { Modal, Container, Group, Card, Text, Button, TextInput } from '@mantine/core';
 import classes from '../css/CreateFlashcards.module.css';
-import { UserContext } from '../../../App'; // Import UserContext
+import { UserContext } from '../../../App';
 
-export default function CreateFlashcards({ opened, onClose }) {
-  const { username } = useContext(UserContext); // Get the username from global state
+export default function CreateFlashcards({ opened, onClose, subject, onSubmit, editDeck }) {
+  const { username } = useContext(UserContext);
   const [deckTitle, setDeckTitle] = useState('');
-  const [flashcardsData, setFlashcardsData] = useState([{ front: '', back: '' }]); // Start with one empty card
+  const [flashcardsData, setFlashcardsData] = useState([{ front: '', back: '' }]);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
 
   const currentCard = flashcardsData[currentCardIndex];
 
-  const handleFlip = () => {
-    setIsFlipped((prev) => !prev);
-  };
+  useEffect(() => {
+    if (editDeck) {
+      setDeckTitle(editDeck.title);
+      setFlashcardsData(
+        editDeck.cards.map(card => ({
+          _id: card._id,
+          front: card.front,
+          back: card.back,
+        }))
+      );
+      setCurrentCardIndex(0);
+      setIsFlipped(false);
+    } else {
+      setDeckTitle('');
+      setFlashcardsData([{ front: '', back: '' }]);
+      setCurrentCardIndex(0);
+      setIsFlipped(false);
+    }
+  }, [editDeck]);
+
+  const handleFlip = () => setIsFlipped((prev) => !prev);
 
   const handlePrev = () => {
     if (currentCardIndex > 0) {
@@ -31,26 +49,50 @@ export default function CreateFlashcards({ opened, onClose }) {
   };
 
   const handleAddFlashcard = () => {
-    setFlashcardsData([...flashcardsData, { front: '', back: '' }]); // Add an empty flashcard to the list
-    setCurrentCardIndex(flashcardsData.length); // Move to the new card
-    setIsFlipped(false); // Start with the front of the card
+    setFlashcardsData([...flashcardsData, { front: '', back: '' }]);
+    setCurrentCardIndex(flashcardsData.length);
+    setIsFlipped(false);
+  };
+
+  const handleDeleteCard = async () => {
+    const cardToDelete = flashcardsData[currentCardIndex];
+  
+    if (!cardToDelete._id) return;
+  
+    const confirm = window.confirm("Are you sure you want to delete this card?");
+    if (!confirm) return;
+  
+    try {
+      await fetch(`http://localhost:4000/api/card/${cardToDelete._id}`, {
+        method: "DELETE",
+      });
+  
+      const updated = [...flashcardsData];
+      updated.splice(currentCardIndex, 1);
+  
+      setFlashcardsData(updated.length > 0 ? updated : [{ front: "", back: "" }]);
+      setCurrentCardIndex(Math.max(0, currentCardIndex - 1));
+      setIsFlipped(false);
+    } catch (error) {
+      console.error("Error deleting flashcard:", error);
+      alert("Failed to delete flashcard.");
+    }
   };
 
   const handleChangeFront = (e) => {
     const updated = [...flashcardsData];
     updated[currentCardIndex].front = e.target.value;
-    setFlashcardsData(updated); // Update the front of the current card
+    setFlashcardsData(updated);
   };
 
   const handleChangeBack = (e) => {
     const updated = [...flashcardsData];
     updated[currentCardIndex].back = e.target.value;
-    setFlashcardsData(updated); // Update the back of the current card
+    setFlashcardsData(updated);
   };
 
-  // Collect the flashcards data (ensure that we're capturing valid front and back)
   const collectFlashcards = () => {
-    return flashcardsData.filter(card => card.front.trim() && card.back.trim()); // Filter out empty cards
+    return flashcardsData.filter(card => card.front.trim() && card.back.trim());
   };
 
   const handleSubmit = async () => {
@@ -59,57 +101,73 @@ export default function CreateFlashcards({ opened, onClose }) {
       return;
     }
 
-    const collectedFlashcards = collectFlashcards(); // Collect all flashcards
-
+    const collectedFlashcards = collectFlashcards();
     if (collectedFlashcards.length === 0) {
       alert("At least one flashcard is required!");
       return;
     }
 
     try {
-      // Step 1: Create the Flashdeck
-      const deckResponse = await fetch("http://localhost:4000/api/deck", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: username, // Use the global username
-          title: deckTitle,
-        }),
-      });
+      let deckId;
 
-      if (!deckResponse.ok) {
-        throw new Error("Failed to create deck");
-      }
+      if (editDeck) {
+        const updateDeckRes = await fetch(`http://localhost:4000/api/deck/${editDeck._id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title: deckTitle }),
+        });
 
-      const deckData = await deckResponse.json();
-      const deckId = deckData.deck.deck_id; // Get the deck ID from the response
-
-      // Step 2: Create Flashcards for that deck
-      const cardPromises = collectedFlashcards.map((card) =>
-        fetch("http://localhost:4000/api/card", {
+        if (!updateDeckRes.ok) throw new Error("Failed to update deck");
+        deckId = editDeck.deck_id;
+      } else {
+        const deckRes = await fetch("http://localhost:4000/api/deck", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            username: username, // Use the global username
-            deck_id: deckId,
-            front: card.front,
-            back: card.back,
+            username,
+            title: deckTitle,
+            subject_id: subject.id,
           }),
-        })
-      );
+        });
 
-      // Wait for all the flashcards to be created
+        if (!deckRes.ok) throw new Error("Failed to create deck");
+        const data = await deckRes.json();
+        deckId = data.deck.deck_id;
+      }
+
+      const cardPromises = collectedFlashcards.map((card) => {
+        if (card._id) {
+          return fetch(`http://localhost:4000/api/card/${card._id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              front: card.front,
+              back: card.back,
+            }),
+          });
+        } else {
+          return fetch("http://localhost:4000/api/card", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              username,
+              deck_id: deckId,
+              front: card.front,
+              back: card.back,
+            }),
+          });
+        }
+      });
+
       await Promise.all(cardPromises);
 
-      alert("Deck and flashcards saved successfully!");
+      alert(editDeck ? "Deck updated!" : "Deck and flashcards saved!");
 
-      // Reset form
-      setDeckTitle("");
-      setFlashcardsData([{ front: "", back: "" }]);
+      setDeckTitle('');
+      setFlashcardsData([{ front: '', back: '' }]);
       setCurrentCardIndex(0);
       setIsFlipped(false);
-
-      onClose(); // Close the modal after saving
+      onSubmit();
     } catch (error) {
       console.error("Error saving deck and flashcards:", error);
       alert("Error saving deck and flashcards. Please try again.");
@@ -120,7 +178,7 @@ export default function CreateFlashcards({ opened, onClose }) {
     <Modal
       opened={opened}
       onClose={onClose}
-      title="Create Flashcard Deck"
+      title={editDeck ? "Edit Flashcard Deck" : "Create Flashcard Deck"}
       size="xl"
       overlayOpacity={0.55}
       overlayBlur={3}
@@ -137,9 +195,7 @@ export default function CreateFlashcards({ opened, onClose }) {
         />
 
         <Group position="apart" className={classes.infoGroup}>
-          <Text>
-            Flashcard: {currentCardIndex + 1}/{flashcardsData.length}
-          </Text>
+          <Text>Flashcard: {currentCardIndex + 1}/{flashcardsData.length}</Text>
         </Group>
 
         <Group position="center" className={classes.cardGroup}>
@@ -153,9 +209,7 @@ export default function CreateFlashcards({ opened, onClose }) {
         </Group>
 
         <Group position="center" className={classes.buttonGroup}>
-          <Button className={classes.button} onClick={handleFlip}>
-            Flip
-          </Button>
+          <Button className={classes.button} onClick={handleFlip}>Flip</Button>
         </Group>
 
         <Group direction="column" className={classes.inputGroup}>
@@ -187,8 +241,18 @@ export default function CreateFlashcards({ opened, onClose }) {
           <Button className={classes.button} onClick={handleAddFlashcard}>
             Add Flashcard
           </Button>
-        </Group>
 
+          {flashcardsData[currentCardIndex]?._id && (
+          <Button
+            className={classes.button}
+            color="red"
+            variant="filled"
+            onClick={handleDeleteCard}
+          >
+            Delete Flashcard
+          </Button>
+        )}
+        </Group>
         <Group position="center" className={classes.saveGroup}>
           <Button className={classes.button} onClick={handleSubmit}>
             Save Deck
