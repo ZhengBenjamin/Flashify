@@ -28,7 +28,6 @@ export default function App() {
                         <Route path="/" element={<Front/>}/>
                         <Route path="/auth" element={<Authentication/>}/>
                         <Route path="/flashcards" element={<Flashcards/>}/>
-
                         <Route path="/studyinterface" element={<Study/>}/>
                     </Routes>
 
