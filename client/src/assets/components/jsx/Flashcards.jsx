@@ -1,200 +1,240 @@
-import { useState, useContext } from 'react';
-import { Modal, Container, Group, Card, Text, Button, TextInput } from '@mantine/core';
-import classes from '../css/CreateFlashcards.module.css';
-import { UserContext } from '../../../App'; // Import UserContext
+import {useState, useEffect, useContext} from 'react';
+import axios from 'axios';
+import {Card, Container, Group, Text, Button, Flex, Title} from '@mantine/core';
+import {UserContext} from '../../../App'; // adjust the import path as needed
+import classes from '../css/Flashcards.module.css';
 
-export default function CreateFlashcards({ opened, onClose }) {
-  const { username } = useContext(UserContext); // Get the username from global state
-  const [deckTitle, setDeckTitle] = useState('');
-  const [flashcardsData, setFlashcardsData] = useState([{ front: '', back: '' }]); // Start with one empty card
+// eslint-disable-next-line react/prop-types
+export default function Flashcards({deckId}) {
+  /*** Flashcard Logic Fields ***/
+
+      // State variables
+  const {username} = useContext(UserContext);
+  const [flashcardsData, setFlashcardsData] = useState([]);
+
+  // Status variables
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  // Flashcard logic variables
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
-  const [isFlipped, setIsFlipped] = useState(false);
+  const [flipped, setFlipped] = useState(false);
 
-  const currentCard = flashcardsData[currentCardIndex];
+  // Variables for tracking user progress
+  const [learnedTerms, setLearnedTerms] = useState([]);
+  const [termsToStudy, setTermsToStudy] = useState(flashcardsData);
+  const [resultsThisRound, setResultsThisRound] = useState([]);
 
-  const handleFlip = () => {
-    setIsFlipped((prev) => !prev);
-  };
-
-  const handlePrev = () => {
-    if (currentCardIndex > 0) {
-      setCurrentCardIndex(currentCardIndex - 1);
-      setIsFlipped(false);
-    }
-  };
-
-  const handleNext = () => {
-    if (currentCardIndex < flashcardsData.length - 1) {
-      setCurrentCardIndex(currentCardIndex + 1);
-      setIsFlipped(false);
-    }
-  };
-
-  const handleAddFlashcard = () => {
-    setFlashcardsData([...flashcardsData, { front: '', back: '' }]); // Add an empty flashcard to the list
-    setCurrentCardIndex(flashcardsData.length); // Move to the new card
-    setIsFlipped(false); // Start with the front of the card
-  };
-
-  const handleChangeFront = (e) => {
-    const updated = [...flashcardsData];
-    updated[currentCardIndex].front = e.target.value;
-    setFlashcardsData(updated); // Update the front of the current card
-  };
-
-  const handleChangeBack = (e) => {
-    const updated = [...flashcardsData];
-    updated[currentCardIndex].back = e.target.value;
-    setFlashcardsData(updated); // Update the back of the current card
-  };
-
-  // Collect the flashcards data (ensure that we're capturing valid front and back)
-  const collectFlashcards = () => {
-    return flashcardsData.filter(card => card.front.trim() && card.back.trim()); // Filter out empty cards
-  };
-
-  const handleSubmit = async () => {
-    if (!deckTitle.trim()) {
-      alert("Deck title is required!");
-      return;
-    }
-
-    const collectedFlashcards = collectFlashcards(); // Collect all flashcards
-
-    if (collectedFlashcards.length === 0) {
-      alert("At least one flashcard is required!");
-      return;
-    }
-
-    try {
-      // Step 1: Create the Flashdeck
-      const deckResponse = await fetch("http://localhost:4000/api/deck", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: username, // Use the global username
-          title: deckTitle,
-        }),
-      });
-
-      if (!deckResponse.ok) {
-        throw new Error("Failed to create deck");
-      }
-
-      const deckData = await deckResponse.json();
-      const deckId = deckData.deck.deck_id; // Get the deck ID from the response
-
-      // Step 2: Create Flashcards for that deck
-      const cardPromises = collectedFlashcards.map((card) =>
-          fetch("http://localhost:4000/api/card", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              username: username, // Use the global username
-              deck_id: deckId,
-              front: card.front,
-              back: card.back,
-            }),
+  /**
+   * Fetch flashcards from the backend when username and deckId are available
+   */
+  useEffect(() => {
+    // Fetch flashcards only if username and deckId are available
+    if (username && deckId && flashcardsData.length === 0) {
+      const url = `http://localhost:4000/api/card?username=${username}&deck_id=${deckId}`;
+      setLoading(true);
+      axios.get(url)
+          .then(response => {
+            // Set the flashcards data and terms to study with the data from the backend
+            setFlashcardsData(response.data);
+            setTermsToStudy(response.data);
+            setLoading(false);
           })
-      );
-
-      // Wait for all the flashcards to be created
-      await Promise.all(cardPromises);
-
-      alert("Deck and flashcards saved successfully!");
-
-      // Reset form
-      setDeckTitle("");
-      setFlashcardsData([{ front: "", back: "" }]);
-      setCurrentCardIndex(0);
-      setIsFlipped(false);
-
-      onClose(); // Close the modal after saving
-    } catch (error) {
-      console.error("Error saving deck and flashcards:", error);
-      alert("Error saving deck and flashcards. Please try again.");
+          .catch(err => {
+            setError(err.response?.data?.error || "Error fetching flashcards");
+            setLoading(false);
+          });
     }
+  }, [username, deckId, flashcardsData.length]);
+
+  /*** Studying Flashcard Logic ***/
+
+      // showSummary must be placed here to avoid an error
+  const [showSummary, setShowSummary] = useState(false);
+
+  /**
+   * Flips the card to show the other side
+   */
+  const flipCard = () => setFlipped(!flipped);
+
+  // Function to handle correct/incorrect answer
+  const handleAnswer = (isCorrect) => {
+    // Update the progress in the current round
+    setResultsThisRound(prevResults => {
+      const updatedResults = [...prevResults, isCorrect];
+
+      // If the last card was answered, update results & show the summary screen
+      if (currentCardIndex + 1 === termsToStudy.length)
+        updateLearnedTerms(updatedResults);
+
+      return updatedResults;
+    });
+
+    // move to the next card
+    setCurrentCardIndex(currentCardIndex + 1);
+    setFlipped(false);
   };
 
-  return (
-      <Modal
-          opened={opened}
-          onClose={onClose}
-          title="Create Flashcard Deck"
-          size="xl"
-          overlayOpacity={0.55}
-          overlayBlur={3}
-          centered
-          className={classes.modal}
-      >
+  /**
+   * If a user wants to undo their last answer, remove the last answer from the results
+   */
+  const undoAnswer = () => {
+    // Remove the last answer from the results
+    setResultsThisRound(resultsThisRound.slice(0, -1));
+
+    // move back to the previous card
+    setCurrentCardIndex(currentCardIndex - 1);
+    setFlipped(false);
+  }
+
+  /*** Summary Screen Logic ***/
+
+  /**
+   * Update the learned terms based on the results of this round
+   *
+   * @param results the results of this round
+   */
+  const updateLearnedTerms = (results) => {
+    // Update the learned terms based on the results of this round
+    const newLearnedTerms = [...learnedTerms];
+    const newTermsToStudy = [...termsToStudy];
+
+    // Filter out the terms that were answered correctly and move them to the learned terms
+    for (let i = 0; i < results.length; i++) {
+      if (results[i]) {
+        newLearnedTerms.push(termsToStudy[i]);
+        newTermsToStudy.splice(i, 1);
+      }
+    }
+
+    // Update the state with the new learned terms and terms to study
+    setLearnedTerms(newLearnedTerms);
+    setTermsToStudy(newTermsToStudy);
+
+    // Display the summary screen
+    setShowSummary(true);
+  }
+
+  /**
+   * Continue studying after the summary screen
+   */
+  const continueStudying = () => {
+    setCurrentCardIndex(0);
+    setFlipped(false);
+    setResultsThisRound([]);
+    setShowSummary(false);
+  }
+
+  /**
+   * Restart the flashcards and the progress from the user
+   */
+  const restartFlashcards = () => {
+    // Reset the deck
+    setLearnedTerms([]);
+    setTermsToStudy(flashcardsData);
+
+    // Continue studying
+    continueStudying();
+  }
+
+
+  /*** Render Flashcards ***/
+
+  /**
+   * Loading state
+   */
+  if (loading) {
+    return (<Container className={classes.container}><Text>Loading flashcards...</Text></Container>);
+  }
+
+  /**
+   * No flashcards state
+   */
+  if (flashcardsData.length === 0) {
+    return (<Container className={classes.container}><Text>No flashcards available</Text></Container>);
+  }
+
+  /**
+   * Error state
+   */
+  if (error) {
+    return (<Container className={classes.container}><Text>Error</Text></Container>);
+  }
+
+
+  /**
+   * Summary screen
+   */
+
+  if (showSummary) {
+    return (
         <Container className={classes.container}>
-          <TextInput
-              label="Deck Title"
-              placeholder="Enter deck title"
-              value={deckTitle}
-              onChange={(e) => setDeckTitle(e.target.value)}
-              className={classes.titleInput}
-          />
+          <Flex direction="column" align={"center"} spacing={"md"}>
+            <Title order={1}>Summary:</Title>
+            <br/>
+            <h6>Results this round</h6>
+            <Text>{resultsThisRound.filter(response => response).length} / {resultsThisRound.length} =
+              {(100.0 * resultsThisRound.filter(response => response).length / resultsThisRound.length).toFixed(2)}%</Text>
+            <br/><br/>
 
-          <Group position="apart" className={classes.infoGroup}>
-            <Text>
-              Flashcard: {currentCardIndex + 1}/{flashcardsData.length}
-            </Text>
-          </Group>
 
-          <Group position="center" className={classes.cardGroup}>
-            <Card className={classes.card} onClick={handleFlip}>
-              <Text className={classes.text}>
-                {isFlipped
-                    ? currentCard.back || 'Back side is empty'
-                    : currentCard.front || 'Front side is empty'}
-              </Text>
-            </Card>
-          </Group>
+            <h6>Results overall</h6>
+            <Text>{learnedTerms.length} / {flashcardsData.length} =
+              {(learnedTerms.length / flashcardsData.length * 100.0).toFixed(2)}%</Text>
+            <br/><br/>
 
-          <Group position="center" className={classes.buttonGroup}>
-            <Button className={classes.button} onClick={handleFlip}>
-              Flip
-            </Button>
-          </Group>
-
-          <Group direction="column" className={classes.inputGroup}>
-            <TextInput
-                label="Front"
-                placeholder="Enter front text"
-                value={currentCard.front}
-                onChange={handleChangeFront}
-            />
-            <TextInput
-                label="Back"
-                placeholder="Enter back text"
-                value={currentCard.back}
-                onChange={handleChangeBack}
-            />
-          </Group>
-
-          <Group position="apart" className={classes.navGroup}>
-            <Button className={classes.button} onClick={handlePrev} disabled={currentCardIndex === 0}>
-              Previous
-            </Button>
-            <Button
-                className={classes.button}
-                onClick={handleNext}
-                disabled={currentCardIndex === flashcardsData.length - 1}
-            >
-              Next
-            </Button>
-            <Button className={classes.button} onClick={handleAddFlashcard}>
-              Add Flashcard
-            </Button>
-          </Group>
-
-          <Group position="center" className={classes.saveGroup}>
-            <Button className={classes.button} onClick={handleSubmit}>
-              Save Deck
-            </Button>
-          </Group>
+            {learnedTerms.length < flashcardsData.length &&
+                (<Button className={classes.button} onClick={continueStudying}>continue →</Button>)}
+            <br/>
+            <Button className={classes.button} onClick={restartFlashcards}>restart progress 🔄</Button>
+          </Flex>
         </Container>
-      </Modal>
+    );
+  }
+
+  /**
+   * Flashcard screen (default)
+   */
+  return (
+      <Container className={classes.container}>
+        <Group position="right" justify="space-between">
+          <Text>
+            Flashcard: {currentCardIndex + 1}/{termsToStudy.length}
+          </Text>
+          {currentCardIndex > 0 && (
+              <Text>
+                Correct: {resultsThisRound.filter(response => response).length}/
+                {resultsThisRound.length} = {(100.0 * (resultsThisRound.filter(response => response).length)
+                  / resultsThisRound.length).toFixed(2)}%
+
+              </Text>
+          )}
+        </Group>
+
+        <Group position="center">
+          <Card className={classes.card} onClick={flipCard}>
+            <Text className={classes.text}>
+              {flipped ? termsToStudy[currentCardIndex].back : termsToStudy[currentCardIndex].front}
+            </Text>
+          </Card>
+        </Group>
+
+        <Flex justify="space-between" mt="md">
+          <Flex justify="center" gap="md">
+            <Button className={classes.button} onClick={() => handleAnswer(false)}>
+              ❌ Don&#39;t Know
+            </Button>
+            <Button className={classes.button} onClick={() => handleAnswer(true)}>
+              ✅ I Know it
+            </Button>
+          </Flex>
+
+          {currentCardIndex > 0 && (
+              <Button className={classes.button} onClick={undoAnswer}>
+                ↩️ Undo
+              </Button>
+          )}
+        </Flex>
+      </Container>
   );
 }
