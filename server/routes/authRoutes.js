@@ -54,4 +54,31 @@ router.post("/login", async (req, res) => {
     }
 });
 
+// ✅ Get all users for an admin to see. NOT for the public. Not complete
+router.get("/", async (req, res) => {
+  const { username } = req.query; // Get the username from the query string
+  try {
+    const allUsers = await UserModel.find({ username }) // Fetch all users
+    res.json(allUsers); // Send the users as a response
+  } catch (error) {
+    console.error("Error retrieving users:", error);
+    res.status(500).json({ error: "Error retrieving users" });
+  }
+});
+
+// Delete User
+router.delete("/:id", async (req, res) => {
+    const { id } = req.params; 
+
+    try {
+        const deletedUser = await UserModel.findByIdAndDelete(id);
+        if (!deletedUser) return res.status(404).json({ message: "User not found" });
+
+        res.json({ message: "User deleted successfully" });
+    } catch (error) {
+        console.error("Error deleting user:", error.message);
+        res.status(500).json({ message: "Server error" });
+    }
+});
+
 module.exports = router;
