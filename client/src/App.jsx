@@ -7,6 +7,7 @@ import '@mantine/core/styles.css';
 import {MantineProvider} from '@mantine/core';
 import Front from './assets/pages/Front';
 import Authentication from './assets/pages/Authentication';
+import Admin from './assets/pages/Admin'; 
 import Header from "./assets/components/jsx/Header.jsx";
 import Flashcards from "./assets/components/jsx/Flashcards.jsx";
 import Summary from "./assets/components/jsx/Summary.jsx";
@@ -31,6 +32,7 @@ export default function App() {
                         <Route path="/flashcards" element={<Flashcards/>}/>
                         <Route path="/summary" element={<Summary/>}/>
                         <Route path="/studyinterface" element={<Study/>}/>
+                        <Route path="/admin" element={<Admin/>}/>
                     </Routes>
 
                     <Footer/>
