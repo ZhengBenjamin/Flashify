@@ -1,6 +1,3 @@
-// Import styles of packages that you've installed.
-// All packages except `@mantine/hooks` require styles imports
-
 import React, {useState, createContext} from 'react';
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import '@mantine/core/styles.css';
@@ -18,26 +15,27 @@ export const UserContext = createContext();
 
 export default function App() {
     const storedUsername = localStorage.getItem('username') || '';
+    const storedRole = localStorage.getItem('role') || '';
+    
     const [username, setUsername] = useState(storedUsername);
-
+    const [role, setRole] = useState(storedRole);
+  
     return (
-        <UserContext.Provider value={{ username, setUsername }}>
-            <MantineProvider>
-                <Router>
-                    <Header/>
-
-                    <Routes>
-                        <Route path="/" element={<Front/>}/>
-                        <Route path="/auth" element={<Authentication/>}/>
-                        <Route path="/flashcards" element={<Flashcards/>}/>
-                        <Route path="/summary" element={<Summary/>}/>
-                        <Route path="/studyinterface" element={<Study/>}/>
-                        <Route path="/admin" element={<Admin/>}/>
-                    </Routes>
-
-                    <Footer/>
-                </Router>
-            </MantineProvider>
-        </UserContext.Provider>
+      <UserContext.Provider value={{ username, setUsername, role, setRole }}>
+        <MantineProvider>
+          <Router>
+            <Header />
+            <Routes>
+              <Route path="/" element={<Front />} />
+              <Route path="/auth" element={<Authentication />} />
+              <Route path="/flashcards" element={<Flashcards />} />
+              <Route path="/summary" element={<Summary />} />
+              <Route path="/studyinterface" element={<Study />} />
+              <Route path="/admin" element={<Admin />} />
+            </Routes>
+            <Footer />
+          </Router>
+        </MantineProvider>
+      </UserContext.Provider>
     );
-}
+  }

@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Grid, Container, Title } from '@mantine/core';
+import React, { useState, useEffect, useContext } from 'react';
+import { Grid, Container, Title, Text } from '@mantine/core';
 import AdminNavbar from '../components/jsx/AdminNavbar';
 import AdminUserDashboard from '../components/jsx/AdminUserDashboard';
+import { UserContext } from '../../App'; // adjust path as needed
 
 export default function Admin() {
+  const { role } = useContext(UserContext);
+  console.log("User role:", role);
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
 
-  // Fetch all users (no specific username in this case)
   useEffect(() => {
+    if (role !== 'admin') return; // only fetch if role is admin
     const fetchUsers = async () => {
       try {
         const res = await fetch("http://localhost:4000/api/auth/");
@@ -20,8 +23,19 @@ export default function Admin() {
     };
 
     fetchUsers();
-  }, []);
+  }, [role]);
 
+  // If not admin, block access
+  if (role !== 'admin') {
+    return (
+      <Container my="xl">
+        <Title order={2}>Access Denied</Title>
+        <Text>You must be an admin to access this page.</Text>
+      </Container>
+    );
+  }
+
+  // Admin content
   return (
     <Container my="xl">
       <Title order={1}>Welcome Admin!</Title>

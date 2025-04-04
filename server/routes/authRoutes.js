@@ -37,22 +37,27 @@ router.post("/register", async (req, res) => {
 
 // Login User
 router.post("/login", async (req, res) => {
-    const { username, password } = req.body;
+  const { username, password } = req.body;
 
-    try {
-        const user = await UserModel.findOne({ username });
-        if (!user) return res.status(400).json({ message: "Invalid credentials" });
+  try {
+    const user = await UserModel.findOne({ username });
+    if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
-        const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
-        res.json({ token, user: { id: user._id, username: user.username } });
-    } catch (error) {
-        console.error("Login Error:", error.message);
-        res.status(500).json({ message: "Server error" });
-    }
+    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
+    
+    res.json({ 
+      token, 
+      user: { id: user._id, username: user.username, role: user.role } 
+    });
+  } catch (error) {
+    console.error("Login Error:", error.message);
+    res.status(500).json({ message: "Server error" });
+  }
 });
+
 
 // Get all users for an admin to see. NOT for the public. Not complete
 router.get("/", async (req, res) => {
