@@ -6,7 +6,6 @@ import { UserContext } from '../../App'; // adjust path as needed
 
 export default function Admin() {
   const { role } = useContext(UserContext);
-  console.log("User role:", role);
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
 

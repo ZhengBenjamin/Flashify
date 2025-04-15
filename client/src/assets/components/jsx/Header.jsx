@@ -52,7 +52,7 @@ export default function Header() {
 
   return (
     <header className={classes.header}>
-      <Container size="md" className={classes.inner}>
+      <Container size="md" className={`${classes.inner} ${opened ? classes.opened : ''}`}>
         <Link to="/" className={classes.link}>
           Flashify
         </Link>

@@ -152,6 +152,7 @@ const editSubject = async (id, updatedSubject) => {
             console.log("Selected subject:", selectedSubject.id),
             <SubjectDashboard 
               subject={selectedSubject} 
+              key={selectedSubject.id} 
             />
           ) : ( // Default view when no subject is selected
             <> 
