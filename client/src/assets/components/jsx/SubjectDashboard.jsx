@@ -1,13 +1,11 @@
 import { useState, useContext, useEffect } from 'react';
 import { Card, Title, Text, Stack, Grid, Button } from '@mantine/core';
-import { useNavigate } from 'react-router-dom';
 import Flashcards from './Flashcards';
 import CreateFlashcards from './CreateFlashcards';
 import { UserContext } from '../../../App';
 
 export default function SubjectDashboard({ subject }) {
   const { username } = useContext(UserContext);
-  const navigate = useNavigate();
   const [flashcardDecks, setFlashcardDecks] = useState([]);
   const [showCreateDeck, setShowCreateDeck] = useState(false);
   const [selectedDeckId, setSelectedDeckId] = useState(null);
@@ -35,10 +33,20 @@ export default function SubjectDashboard({ subject }) {
   };
 
   // Handle deletion of a deck
-  const handleDelete = (deckId) => {
+  const handleDelete = async (deckId) => {
     if (window.confirm("Are you sure you want to delete this deck?")) {
-      // API HERE FRANK
-      setFlashcardDecks((prevDecks) => prevDecks.filter((deck) => deck.deck_id !== deckId));
+      try {
+        const res = await fetch(`http://localhost:4000/api/deck/${deckId}`, {
+          method: "DELETE",
+        });
+  
+        if (!res.ok) throw new Error("Failed to delete deck");
+  
+        refreshDecks(); // Refresh from DB after deletion
+      } catch (err) {
+        console.error("Error deleting deck:", err);
+        alert("Failed to delete deck.");
+      }
     }
   };
 

@@ -103,6 +103,34 @@ export default function Study() {
     fetchSubjects();
   }, [username]);
 
+// Handle deleting a subject
+const deleteSubject = async (id) => {
+  try {
+    await axios.delete(`http://localhost:4000/api/subject/${id}`);
+    // Remove subject from local state after deletion
+    setSubjects((prevSubjects) => prevSubjects.filter((subject) => subject.id !== id));
+  } catch (err) {
+    console.error("Error deleting subject:", err);
+    alert("Failed to delete subject.");
+  }
+};
+
+// Handle editing a subject
+const editSubject = async (id, updatedSubject) => {
+  try {
+    const res = await axios.put(`http://localhost:4000/api/subject/${id}`, updatedSubject);
+    const updated = res.data;
+
+    setSubjects((prevSubjects) =>
+      prevSubjects.map((subject) =>
+        subject.id === id ? { ...subject, name: updated.subjectName, color: updated.color } : subject
+      )
+    );
+  } catch (err) {
+    console.error("Error updating subject:", err);
+    alert("Failed to update subject.");
+  }
+};
 
   return (
     <Container my="xl">
@@ -111,9 +139,11 @@ export default function Study() {
       <Grid>
         <Grid.Col span={4}>
           <SubjectNavbar 
-            subjects={subjects} 
+            subjects={subjects}
             onSubjectSelect={(subject) => setSelectedSubject(subject)}
             onAddSubject={addSubject}
+            onSubjectDeleted={deleteSubject}
+            onEditSubject={editSubject}
           />
         </Grid.Col>
 
