@@ -53,100 +53,115 @@ export default function SubjectDashboard({ subject }) {
   }
 
   return (
-    <Stack spacing="md">
-      <Title order={4}>{subject.name} Dashboard</Title>
+    <div className="fadeIn">
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        .fadeIn {
+          animation: fadeIn 0.5s ease-in-out;
+        }
+      `}</style>
+      <Stack spacing="md">
+        <Title order={4}>{subject.name} Dashboard</Title>
 
-      <Button onClick={() => setShowCreateDeck(true)}>Create Flashcard Deck</Button>
+        <Button onClick={() => setShowCreateDeck(true)}>Create Flashcard Deck</Button>
 
-      <Grid>
-        {flashcardDecks && flashcardDecks.length > 0 ? (
-          flashcardDecks.map((deck) => (
-            <Grid.Col key={deck.deck_id} span={6}>
-              <Card
-                shadow="md"
-                p="lg"
-                radius="md"
-                withBorder
-                style={{
-                  height: '150px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  position: 'relative',
-                }}
-                onMouseEnter={() => setHoveredDeckId(deck.deck_id)}
-                onMouseLeave={() => setHoveredDeckId(null)}
-                onClick={() => handleDeckClick(deck.deck_id)}
-              >
-                {/* Conditionally render the delete button when the deck is hovered */}
-                {hoveredDeckId === deck.deck_id && (
-                  <>
-                  <Button
-                    variant="light"
-                    size="xs"
-                    style={{ position: 'absolute', top: 10, right: 80 }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleEdit(deck.deck_id);
-                    }}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="light"
-                    color="red"
-                    size="xs"
-                    style={{ position: 'absolute', top: 10, right: 10 }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(deck.deck_id);
-                    }}
-                  >
-                    Delete
-                  </Button>
-                  </>
-                )}
-                <Title order={4} align="center">
-                  {deck.title}
-                </Title>
-              </Card>
-            </Grid.Col>
-          ))
-        ) : (
-          <Text>No flashcard decks available</Text>
-        )}
-      </Grid>
+        <Grid>
+          {flashcardDecks && flashcardDecks.length > 0 ? (
+            flashcardDecks.map((deck) => (
+              <Grid.Col key={deck.deck_id} span={6}>
+                <Card
+                  shadow="md"
+                  p="lg"
+                  radius="md"
+                  withBorder
+                  style={{
+                    height: '150px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    position: 'relative',
+                    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                    ...(hoveredDeckId === deck.deck_id
+                      ? { transform: 'scale(1.05)', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }
+                      : {})
+                  }}
+                  onMouseEnter={() => setHoveredDeckId(deck.deck_id)}
+                  onMouseLeave={() => setHoveredDeckId(null)}
+                  onClick={() => handleDeckClick(deck.deck_id)}
+                >
+                  {/* Conditionally render the delete button when the deck is hovered */}
+                  {hoveredDeckId === deck.deck_id && (
+                    <>
+                    <Button
+                      variant="light"
+                      size="xs"
+                      style={{ position: 'absolute', top: 10, right: 80 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEdit(deck.deck_id);
+                      }}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="light"
+                      color="red"
+                      size="xs"
+                      style={{ position: 'absolute', top: 10, right: 10 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(deck.deck_id);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                    </>
+                  )}
+                  <Title order={4} align="center">
+                    {deck.title}
+                  </Title>
+                </Card>
+              </Grid.Col>
+            ))
+          ) : (
+            <Text>No flashcard decks available</Text>
+          )}
+        </Grid>
 
-      {/* Todo: Add when quizzes are implemented
-      <Card shadow="sm" p="md">
-        <Title order={4}>Quizzes</Title>
-        {quizzes && quizzes.length > 0 ? (
-          quizzes.map((quiz, index) => (
-            <Text key={index}>
-              Score: {quiz.score}% - Date: {new Date(quiz.date).toLocaleDateString()}
-            </Text>
-          ))
-        ) : (
-          <Text>No quizzes available</Text>
-        )}
-      </Card> */}
+        {/* Todo: Add when quizzes are implemented
+        <Card shadow="sm" p="md">
+          <Title order={4}>Quizzes</Title>
+          {quizzes && quizzes.length > 0 ? (
+            quizzes.map((quiz, index) => (
+              <Text key={index}>
+                Score: {quiz.score}% - Date: {new Date(quiz.date).toLocaleDateString()}
+              </Text>
+            ))
+          ) : (
+            <Text>No quizzes available</Text>
+          )}
+        </Card> */}
 
-      <CreateFlashcards
-        opened={showCreateDeck}
-        onClose={() => {
-          setShowCreateDeck(false)
-          setEditDeck(null);
-        }}
-        subject={subject}
-        editDeck={editDeck}
-        onSubmit={(deck) => {
-          console.log('New deck created:', deck);
-          refreshDecks();
-          setShowCreateDeck(false);
-          setEditDeck(null);
-        }}
-      />
-    </Stack>
+        <CreateFlashcards
+          opened={showCreateDeck}
+          onClose={() => {
+            setShowCreateDeck(false)
+            setEditDeck(null);
+          }}
+          subject={subject}
+          editDeck={editDeck}
+          onSubmit={(deck) => {
+            console.log('New deck created:', deck);
+            refreshDecks();
+            setShowCreateDeck(false);
+            setEditDeck(null);
+          }}
+        />
+      </Stack>
+    </div>
   );
 }

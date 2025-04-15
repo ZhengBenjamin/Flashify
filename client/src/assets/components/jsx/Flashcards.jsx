@@ -18,6 +18,7 @@ export default function Flashcards({ deckId }) {
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [correctResponses, setCorrectResponses] = useState([]);
+  const [animate, setAnimate] = useState(false);
 
   // Fetch flashcards from the backend when username and deckId are available
   useEffect(() => {
@@ -41,6 +42,8 @@ export default function Flashcards({ deckId }) {
 
   const handleFlip = () => {
     setIsFlipped(!isFlipped);
+    setAnimate(true);
+    setTimeout(() => setAnimate(false), 500);
   };
 
   const undo = () => {
@@ -94,6 +97,15 @@ export default function Flashcards({ deckId }) {
 
   return (
     <Container className={classes.container}>
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        .fadeIn {
+          animation: fadeIn 0.5s ease-in-out;
+        }
+      `}</style>
       <Group position="right" justify="space-between">
         <Text>
           Flashcard: {currentCardIndex + 1}/{flashcardsData.length}
@@ -108,7 +120,10 @@ export default function Flashcards({ deckId }) {
       </Group>
 
       <Group position="center">
-        <Card className={classes.card} onClick={handleFlip}>
+        <Card 
+          className={`${classes.card} ${animate ? 'fadeIn' : ''}`}
+          onClick={handleFlip}
+        >
           <Text className={classes.text}>
             {isFlipped ? currentCard.back : currentCard.front}
           </Text>
