@@ -19,12 +19,12 @@ const data = [
   },
   {
     image: notes_icon,
-    title: 'Notes',
+    title: 'Track Your Progress',
     description: "Enhance your study experience with Notes, where you can jot down key insights, explanations, and summaries alongside your flashcards. Stay organized, connect ideas, and build a deeper understanding of your subjects.",
   },
   {
     image: collaborative_decks_icon,
-    title: 'Collaborative Decks',
+    title: 'Per Course Organization',
     description: "Learning is better together! With Collaborative Decks, you can create, edit, and study flashcards with friends, classmates, or colleagues in real-time. Share knowledge, test each other, and make studying a more engaging and interactive experience.",
   },
 ];

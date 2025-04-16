@@ -112,7 +112,7 @@ export default function Study() {
 
   return (
     <div className={classes.dashboardContainer}>
-      <Paper className={classes.dashboardPaper}>
+      <Paper className={classes.dashboardPaper} radius="md">
         <Title align="center" className={classes.dashboardTitle}>
           Welcome to your dashboard, {username}!
         </Title>
@@ -140,11 +140,11 @@ export default function Study() {
             {selectedSubject ? ( // If subject selected show subject dashboard
               <SubjectDashboard subject={selectedSubject} key={selectedSubject.id} />
             ) : ( // else default view
-              <Paper className={classes.quizHistoryPaper}> 
+              <Paper className={classes.quizHistoryPaper} style={{paddingTop: "100px"}}> 
                 <Title order={2} align="center" className={classes.quizHistoryTitle}>
                   Select a subject from the left to view your decks!
                 </Title>
-                <QuizHistory quizzes={quizHistory} />
+                {/* <QuizHistory quizzes={quizHistory} /> */}
               </Paper>
             )}
           </Grid.Col>

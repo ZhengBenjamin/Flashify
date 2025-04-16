@@ -4,9 +4,7 @@ import classes from '../css/Footer.module.css';
 
 const links = [
   { link: '/', label: 'Home' },
-  { link: '/about', label: 'About' },
   { link: '/auth', label: 'Login' },
-  { link: '/contact', label: 'Contact' },
 ];
 
 export default function FooterSimple() {
