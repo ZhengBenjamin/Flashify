@@ -46,7 +46,7 @@ export default function App() {
                 animation: fadeIn 0.5s ease-in-out;
               }
             `}</style>
-            <AnimatedRoutes />
+            <AnimatedRoutes/>
             <Footer />
           </Router>
         </MantineProvider>

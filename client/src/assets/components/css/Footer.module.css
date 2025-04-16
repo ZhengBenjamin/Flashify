@@ -1,5 +1,7 @@
 .footer {
-  /* margin-top: 50px; */
+  position: absolute;
+  bottom: 0;
+  width: 100%;
   border-top: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
 }
 

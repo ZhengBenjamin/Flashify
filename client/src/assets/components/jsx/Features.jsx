@@ -10,22 +10,22 @@ const data = [
   {
     image: spaced_repetition_icon,
     title: 'Spaced Repetition',
-    description: "Designed to optimize your learning by reviewing flashcards at strategic intervals. By prioritizing harder concepts and delaying easier ones, you’ll retain knowledge longer and reduce study time.",
+    description: "Designed to optimize your learning by reviewing at random intervals. Randomizing the order of flashcards keeps your brain engaged and helps you retain information more effectively.",
   },
   {
     image: study_sets_icon,
     title: 'Study Sets',
-    description: "Create Sets tailored to your learning needs! Organize flashcards by topic, subject, or exam to streamline your study sessions. Whether you're preparing for a test or reinforcing key concepts, Study Sets keep everything structured and accessible.",
+    description: "Create Sets tailored to your learning needs! Organize flashcards with whatever content you want to streamline your study sessions. Whether you're preparing for a test or reinforcing key concepts, Study Sets keep everything structured and accessible.",
   },
   {
     image: notes_icon,
-    title: 'Track Your Progress',
-    description: "Enhance your study experience with Notes, where you can jot down key insights, explanations, and summaries alongside your flashcards. Stay organized, connect ideas, and build a deeper understanding of your subjects.",
+    title: 'Intuitive Interface',
+    description: "Navigate your study tools with ease. Flashify's clean, modern design makes it simple to create, organize, and review content without distractions. Focus more on learning, less on figuring out how to use the platform.",
   },
   {
     image: collaborative_decks_icon,
-    title: 'Per Course Organization',
-    description: "Learning is better together! With Collaborative Decks, you can create, edit, and study flashcards with friends, classmates, or colleagues in real-time. Share knowledge, test each other, and make studying a more engaging and interactive experience.",
+    title: 'Organize by Subjects',
+    description: "Easily organize your flashcards into subjects and decks. Flashify allows you to create, edit, and manage subjects, ensuring your study materials are always structured and accessible.",
   },
 ];
 
