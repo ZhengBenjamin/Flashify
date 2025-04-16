@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Paper, Stack, Title, TextInput, Button, Modal, ColorInput } from '@mantine/core';
+import { Paper, Stack, Title, TextInput, Button, Modal, ColorInput, Group } from '@mantine/core';
 import SubjectButton from './SubjectButtons';
 import classes from '../css/SubjectNavbar.module.css';
 import axios from 'axios';
@@ -9,21 +9,21 @@ export default function SubjectNavbar(props) {
 
   const [modalOpened, setModalOpened] = useState(false);
   const [newSubjectName, setNewSubjectName] = useState('');
-  const [newSubjectColor, setNewSubjectColor] = useState('#ffffff');
+  const [newSubjectColor, setNewSubjectColor] = useState('');
   const [hoveredSubjectId, setHoveredSubjectId] = useState(null);
 
   // Handle subject creation
   const handleSaveSubject = () => {
     const subjectData = {
       subjectName: newSubjectName,
-      color: newSubjectColor,
+      color: newSubjectColor || null, // Pass null if no color is selected
     };
 
     onAddSubject(subjectData);
 
     setModalOpened(false);
     setNewSubjectName('');
-    setNewSubjectColor('#ffffff');
+    setNewSubjectColor('');
   };
 
   // Delete subject
@@ -41,9 +41,20 @@ export default function SubjectNavbar(props) {
 
   return (
     <>
-      <Paper className={classes.navbar}>
-        <Title order={4}>Available Subjects:</Title>
-        <Stack justify="center" className={classes.stack}>
+      <Paper
+        shadow="md"
+        radius="md"
+        p="lg"
+        style={{
+          backgroundColor: '#ffffff',
+          border: '1px solid #e0e0e0',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+        }}
+      >
+        <Title order={4} align="center" style={{ color: '#4c6ef5' }}>
+          Available Subjects
+        </Title>
+        <Stack mt="lg">
           {subjects.map((subject, index) => (
             <div
               key={index}
@@ -57,54 +68,112 @@ export default function SubjectNavbar(props) {
                 onClick={() => onSubjectSelect(subject)}
               />
               {hoveredSubjectId === subject.id && (
-                <>
-                  <Button
-                    size="xs"
-                    color="red"
-                    style={{
-                      position: 'absolute',
-                      top: '50%', 
-                      right: '10px',
-                      transform: 'translateY(-50%)', // Vertically center the button
-                      padding: '5px 10px',
-                      backgroundColor: '#e74c3c',  // Red for Delete
-                      color: 'white',
-                      display: 'inline-block',
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteSubject(subject.id);
-                    }}
-                  >
-                    Delete
-                  </Button>
-                </>
+                <Button
+                  size="xs"
+                  color="red"
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    right: '10px',
+                    transform: 'translateY(-50%)',
+                    padding: '5px 10px',
+                    backgroundColor: '#e74c3c',
+                    color: 'white',
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteSubject(subject.id);
+                  }}
+                >
+                  Delete
+                </Button>
               )}
             </div>
           ))}
-
-          <Button onClick={() => setModalOpened(true)}>Create New Subject</Button>
+          <Button
+            fullWidth
+            className={classes.createSubjectButton}
+            onClick={() => setModalOpened(true)}
+          >
+            Create New Subject
+          </Button>
         </Stack>
       </Paper>
 
-      <Modal opened={modalOpened} onClose={() => setModalOpened(false)} title="Create New Subject">
-        <TextInput
-          label="Subject Name"
-          placeholder="Enter subject name"
-          value={newSubjectName}
-          onChange={(e) => setNewSubjectName(e.currentTarget.value)}
-          required
-          mb="md"
-        />
-        <ColorInput
-          label="Button Color"
-          placeholder="Pick a color"
-          value={newSubjectColor}
-          onChange={setNewSubjectColor}
-          required
-          mb="md"
-        />
-        <Button onClick={handleSaveSubject}>Add Subject</Button>
+      <Modal
+        opened={modalOpened}
+        onClose={() => setModalOpened(false)}
+        title=""
+        centered
+        overlayOpacity={0.6}
+        overlayBlur={3}
+        size="lg"
+        styles={{
+          modal: {
+            backgroundColor: '#f0f4ff',
+            borderRadius: '16px',
+            padding: '2rem',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
+          },
+          header: { borderBottom: 'none' },
+          close: { color: '#4c6ef5' },
+        }}
+      >
+        <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
+          <Title order={3} style={{ color: '#4c6ef5', marginBottom: '1rem' }}>
+            Create a New Subject
+          </Title>
+          <TextInput
+            label="Subject Name"
+            placeholder="Enter subject name"
+            value={newSubjectName}
+            onChange={(e) => setNewSubjectName(e.currentTarget.value)}
+            required
+            mb="md"
+            styles={{
+              input: {
+                borderRadius: '8px',
+              },
+            }}
+          />
+          <ColorInput
+            label="Pick a Color (Optional)"
+            placeholder="Select a color or leave blank for random"
+            value={newSubjectColor}
+            onChange={setNewSubjectColor}
+            mb="md"
+            styles={{
+              input: {
+                borderRadius: '8px',
+              },
+            }}
+          />
+          <Group position="center" mt="lg" style={{paddingTop: '2rem'}}>
+            <Button
+              onClick={handleSaveSubject}
+              style={{
+                backgroundColor: '#4c6ef5',
+                color: '#ffffff',
+                padding: '0.75rem 2rem',
+                borderRadius: '8px',
+              }}
+            >
+              Add Subject
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setModalOpened(false)}
+              style={{
+                borderColor: '#4c6ef5',
+                color: '#4c6ef5',
+                padding: '0.75rem 2rem',
+                borderRadius: '8px',
+              }}
+            >
+              Cancel
+            </Button>
+          </Group>
+        </div>
       </Modal>
     </>
   );

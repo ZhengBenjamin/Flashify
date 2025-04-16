@@ -1,15 +1,7 @@
 import { useState, useContext } from 'react';
 import axios from 'axios';
-import {
-  Anchor,
-  Button,
-  Group,
-  Paper,
-  PasswordInput,
-  TextInput,
-} from '@mantine/core';
-import { UserContext } from '../../../App'; 
-
+import { Button, Group, Paper, PasswordInput, TextInput, Text } from '@mantine/core';
+import { UserContext } from '../../../App';
 
 export default function LoginCard() {
   const [localUsername, setLocalUsername] = useState('');
@@ -33,41 +25,36 @@ export default function LoginCard() {
       setUsername(user.username);
       setRole(user.role);
 
-      window.location.href = "/studyinterface";
+      window.location.href = '/studyinterface';
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
+      setError(err.response?.data?.message || 'Login failed');
     }
   };
 
-
   return (
-    <div>
-      <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-        <TextInput 
-          label="Username" 
-          placeholder="Username" 
-          required 
-          value={localUsername} 
-          onChange={(e) => setLocalUsername(e.currentTarget.value)}
-        />
-        <PasswordInput 
-          label="Password" 
-          placeholder="Password" 
-          required 
-          mt="md" 
-          value={password} 
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        <Group justify="space-between" mt="lg">
-          <Anchor component="button" size="sm">
-            Forgot password?
-          </Anchor>
-        </Group>
-        <Button fullWidth mt="xl" onClick={handleLogin}>
-          Sign in
+    <Paper withBorder shadow="md" p="xl" radius="md" style={{ backgroundColor: '#f9f9f9' }}>
+      <TextInput
+        label="Username"
+        placeholder="Enter your username"
+        value={localUsername}
+        onChange={(e) => setLocalUsername(e.currentTarget.value)}
+        required
+        style={{ marginBottom: '1.5rem' }}
+      />
+      <PasswordInput
+        label="Password"
+        placeholder="Enter your password"
+        value={password}
+        onChange={(e) => setPassword(e.currentTarget.value)}
+        required
+        style={{ marginBottom: '1.5rem' }}
+      />
+      {error && <Text color="red" size="sm" style={{ marginBottom: '1.5rem' }}>{error}</Text>}
+      <Group position="apart" mt="lg">
+        <Button fullWidth onClick={handleLogin} style={{ backgroundColor: '#4c6ef5', color: 'white', padding: '0.75rem' }}>
+          Log In
         </Button>
-      </Paper>
-    </div>
+      </Group>
+    </Paper>
   );
 }
