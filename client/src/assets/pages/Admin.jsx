@@ -39,7 +39,7 @@ export default function Admin() {
     <Container my="xl">
       <Title order={1}>Welcome Admin!</Title>
       <br />
-      <Grid>
+      <Grid gutter={'xl'}>
         <Grid.Col span={4}>
           <AdminNavbar users={users} onUserSelect={setSelectedUser} />
         </Grid.Col>

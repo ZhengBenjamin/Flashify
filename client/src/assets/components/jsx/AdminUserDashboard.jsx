@@ -83,7 +83,7 @@ export default function AdminUserDashboard({ user }) {
       {!selectedSubject ? (
         <>
           <Title order={4}>Subjects</Title>
-          <Grid>
+          <Grid gutter={'md'}>
             {subjects && subjects.length > 0 ? (
               subjects.map((subject) => (
                 <Grid.Col key={subject.subject_id} span={6}>
@@ -103,7 +103,9 @@ export default function AdminUserDashboard({ user }) {
                 </Grid.Col>
               ))
             ) : (
-              <Text>No subjects found for this user.</Text>
+              <Grid.Col span={12}>
+                <Title order={3}>No subjects found for this user.</Title>
+              </Grid.Col>
             )}
           </Grid>
         </>

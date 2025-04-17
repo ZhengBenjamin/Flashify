@@ -136,7 +136,9 @@ export default function SubjectDashboard({ subject }) {
               </Grid.Col>
             ))
           ) : (
-            <Text>No flashcard decks available</Text>
+            <Grid.Col>
+              <Title order={3} style={{textAlign: 'center'}}>No flashcard decks available</Title>
+            </Grid.Col>
           )}
         </Grid>
 

@@ -140,7 +140,7 @@ export default function Study() {
             {selectedSubject ? ( // If subject selected show subject dashboard
               <SubjectDashboard subject={selectedSubject} key={selectedSubject.id} />
             ) : ( // else default view
-              <Paper className={classes.quizHistoryPaper} style={{paddingTop: "100px"}}> 
+              <Paper className={classes.quizHistoryPaper} style={{paddingTop: "30px"}}> 
                 <Title order={2} align="center" className={classes.quizHistoryTitle}>
                   Select a subject from the left to view your decks!
                 </Title>
