@@ -1,3 +1,14 @@
+/**
+ * CreateFlashcards component.
+ * Handles creation (or editing) of flashcard decks.
+ * @param {Object} props - Component props.
+ * @param {boolean} props.opened - Whether the modal is open.
+ * @param {Function} props.onClose - Function to close the modal.
+ * @param {Object} [props.subject] - The subject for the new deck.
+ * @param {Function} props.onSubmit - Callback after deck creation.
+ * @param {Object} [props.editDeck] - If set, deck is being edited.
+ * @returns {JSX.Element} The CreateFlashcards modal.
+ */
 import { useState, useContext, useEffect } from 'react';
 import { Modal, Container, Group, Card, Text, Button, TextInput } from '@mantine/core';
 import classes from '../css/CreateFlashcards.module.css';
@@ -32,8 +43,14 @@ export default function CreateFlashcards({ opened, onClose, subject, onSubmit, e
     }
   }, [editDeck]);
 
+  /**
+   * Toggles the flip state of the current card.
+   */
   const handleFlip = () => setIsFlipped((prev) => !prev);
 
+  /**
+   * Moves to the previous card in the deck.
+   */
   const handlePrev = () => {
     if (currentCardIndex > 0) {
       setCurrentCardIndex(currentCardIndex - 1);
@@ -41,6 +58,9 @@ export default function CreateFlashcards({ opened, onClose, subject, onSubmit, e
     }
   };
 
+  /**
+   * Moves to the next card in the deck.
+   */
   const handleNext = () => {
     if (currentCardIndex < flashcardsData.length - 1) {
       setCurrentCardIndex(currentCardIndex + 1);
@@ -48,12 +68,18 @@ export default function CreateFlashcards({ opened, onClose, subject, onSubmit, e
     }
   };
 
+  /**
+   * Adds a new flashcard to the deck.
+   */
   const handleAddFlashcard = () => {
     setFlashcardsData([...flashcardsData, { front: '', back: '' }]);
     setCurrentCardIndex(flashcardsData.length);
     setIsFlipped(false);
   };
 
+  /**
+   * Deletes the current flashcard from the deck.
+   */
   const handleDeleteCard = async () => {
     const cardToDelete = flashcardsData[currentCardIndex];
   
@@ -79,22 +105,37 @@ export default function CreateFlashcards({ opened, onClose, subject, onSubmit, e
     }
   };
 
+  /**
+   * Updates the front text of the current card.
+   * @param {Object} e - Event object.
+   */
   const handleChangeFront = (e) => {
     const updated = [...flashcardsData];
     updated[currentCardIndex].front = e.target.value;
     setFlashcardsData(updated);
   };
 
+  /**
+   * Updates the back text of the current card.
+   * @param {Object} e - Event object.
+   */
   const handleChangeBack = (e) => {
     const updated = [...flashcardsData];
     updated[currentCardIndex].back = e.target.value;
     setFlashcardsData(updated);
   };
 
+  /**
+   * Collects all valid flashcards (non-empty front and back).
+   * @returns {Array} Array of valid flashcards.
+   */
   const collectFlashcards = () => {
     return flashcardsData.filter(card => card.front.trim() && card.back.trim());
   };
 
+  /**
+   * Handles the submission of the deck and its flashcards.
+   */
   const handleSubmit = async () => {
     if (!deckTitle.trim()) {
       alert("Deck title is required!");
@@ -186,6 +227,7 @@ export default function CreateFlashcards({ opened, onClose, subject, onSubmit, e
       className={classes.modal}
     >
       <Container className={classes.container}>
+        {/* Deck Title */}
         <TextInput
           label="Deck Title"
           placeholder="Enter deck title"

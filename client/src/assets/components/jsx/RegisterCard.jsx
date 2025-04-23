@@ -1,3 +1,8 @@
+/**
+ * RegisterCard component for user registration.
+ * Handles input validation and submits registration data to the backend.
+ * @returns {JSX.Element} The registration form.
+ */
 import { useState } from 'react';
 import axios from 'axios';
 import { Button, Group, Paper, PasswordInput, TextInput, Text } from '@mantine/core';

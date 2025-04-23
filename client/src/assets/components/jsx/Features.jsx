@@ -1,3 +1,7 @@
+/**
+ * Features component displaying the key features of the platform.
+ * @returns {JSX.Element} The features layout.
+ */
 import { Container, Image, SimpleGrid, Text, ThemeIcon, Title } from '@mantine/core';
 import spaced_repetition_icon from '../../images/spaced_repetition_icon.jpg';
 import notes_icon from '../../images/notes_icon.jpg';
@@ -6,6 +10,9 @@ import collaborative_decks_icon from '../../images/collaborative_decks_icon.jpg'
 
 import classes from '../css/Features.module.css';
 
+/**
+ * Data for the features section, including image, title, and description.
+ */
 const data = [
   {
     image: spaced_repetition_icon,
@@ -29,7 +36,12 @@ const data = [
   },
 ];
 
+/**
+ * FeaturesImages component rendering the features overview.
+ * @returns {JSX.Element} The features layout.
+ */
 export default function FeaturesImages() {
+  // Map through the data to create feature items
   const items = data.map((item) => (
     <div className={classes.item} key={item.image}>
       <ThemeIcon variant="light" className={classes.itemIcon} size={60} radius="md">

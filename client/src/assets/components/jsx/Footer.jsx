@@ -1,3 +1,9 @@
+/**
+ * Footer component for the application.
+ * Displays navigation links and branding information.
+ * @returns {JSX.Element} The footer layout.
+ */
+
 import { Container, Group } from '@mantine/core';
 import { Link } from 'react-router-dom';
 import classes from '../css/Footer.module.css';

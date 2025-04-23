@@ -1,3 +1,9 @@
+/**
+ * QuizHistory component to display the user's quiz history.
+ * @param {Object} props - Component props.
+ * @param {Array} props.quizzes - Array of quiz objects.
+ * @returns {JSX.Element} The quiz history display.
+ */
 import { Card, Text, Group, Title } from '@mantine/core';
 
 export default function QuizHistory({ quizzes }) {

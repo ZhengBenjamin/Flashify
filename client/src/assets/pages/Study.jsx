@@ -1,3 +1,9 @@
+/**
+ * Study page for managing subjects and flashcard decks.
+ * Displays a dashboard with subjects and their associated decks.
+ * @returns {JSX.Element} The study page layout.
+ */
+
 import React, { useState, useEffect, useContext } from 'react';
 import { Grid, Title, Modal, Paper } from '@mantine/core';
 import { UserContext } from '../../App';
@@ -32,6 +38,10 @@ export default function Study() {
     }
   }, [username, navigate]);
 
+  /**
+   * Fetches all subjects for the logged-in user.
+   * Maps the response to include subject ID, name, and color.
+   */
   const fetchSubjects = async () => {
     if (!username) return;
     try {
@@ -51,6 +61,10 @@ export default function Study() {
     fetchSubjects();
   }, [username]);
 
+  /**
+   * Generates a random pastel color in hexadecimal format.
+   * Used when no color is provided for a new subject.
+   */
   const generateRandomPastelColor = () => {
     const randomColor = Math.floor(Math.random() * 16777215).toString(16);
     return `#${randomColor.padStart(6, '0')}`;

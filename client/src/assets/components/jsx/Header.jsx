@@ -1,3 +1,9 @@
+/**
+ * Header component for the application.
+ * Displays navigation links and handles user authentication actions (e.g., sign out).
+ * @returns {JSX.Element} The header layout.
+ */
+
 import { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Burger, Container, Group } from '@mantine/core';
@@ -17,7 +23,7 @@ export default function Header() {
     { label: 'Admin', link: '/admin' },
   ];
 
-  // Auth links 
+  // Auth links
   const authLink = username
     ? {
         label: 'Sign Out',

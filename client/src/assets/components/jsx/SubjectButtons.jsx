@@ -1,3 +1,13 @@
+/**
+ * SubjectButton component for displaying a subject card.
+ * @param {Object} props - Component props.
+ * @param {string} props.subject - The subject name.
+ * @param {string} props.color - The background color.
+ * @param {Function} props.onClick - Callback clicked.
+ * @param {string} [props.description] - Optional subject description.
+ * @returns {JSX.Element} The subject button.
+ */
+
 import { Card, Group, Text } from '@mantine/core';
 import classes from '../css/SubjectButton.module.css';
 

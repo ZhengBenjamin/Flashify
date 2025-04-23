@@ -1,3 +1,9 @@
+/**
+ * Authentication page for login and registration.
+ * Allows users to toggle between login and registration forms.
+ * @returns {JSX.Element} The authentication page layout.
+ */
+
 import React, { useState } from 'react';
 import { Container, Title, Text, Anchor, Paper, Box } from '@mantine/core';
 import LoginCard from '../components/jsx/LoginCard';
@@ -6,6 +12,9 @@ import RegisterCard from '../components/jsx/RegisterCard';
 export default function Authentication() {
   const [login, setLogin] = useState(true);
 
+  /**
+   * Toggles between login and registration modes.
+   */
   const toggleAuthMode = () => {
     setLogin((prev) => !prev);
   };

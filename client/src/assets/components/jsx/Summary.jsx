@@ -1,9 +1,17 @@
+/**
+ * Summary component for displaying flashcard deck creation or editing summary.
+ * Allows users to create or edit flashcard decks and save them.
+ * @param {Object} props - Component props.
+ * @param {boolean} props.opened - Whether the modal is open.
+ * @param {Function} props.onClose - Function to close the modal.
+ * @returns {JSX.Element} The Summary modal layout.
+ */
+
 import { useState, useContext } from 'react';
 import { Modal, Container, Group, Card, Text, Button, TextInput } from '@mantine/core';
 import classes from '../css/CreateFlashcards.module.css';
 import { UserContext } from '../../../App'; // Import UserContext
 
-// export default function CreateFlashcards({ opened, onClose }) {
 export default function Summary({ opened, onClose }) {
     const { username } = useContext(UserContext); // Get the username from global state
     const [deckTitle, setDeckTitle] = useState('');

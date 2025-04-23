@@ -1,3 +1,9 @@
+/**
+ * Events component for displaying upcoming events.
+ * @param {Object} props - Component props.
+ * @param {Array} props.events - Array of event objects with name and date.
+ * @returns {JSX.Element} The Events card component.
+ */
 import { Card, Text, Group, Badge } from '@mantine/core';
 import { FaCalendar } from "react-icons/fa";
 

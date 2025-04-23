@@ -1,3 +1,13 @@
+/**
+ * EditFlashcards component for editing an existing flashcard deck.
+ * Allows users to navigate, edit, add, and delete flashcards.
+ * @param {Object} props - Component props.
+ * @param {boolean} props.opened - Whether the modal is open.
+ * @param {Function} props.onClose - Function to close the modal.
+ * @param {Object} props.deck - The deck being edited.
+ * @param {Function} props.onSave - Callback after saving changes.
+ * @returns {JSX.Element} The EditFlashcards modal.
+ */
 import { useState, useContext, useEffect } from 'react';
 import {
   Modal,

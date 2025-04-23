@@ -1,3 +1,10 @@
+/**
+ * Flashcards component for studying flashcards in a deck.
+ * Handles flipping, navigation, and showing the summary.
+ * @param {Object} props - Component props.
+ * @param {string} props.deckId - The ID of the flashcard deck.
+ * @returns {JSX.Element} The flashcards study interface.
+ */
 import {useState, useEffect, useContext} from 'react';
 import axios from 'axios';
 import {Card, Container, Group, Text, Button, Flex, Title} from '@mantine/core';
@@ -8,7 +15,7 @@ import classes from '../css/Flashcards.module.css';
 export default function Flashcards({deckId}) {
     /*** Flashcard Logic Fields ***/
 
-        // State variables
+    // State variables
     const {username} = useContext(UserContext);
     const [flashcardsData, setFlashcardsData] = useState([]);
 
@@ -39,22 +46,18 @@ export default function Flashcards({deckId}) {
                     const tmp = response.data;
                     setFlashcardsData(response.data);
                     setTermsToStudy(shuffle(tmp));
-                    // setTermsToStudy(tmp);
-                    // setTermsToStudy(response.data);
                     setLoading(false);
                 })
                 .catch(err => {
                     setError(err.response?.data?.error || "Error fetching flashcards");
                     setLoading(false);
                 });
-            // randomizeFlashcards();
-
         }
     }, [username, deckId, flashcardsData.length]);
 
     /*** Studying Flashcard Logic ***/
 
-        // showSummary must be placed here to avoid an error
+    // showSummary must be placed here to avoid an error
     const [showSummary, setShowSummary] = useState(false);
 
     /**
@@ -62,7 +65,10 @@ export default function Flashcards({deckId}) {
      */
     const flipCard = () => setFlipped(!flipped);
 
-    // Function to handle correct/incorrect answer
+    /**
+     * Handles the user's answer to the current flashcard.
+     * @param {boolean} isCorrect - Whether the user's answer is correct.
+     */
     const handleAnswer = (isCorrect) => {
         // Update the progress in the current round
         setResultsThisRound(prevResults => {
@@ -95,7 +101,8 @@ export default function Flashcards({deckId}) {
     /**
      * Randomizes the order of the flashcards
      *
-     * @param cards the array of flashcards to shuffle
+     * @param {Array} cards - The array of flashcards to shuffle.
+     * @returns {Array} The shuffled array of flashcards.
      */
     const shuffle = (cards) => {
         const shuffled = [...cards];
@@ -111,7 +118,7 @@ export default function Flashcards({deckId}) {
     /**
      * Update the learned terms based on the results of this round
      *
-     * @param results the results of this round
+     * @param {Array} results - The results of this round.
      */
     const updateLearnedTerms = (results) => {
         // Update the learned terms based on the results of this round

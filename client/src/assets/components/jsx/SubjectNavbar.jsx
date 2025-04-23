@@ -1,3 +1,14 @@
+/**
+ * SubjectNavbar component for managing subjects.
+ * Displays a list of subjects and allows users to add or delete subjects.
+ * @param {Object} props - Component props.
+ * @param {Array} props.subjects - List of subjects.
+ * @param {Function} props.onSubjectSelect - Function to handle subject selection.
+ * @param {Function} props.onAddSubject - Function to handle adding a new subject.
+ * @param {Function} props.onSubjectDeleted - Function to handle subject deletion.
+ * @returns {JSX.Element} The SubjectNavbar layout.
+ */
+
 import { useState } from 'react';
 import { Paper, Stack, Title, TextInput, Button, Modal, ColorInput, Group } from '@mantine/core';
 import SubjectButton from './SubjectButtons';

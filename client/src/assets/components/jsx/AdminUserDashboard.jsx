@@ -1,3 +1,11 @@
+/**
+ * AdminUserDashboard component for managing a user's subjects and decks.
+ * Displays a list of subjects and their associated decks for the selected user.
+ * @param {Object} props - Component props.
+ * @param {Object} props.user - The user object containing user details.
+ * @returns {JSX.Element} The AdminUserDashboard layout.
+ */
+
 import { useState, useEffect } from 'react';
 import { Card, Title, Text, Stack, Grid, Button } from '@mantine/core';
 import { UserContext } from '../../../App';
@@ -25,6 +33,9 @@ export default function AdminUserDashboard({ user }) {
     }
   }, [user, selectedSubject]);
 
+  /**
+   * Fetches all subjects for the selected user.
+   */
   const fetchSubjects = async () => {
     try {
       const res = await fetch(`http://localhost:4000/api/subject/${user.username}`);
@@ -35,6 +46,9 @@ export default function AdminUserDashboard({ user }) {
     }
   };
 
+  /**
+   * Fetches all decks for the selected subject and user.
+   */
   const fetchDecks = async () => {
     try {
       const res = await fetch(
@@ -47,22 +61,37 @@ export default function AdminUserDashboard({ user }) {
     }
   };
 
+  /**
+   * Handles the selection of a deck.
+   * @param {number} deckId - The ID of the selected deck.
+   */
   const handleDeckClick = (deckId) => {
     setSelectedDeckId(deckId);
   };
 
+  /**
+   * Handles the deletion of a deck.
+   * @param {number} deckId - The ID of the deck to delete.
+   */
   const handleDelete = (deckId) => {
     if (window.confirm("Are you sure you want to delete this deck?")) {
       setFlashcardDecks((prev) => prev.filter((deck) => deck.deck_id !== deckId));
     }
   };
 
+  /**
+   * Handles the editing of a deck.
+   * @param {number} deckId - The ID of the deck to edit.
+   */
   const handleEdit = (deckId) => {
     const deckToEdit = flashcardDecks.find((deck) => deck.deck_id === deckId);
     setEditDeck(deckToEdit);
     setShowCreateDeck(true);
   };
 
+  /**
+   * Handles navigation back to the subjects view.
+   */
   const handleBackToSubjects = () => {
     setSelectedSubject(null);
     setFlashcardDecks([]);
