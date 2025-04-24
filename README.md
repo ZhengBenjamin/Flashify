@@ -22,6 +22,7 @@ Here is the [trello.](https://trello.com/invite/b/679d347b3bcd25e792f98659/ATTIb
 ## To run server/backend:
 * install node.js
 * Have mongoDB and the FlashifyDB available.
+* COnfigure the .env to access mongoDB??
 * Enable IP address
 * cd server
 * node server.js
