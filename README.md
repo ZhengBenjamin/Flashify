@@ -25,9 +25,29 @@ Database Schema: <img width="386" alt="image" src="https://github.com/user-attac
 * npm run dev
 * click the link to open the GUI
 
-## Usage - TODO:
-How to use the software (think about a non-technical user's perspective). 
-1. Create an account
+## Usage:
+First either create an account or login to an existing account. Then choose from the following options:
+
+**Create a study set:**
+1) Select the study button in the navigation bar at the top
+2) Create a new subject or select an existing subject to place the study set in
+3) Select "Create Flashcard Deck" and follow the prompts
+
+**Delete a study set:**
+1) Find the study set within the subject it is located in and hover the mouse over it
+2) A red delete button should pop up. Select that button
+
+**Edit a study set:**
+1) Find the study set within the subject it is located in and hover the mouse over it
+2) A blue edit button should pop up. Follow the prompts
+
+**Study a study set:**
+1) Select your set to study
+2) Click the flashcard to reveal the other side
+3) Select the "I know it" or "Don't know" button depending on if you got the flashcard correct
+4) Repeat step 3 until all terms have been studied in the round
+5) See your statistics for both how well you did in this round or how well you've progressed over the entire material
+6) Select continue to continue your progress or restart progress to restart your statistics
 
 ## Folder structure overview
 
