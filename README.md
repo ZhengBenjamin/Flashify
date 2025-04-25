@@ -1,21 +1,15 @@
-# Introduction
-This project is named Flashify, A study platform with a minimalist design that promotes focused learning. This platform allows students to crate and practice their own flashcards.
-This project is an open source license(?)
+# Flashify
+## Introduction
+Our project is named Flashify. Flashify is an ad-free study platform that helps students learn material quickly through the use of custom flashcards.
 
-The team members involved are 
-* Ari Glockner: Frontend
-* Benjamin Zheng: Frontend
-* David Cho: Backend
-* Franklin Wang: Backend
+## Architecture
+Architecture: <img width="1024" alt="image" src="https://github.com/user-attachments/assets/8e559048-982a-4a33-8c78-24494471d329" />
 
-# Organization
-You can find our documents (viewable for those affiliated with Case Western Reserve University) [here.](https://drive.google.com/drive/folders/1Mp9yC2VNtGyMmL1CG0DQPc57iob_h0mn?usp=drive_link)
-Here is the [trello.](https://trello.com/invite/b/679d347b3bcd25e792f98659/ATTIb64458f639ce415414ade7ec2de411b65CB6C203/flashify)
+Database Schema: <img width="386" alt="image" src="https://github.com/user-attachments/assets/67dccf66-6c83-4c28-bb4c-9af494d8d298" />
 
-## System Architecture
+## Installation - TODO:
+Steps to set up the environment and run the project (this will tested in grader's computers).
 
-
-# Getting Started
 ## Cloning the project
 * Open the main project branch in VSCode
 
@@ -34,14 +28,74 @@ Here is the [trello.](https://trello.com/invite/b/679d347b3bcd25e792f98659/ATTIb
 * npm run dev
 * click the link to open the GUI
 
-# Usage examples
+## Usage - TODO:
+How to use the software (think about a non-technical user's perspective). 
 
-# Important directories and Tech Stack
-* server/server.js Main entry point
+
+## Folder structure overview
+
+### Flashify Directory:
+client directory
+
+server directory
+
+### client directory:
+* client/node_modules --> local dependencies to be installed through our installation process
+* client/src directory --> contains the code for the project that will be run locally
+* client/src/main.jsx --> main project file to be run with the npm run dev command
+* client/src/App.jsx --> contains the local routing
+* client/src/assets --> Directory containing code for 
+* client/src/assets/components/jsx --> contains all the GUI interactions and event handlers.
+* client/src/assets/components/css --> Contains the styling components
+* client/src/assets/images --> contains the images that will be displayed by the program
+* client/src/assets/pages --> displays the pages for the platform
+
+### server directory:
+* server/server.js Main server entry point
 * server/routes API functions for CRUD operations on the database
 * server/models database schemas to store users, flashcards, and flashdecks
-* client/src/assets/components/jsx contains all the GUI interactions and event handlers.
-* client/src/assets/pages displays the pages for the platform
+
+## Dependencies
+Mention major libraries/frameworks/tools APIs used for the project. 
+* React
+* Mantime
+* MongoDB
+
+* MongoDB and Mongoose
+* Node.js and Express
+* Mantine and React
+
+## Contribution
+The team members involved are:
+* Ari Glockner: Frontend
+* Benjamin Zheng: Frontend
+* David Cho: Backend
+* Franklin Wang: Backend
+
+We used a divide and conquer approach and we collaborated with each other by using Pair Programming, Code Reviews, and our File Documentation.
+
+## Development retrospective
+Here were a couple of mistakes we made in developing our project:
+1) When we initially created the study flashcards we used a hardcoded placeholder array for storing the flashcards we were using until we got the backend set up. While both the system that we used for the frontend and the backend initially worked individually, when we integrated the two systems together the system broke so we modified our frontend to become compatible with the backend. We could have made this more efficient by starting with the backend and having the frontend work around the system of the backend here so we wouldn't have needed to redo it, but it didn't end up costing us _that_ much time
+2) We had some issues on the backend with computer security involving confidentiality. Originally we had problems that every user shared the same set of flashcard sets and after some debugging we were able to get this problem fixed. We could have been slightly more efficient with thinking
+
+Overall we were extremely effective at working together as a team and there's not that much we would do differently if we were to do this project again.
+
+## License
+MIT
+
+
+
+
+
+# Organization
+You can find our documents (viewable for those affiliated with Case Western Reserve University) [here.](https://drive.google.com/drive/folders/1Mp9yC2VNtGyMmL1CG0DQPc57iob_h0mn?usp=drive_link)
+Here is the [trello.](https://trello.com/invite/b/679d347b3bcd25e792f98659/ATTIb64458f639ce415414ade7ec2de411b65CB6C203/flashify)
+
+
+
+# Important directories and Tech Stack
+
 
 ## Tech Stack
 * MongoDB and Mongoose
