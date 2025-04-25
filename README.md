@@ -7,21 +7,18 @@ Architecture: <img width="1024" alt="image" src="https://github.com/user-attachm
 
 Database Schema: <img width="386" alt="image" src="https://github.com/user-attachments/assets/67dccf66-6c83-4c28-bb4c-9af494d8d298" />
 
-## Installation - TODO:
-Steps to set up the environment and run the project (this will tested in grader's computers).
+## Installation:
+### Cloning the project
+* Open the [main project branch](https://github.com/ZhengBenjamin/Flashify/tree/main) in VSCode
 
-## Cloning the project
-* Open the main project branch in VSCode
-
-## To run server/backend:
+### To run server/backend:
 * install node.js
 * Have mongoDB and the FlashifyDB available.
-* COnfigure the .env to access mongoDB??
-* Enable IP address
 * cd server
+* npm install
 * node server.js
 
-## To run client/frontend: 
+### To run client/frontend: 
 * install npm
 * cd client
 * npm i
@@ -30,14 +27,16 @@ Steps to set up the environment and run the project (this will tested in grader'
 
 ## Usage - TODO:
 How to use the software (think about a non-technical user's perspective). 
-
+1. Create an account
 
 ## Folder structure overview
 
 ### Flashify Directory:
-client directory
-
-server directory
+* client directory
+* server directory
+* .gitignore
+* README.md --> this file
+* testing.md --> Describes where tests are written and explains the test coverage
 
 ### client directory:
 * client/node_modules --> local dependencies to be installed through our installation process
@@ -56,11 +55,6 @@ server directory
 * server/models database schemas to store users, flashcards, and flashdecks
 
 ## Dependencies
-Mention major libraries/frameworks/tools APIs used for the project. 
-* React
-* Mantime
-* MongoDB
-
 * MongoDB and Mongoose
 * Node.js and Express
 * Mantine and React
@@ -74,6 +68,9 @@ The team members involved are:
 
 We used a divide and conquer approach and we collaborated with each other by using Pair Programming, Code Reviews, and our File Documentation.
 
+You can find our documents (viewable for those affiliated with Case Western Reserve University) [here.](https://drive.google.com/drive/folders/1Mp9yC2VNtGyMmL1CG0DQPc57iob_h0mn?usp=drive_link)
+Here is the [trello.](https://trello.com/invite/b/679d347b3bcd25e792f98659/ATTIb64458f639ce415414ade7ec2de411b65CB6C203/flashify)
+
 ## Development retrospective
 Here were a couple of mistakes we made in developing our project:
 1) When we initially created the study flashcards we used a hardcoded placeholder array for storing the flashcards we were using until we got the backend set up. While both the system that we used for the frontend and the backend initially worked individually, when we integrated the two systems together the system broke so we modified our frontend to become compatible with the backend. We could have made this more efficient by starting with the backend and having the frontend work around the system of the backend here so we wouldn't have needed to redo it, but it didn't end up costing us _that_ much time
@@ -83,26 +80,3 @@ Overall we were extremely effective at working together as a team and there's no
 
 ## License
 MIT
-
-
-
-
-
-# Organization
-You can find our documents (viewable for those affiliated with Case Western Reserve University) [here.](https://drive.google.com/drive/folders/1Mp9yC2VNtGyMmL1CG0DQPc57iob_h0mn?usp=drive_link)
-Here is the [trello.](https://trello.com/invite/b/679d347b3bcd25e792f98659/ATTIb64458f639ce415414ade7ec2de411b65CB6C203/flashify)
-
-
-
-# Important directories and Tech Stack
-
-
-## Tech Stack
-* MongoDB and Mongoose
-* Node.js and Express
-* Mantine and React
-
-# Reflection
-mistakes that could be avoided and how process could be more cost-effective
-
-
