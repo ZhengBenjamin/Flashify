@@ -3,9 +3,11 @@
 Our project is named Flashify. Flashify is an ad-free study platform that helps students learn material quickly through the use of custom flashcards.
 
 ## Architecture
-Architecture: <img width="1024" alt="image" src="https://github.com/user-attachments/assets/8e559048-982a-4a33-8c78-24494471d329" />
+Backend Architecture: <img width="512" alt="image" src="https://github.com/ZhengBenjamin/Flashify/blob/main/client/src/assets/images/backend.png" />
 
-Database Schema: <img width="386" alt="image" src="https://github.com/user-attachments/assets/67dccf66-6c83-4c28-bb4c-9af494d8d298" />
+Frontend Architecture: <img width="512" alt="image" src="https://github.com/ZhengBenjamin/Flashify/blob/main/client/src/assets/images/frontend.png" />
+
+Database Schema: <img width="512" alt="image" src="https://github.com/user-attachments/assets/67dccf66-6c83-4c28-bb4c-9af494d8d298" />
 
 ## Installation:
 ### Cloning the project
