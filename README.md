@@ -9,7 +9,7 @@ Backend Architecture:
 
 Frontend Architecture: 
 
-<img width="512" alt="image" src="https://github.com/ZhengBenjamin/Flashify/blob/main/client/src/assets/images/frontend.png" />
+<img width="512" alt="image" src="https://github.com/ZhengBenjamin/Flashify/blob/main/client/src/assets/images/frontend2.png" />
 
 Database Schema: 
 
