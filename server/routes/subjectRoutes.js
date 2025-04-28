@@ -5,7 +5,11 @@ const Subject = require("../models/SubjectModel");
 const Flashdeck = require("../models/FlashdeckModel");
 const Flashcard = require("../models/FlashcardModel");
 
-// Adding Subjects
+/**
+ * @route POST /create
+ * @desc Create a new subject
+ * @access Public
+ */
 router.post("/create", async (req, res) => {
   console.log("📥 Received body from frontend:", req.body); // Debug log
 
@@ -34,7 +38,11 @@ router.post("/create", async (req, res) => {
   }
 });
 
-// Getting subjects
+/**
+ * @route GET /:username
+ * @desc Get all subjects for a user
+ * @access Public
+ */
 router.get("/:username", async (req, res) => {
   try {
     const subjects = await Subject.find({ username: req.params.username });
@@ -45,7 +53,11 @@ router.get("/:username", async (req, res) => {
   }
 });
 
-// DELETE a subject and all related decks + flashcards
+/**
+ * @route DELETE /:id
+ * @desc Delete a subject along with all associated decks and flashcards
+ * @access Public
+ */
 router.delete("/:id", async (req, res) => {
   const subjectId = req.params.id;
 
