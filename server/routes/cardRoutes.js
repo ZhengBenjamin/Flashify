@@ -5,7 +5,11 @@ const FlashcardModel = require("../models/FlashcardModel");
 
 const router = express.Router();
 
-// Create a flashcard and associate it with a deck
+/**
+ * @route POST /
+ * @desc Create a new flashcard and associate it with a flashdeck
+ * @access Public
+ */
 router.post("/", async (req, res) => {
   const { username, deck_id, front, back } = req.body;
 
@@ -39,7 +43,11 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Get all flashcards for a deck
+/**
+ * @route GET /
+ * @desc Retrieve all flashcards for a specific deck and user
+ * @access Public
+ */
 router.get("/", async (req, res) => {
   const { username, deck_id } = req.query; // Get the username and deck_id from the query string
   try {
@@ -51,7 +59,11 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Update a flashcard
+/**
+ * @route PUT /:id
+ * @desc Update the front and/or back of an existing flashcard
+ * @access Public
+ */
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
   const { front, back } = req.body;
@@ -78,7 +90,11 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// Delete a flashcard
+/**
+ * @route DELETE /:id
+ * @desc Delete a flashcard by its ID and update the deck's card count
+ * @access Public
+ */
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
 
