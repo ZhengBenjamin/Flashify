@@ -9,7 +9,12 @@ dotenv.config();
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET; 
 
-// Register User
+
+/**
+ * @route POST /register
+ * @desc Register a new user
+ * @access Public
+ */
 router.post("/register", async (req, res) => {
     const { username, email, password } = req.body;
     if (!username || !email || !password) {
@@ -35,7 +40,11 @@ router.post("/register", async (req, res) => {
 });
 
 
-// Login User
+/**
+ * @route POST /login
+ * @desc Authenticate a user and get a JWT token
+ * @access Public
+ */
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
@@ -59,7 +68,11 @@ router.post("/login", async (req, res) => {
 });
 
 
-// Get all users for an admin to see. NOT for the public. Not complete
+/**
+ * @route GET /
+ * @desc Get a list of all users (for admin use only)
+ * @access Private (should be protected in future)
+ */
 router.get("/", async (req, res) => {
     try {
       const allUsers = await UserModel.find().select("_id username");
@@ -72,7 +85,11 @@ router.get("/", async (req, res) => {
   
   
 
-// Delete User
+/**
+ * @route DELETE /:id
+ * @desc Delete a user by their ID
+ * @access Private (should be protected in future)
+ */
 router.delete("/:id", async (req, res) => {
     const { id } = req.params; 
 
