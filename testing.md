@@ -1,8 +1,9 @@
-# Testing Overview for API Routes
+# Testing Overview
+For frontend testing, a manual test will use a TestUser who will simulate a person using Flashify for the first time. The test design will use the TestUser account to accomplish all tasks that any typical user will do with the platform; these tasks are outlined in section 4. For each task and subtask,if present, the procedure of the task will be documented (the user story or what they are trying to accomplish), the expected result, and the verdict of whether the task has been completed or not. If the task was not completed, then the test will be flagged, and further investigation will be conducted. The results of these tests can be found in the Functional Testing Document.
 
-This document provides an overview of the unit tests written for the API routes. Each test suite is dedicated to a specific route file and covers various scenarios, including successful responses, error handling, and edge cases. The files are found in \_\_tests\_\_ directory
+For backend testing, the rest of this document provides an overview of the unit tests written for the API routes. Each test suite is dedicated to a specific route file and covers various scenarios, including successful responses, error handling, and edge cases. The files are found in \_\_tests\_\_ directory
 
-## Test Coverage Summary
+## Test Coverage for API Routes
 
 ### 1. **Auth Routes (`authRoutes.test.js`)**
 
