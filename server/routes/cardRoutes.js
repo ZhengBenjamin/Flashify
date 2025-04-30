@@ -1,3 +1,11 @@
+/**
+ * Flashcard route handlers.
+ * 
+ * Provides endpoints to create, retrieve, update, and delete flashcards.
+ * Flashcards are linked to flashdecks and updated accordingly.
+ * 
+ * @module routes/cardRoutes
+ */
 const express = require("express");
 const mongoose = require("mongoose");
 const FlashdeckModel = require("../models/FlashdeckModel");

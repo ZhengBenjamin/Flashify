@@ -1,3 +1,12 @@
+/**
+ * Authentication route handlers.
+ * 
+ * Handles user registration, login (with JWT), fetching users, and deletion.
+ * Uses bcrypt for password hashing and JWT for secure session tokens.
+ * 
+ * @module routes/authRoutes
+ */
+
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");

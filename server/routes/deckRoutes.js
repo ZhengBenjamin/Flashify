@@ -1,3 +1,11 @@
+/**
+ * Flashdeck route handlers.
+ * 
+ * Provides endpoints for creating, retrieving, updating, and deleting flashdecks.
+ * Flashdecks are linked to users and subjects and may contain multiple flashcards.
+ *
+ * @module routes/deckRoutes
+ */
 const express = require("express");
 const mongoose = require("mongoose");
 const FlashdeckModel = require("../models/FlashdeckModel");

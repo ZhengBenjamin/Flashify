@@ -1,3 +1,11 @@
+/**
+ * Subject route handlers.
+ * 
+ * Provides endpoints to create, retrieve, and delete subjects.
+ * Deleting a subject will also cascade delete all associated decks and flashcards.
+ * 
+ * @module routes/subjectRoutes
+ */
 const express = require("express");
 const router = express.Router();
 const { v4: uuidv4 } = require("uuid");
